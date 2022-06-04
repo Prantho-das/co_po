@@ -60,7 +60,7 @@
                         Semester
                     </BreezeNavLink>
                 </li>
-                 <li class="relative px-6 py-3">
+                <li class="relative px-6 py-3">
                     <BreezeNavLink :href="route('batches.index')" :active="route().current('batches.index')">
                         <template #icon>
                             <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
@@ -96,22 +96,65 @@
                         aria-label="submenu">
                         <li
                             class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200">
-                            <a class="w-full" :href="route('co.index')" :active="route().current('co.index')">Course Outcome (CO)</a>
+                            <Link class="w-full" :href="route('co.index')" :active="route().current('co.index')">Course
+                                Outcome (CO)</Link>
                         </li>
-                         <li
+                        <li
                             class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200">
-                            <a class="w-full" :href="route('po.index')" :active="route().current('po.index')">Program Outcome (PO)</a>
+                            <Link class="w-full" :href="route('po.index')" :active="route().current('po.index')">Program
+                                Outcome (PO)</Link>
                         </li>
                     </ul>
                 </li>
                  <li class="relative px-6 py-3">
+                    <BreezeNavLink :href="route('course.index')" :active="route().current('course.index')">
+                        <template #icon>
+                            <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
+                                stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                                <path
+                                    d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z">
+                                </path>
+                            </svg>
+                        </template>
+                        Subject
+                    </BreezeNavLink>
+                </li>
+                <li class="relative px-6 py-3">
+                    <BreezeNavLink :href="route('course.assignTeacherShow')" :active="route().current('course.assignTeacherShow')">
+                        <template #icon>
+                            <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
+                                stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                                <path
+                                    d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z">
+                                </path>
+                            </svg>
+                        </template>
+                        Assign Teacher
+                    </BreezeNavLink>
+                </li>
+                 <li class="relative px-6 py-3">
+                    <BreezeNavLink :href="route('users.studentsShow')" :active="route().current('users.studentsShow')">
+                        <template #icon>
+                            <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
+                                stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                                <path
+                                    d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z">
+                                </path>
+                            </svg>
+                        </template>
+                        Student Create
+                    </BreezeNavLink>
+                </li>
+                <!-- <li class="relative px-6 py-3">
                     <button @click="menuSubject = !menuSubject"
                         class="inline-flex items-center justify-between w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800"
                         aria-haspopup="true">
                         <span class="inline-flex items-center">
-                           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-</svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
                             <span class="ml-4">Subject</span>
                         </span>
                         <svg class="w-4 h-4" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
@@ -125,14 +168,15 @@
                         aria-label="submenu">
                         <li
                             class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200">
-                            <a class="w-full" :href="route('co.index')" :active="route().current('co.index')">Courses</a>
+                            <a class="w-full" :href="route('course.index')"
+                                :active="route().current('course.index')">Courses</a>
                         </li>
-                         <li
+                        <li
                             class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200">
-                            <a class="w-full" :href="route('po.index')" :active="route().current('po.index')">Assign Courses</a>
+                            <a class="w-full" :href="route('po.index')" :active="route().current('po.index')">Course Co Po</a>
                         </li>
                     </ul>
-                </li>
+                </li> -->
             </ul>
         </div>
     </aside>
@@ -141,22 +185,26 @@
 <script>
 import BreezeNavLink from "@/Components/NavLink.vue";
 import { Link } from "@inertiajs/inertia-vue3";
-import { ref } from "vue";
 
 export default {
     components: {
         BreezeNavLink,
         Link,
     },
-
-    setup() {
-        let showingTwoLevelMenu = ref(false);
-        let menuSubject = ref(false);
-
+    data() {
         return {
-            showingTwoLevelMenu,
-            menuSubject
+            showingTwoLevelMenu: false,
+            menuSubject: false,
         };
+    },
+    mounted() {
+        console.log(this.roleCheck);
+    },
+    computed: {
+        roleCheck() {
+            let props = this.$page.props;
+            return props.auth ? props.auth.user.role : "";
+        },
     },
 };
 </script>

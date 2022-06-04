@@ -30,7 +30,7 @@
             <form @submit.prevent="semesterCreate" class="mb-4">
             <h3 class="text-lg">Create semester Year Now</h3>
                 <div class="my-4">
-                    <BreezeLabel for="year" value="year" />
+                    <BreezeLabel for="year" value="Enter Semester" />
                     <BreezeInput
                         id="year"
                         type="year"
@@ -59,7 +59,6 @@
                             >
                                 <th class="px-4 py-3">*</th>
                                 <th class="px-4 py-3">Semester</th>
-                                <th></th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y">

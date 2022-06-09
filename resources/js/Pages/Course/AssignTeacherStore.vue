@@ -47,7 +47,7 @@
                             Choose a Program Outcome
                         </option>
                         <option class="text-black" v-for="(course, i) in courses" :key="i" :value="course.id">
-                            {{ course.co_name }}
+                            {{ course.c_name }}
                         </option>
                         <h2 class="text-red-500" v-if="form.errors.course">
                             {{ form.errors.course }}
@@ -56,7 +56,7 @@
                 </div>
                 <div class="my-4">
                     <BreezeLabel for="sessionId" value="Select Batch" />
-                    <select id="sessionId" v-model="form.po"
+                    <select id="sessionId" v-model="form.batch"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option selected value="" disabled>
                             Choose a Batch
@@ -64,8 +64,8 @@
                         <option class="text-black" v-for="(batch, i) in batches" :key="i" :value="batch.id">
                             {{ batch.name }}
                         </option>
-                        <h2 class="text-red-500" v-if="form.errors.name">
-                            {{ form.errors.name }}
+                        <h2 class="text-red-500" v-if="form.errors.batch">
+                            {{ form.errors.batch }}
                         </h2>
                     </select>
                 </div>
@@ -86,13 +86,13 @@
                 </div>
                 <div class="my-4">
                     <BreezeLabel for="sessionId" value="Select Semester" />
-                    <select id="sessionId" v-model="form.semester"
+                    <select id="sessionId" v-model="form.session"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option selected value="" disabled>
                             Choose a session
                         </option>
                         <option class="text-black" v-for="(session, i) in sessions" :key="i" :value="session.id">
-                            {{ session.name }}
+                            {{ session.session_year }}
                         </option>
                         <h2 class="text-red-500" v-if="form.errors.session">
                             {{ form.errors.session }}
@@ -135,7 +135,7 @@ export default {
     },
     methods: {
         assignTeacher() {
-            this.form.post(this.route("users.store"), {
+            this.form.post(this.route("course.assignTeacherStore"), {
                 onSuccess: () => {
                     this.form.reset()
                 },

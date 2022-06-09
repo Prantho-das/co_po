@@ -6,9 +6,10 @@ use App\Http\Controllers\CourseOutcomeController;
 use App\Http\Controllers\ProgramOutcomeController;
 use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\SessionController;
-use App\Models\CourseOutcome;
-use App\Models\SessionYear;
-use Illuminate\Foundation\Application;
+use App\Models\Course;
+use App\Models\StudentBatch;
+use App\Models\Students;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -24,16 +25,21 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return Inertia::render('Welcome', ['canLogin' => Route::has('login')]);
 });
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    $course = Course::count();
+    $student = Students::count();
+    $teacher = User::where('role', "TEACHER")->count();
+    $batch = StudentBatch::count();
+    $dashboard=[
+        'course' => $course,
+        'student' => $student,
+        'teacher' => $teacher,
+        'batch' => $batch,
+    ];
+    return Inertia::render('Dashboard', $dashboard);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 require __DIR__ . '/auth.php';
@@ -50,9 +56,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('/po', ProgramOutcomeController::class);
 
     // Courses
-    Route::post('/courseAssign', [CourseController::class, 'assignCoPo'])->name('course.assignCoPo');
+    Route::get('/teacher/my-courses', [CourseController::class, 'myCourse'])->name('course.teacher.myCourse');
     Route::get('/teacher-assign-show', [CourseController::class, 'assignTeacherShow'])->name('course.assignTeacherShow');
     Route::get('/teacher-assign-create', [CourseController::class, 'assignTeacherCreate'])->name('course.assignTeacherCreate');
+    Route::post('/courseAssign', [CourseController::class, 'assignCoPo'])->name('course.assignCoPo');
     Route::post('/teacherAssign', [CourseController::class, 'assignTeacherStore'])->name('course.assignTeacherStore');
     Route::resource('/course', CourseController::class);
 

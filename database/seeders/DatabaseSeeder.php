@@ -32,9 +32,24 @@ class DatabaseSeeder extends Seeder
             'department' => 'boat',
             'role'=>"ADMIN"
         ]);
+        User::create([
+            'name' => 'teacher',
+            'email' => 'teacher@gmail.com',
+            'password' => Hash::make(12345678910),
+            'department' => 'CSE',
+            'role' => "TEACHER"
+        ]);
+        User::create([
+            'name' => 'dean',
+            'email' => 'dean@gmail.com',
+            'password' => Hash::make(12345678910),
+            'department' => 'CSE',
+            'role' => "DEAN"
+        ]);
         //session table
         SessionYear::create([
-            'session_year'=>'2020-2021'
+            'session_year'=>'2020-2021',
+            'session_type'=>'SUMMER'
         ]);
     }
 }

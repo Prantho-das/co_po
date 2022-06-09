@@ -33,6 +33,7 @@
             <th class="px-4 py-3">Name</th>
             <th class="px-4 py-3">Email</th>
             <th class="px-4 py-3">Role</th>
+             <th class="px-4 py-3">Department</th>
 
           </tr>
           </thead>
@@ -46,6 +47,9 @@
             </td>
             <td class="px-4 py-3 text-sm capitalize">
               {{ user.role }}
+            </td>
+            <td class="px-4 py-3 text-sm capitalize">
+              {{ user.department ? user.department : '-' }}
             </td>
           </tr>
           </tbody>

@@ -271,8 +271,8 @@
                 </li>
                 <li class="relative px-6 py-3" v-if="roleCheck(['ADMIN'])">
                     <BreezeNavLink
-                        :href="route('users.studentsShow')"
-                        :active="route().current('users.studentsShow')"
+                        :href="route('users.studentShow')"
+                        :active="route().current('users.studentShow')"
                     >
                         <template #icon>
                             <svg

@@ -55,7 +55,7 @@
                             <th class="px-4 py-3">Teacher Name</th>
                             <th class="px-4 py-3">Course Name</th>
                             <th class="px-4 py-3">Course Code</th>
-                            <th class="px-4 py-3">Btach</th>
+                            <th class="px-4 py-3">Batch</th>
                             <th class="px-4 py-3">Semester</th>
                         </tr>
                     </thead>

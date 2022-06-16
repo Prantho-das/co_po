@@ -7,7 +7,7 @@
 
         <div class="p-3 shadow-md rounded mx-auto md:w-4/5 w sm:w-11/12 w-full bg-white">
             <h2 class="mb-2 text-xl text-green-600 font-bold">
-                Course Name:{{ course.c_name }}
+                Course Name: {{ course.c_name }}
             </h2>
             <h2 class="mb-2 text-lg">Course Code: {{ course.c_code }}</h2>
             <h2 class="mb-2 text-md">Course Credit: {{ course.credit }}</h2>

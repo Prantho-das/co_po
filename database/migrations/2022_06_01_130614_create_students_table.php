@@ -18,8 +18,9 @@ return new class extends Migration
             $table->string('name');
             $table->integer('roll');
             $table->string('reg_no');
-            $table->string('session_id');
-            $table->string('batch_id');
+            $table->id('session_id');
+            $table->id('batch_id');
+            $table->string('semester')->nullable();
             $table->string('shift')->comment('Day or Evening');
             $table->string('email')->unique()->nullable();
             $table->string('password')->nullable();

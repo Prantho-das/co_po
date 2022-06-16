@@ -86,6 +86,12 @@
                             >
                                 Exam Assign
                             </Link>
+                             <Link
+                                :href="route('exam.markCreate',run.id)"
+                                class="inline-block m-2 text-md font-weight-bold p-2 rounded bg-indigo-500 text-white"
+                            >
+                                Assign Marks
+                            </Link>
                         </tr>
                     </tbody>
                 </table>
@@ -141,6 +147,7 @@
                             >
                                 Exam List
                             </Link>
+
                         </tr>
                     </tbody>
                 </table>

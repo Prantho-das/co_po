@@ -46,7 +46,7 @@
                     </select>
                 </div>
                 <div class="my-4">
-                    <BreezeLabel for="year" value="Course Code" />
+                    <BreezeLabel for="year" value="Course Credit" />
                     <BreezeInput id="year" type="number" class="block w-full mt-1 p-1.5 border-2 border-rose-100"
                         v-model="form.credit" required autocomplete="off" />
                     <h2 class="text-red-500" v-if="form.errors.credit">{{ form.errors.credit }}</h2>

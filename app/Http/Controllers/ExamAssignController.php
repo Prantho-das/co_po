@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CourseAssign;
 use App\Models\ExamAssign;
+use App\Models\Students;
 use App\Models\TeacherAssignCourse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -15,10 +16,11 @@ class ExamAssignController extends Controller
         $tcourse = TeacherAssignCourse::findOrFail($id);
         $copos = CourseAssign::where('course_id', $tcourse->course_id)
             ->with('relCo', 'relPo')->get();
-
+        $exams = ExamAssign::where('t_assign_courses_id', $id)->with('relCo', 'relPo', 'relBatch')->get();
         return Inertia::render('TeacherPages/ExamMake', [
             'copos' => $copos,
             'tcourse' => $tcourse,
+            'exams' => $exams,
         ]);
     }
 
@@ -42,5 +44,21 @@ class ExamAssignController extends Controller
             'name' => request('name'),
         ]);
         return back()->with('success', 'Exam Created Successfully');
+    }
+
+    public function markCreate(Request $req, $id)
+    {
+        $teacherAssigns = TeacherAssignCourse::findOrFail($id);
+        $examAssigns = ExamAssign::where('t_assign_courses_id', $id)->get();
+        $students = Students::where('batch_id', $teacherAssigns->batch_id)->get();
+        return Inertia::render('TeacherPages/Marks', [
+            'examAssigns' => $examAssigns,
+            'students' => $students,
+            'teacherAssigns' => $teacherAssigns
+        ]);
+    }
+    public function markStore(Request $req, $id)
+    {
+        return $req->all();
     }
 }

@@ -3,10 +3,12 @@
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseOutcomeController;
+use App\Http\Controllers\ExamAssignController;
 use App\Http\Controllers\ProgramOutcomeController;
 use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\SessionController;
 use App\Models\Course;
+use App\Models\ExamAssaign;
 use App\Models\StudentBatch;
 use App\Models\Students;
 use App\Models\User;
@@ -57,6 +59,9 @@ Route::middleware('auth')->group(function () {
 
     // Courses
     Route::get('/teacher/my-courses', [CourseController::class, 'myCourse'])->name('course.teacher.myCourse');
+    Route::get('/teacher/co-po-exam/{id}', [ExamAssignController::class, 'makeExam'])->name('course.teacher.makeExam');
+    Route::post('/teacher/co-po-exam/{id}', [ExamAssignController::class, 'makeExamStore'])->name('course.teacher.makeExamStore');
+
     Route::get('/teacher-assign-show', [CourseController::class, 'assignTeacherShow'])->name('course.assignTeacherShow');
     Route::get('/teacher-assign-create', [CourseController::class, 'assignTeacherCreate'])->name('course.assignTeacherCreate');
     Route::post('/courseAssign', [CourseController::class, 'assignCoPo'])->name('course.assignCoPo');

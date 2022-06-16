@@ -36,7 +36,7 @@
                     </BreezeNavLink>
                 </li>
 
-                <li class="relative px-6 py-3">
+                <li class="relative px-6 py-3" v-if="roleCheck(['ADMIN'])">
                     <BreezeNavLink
                         :href="route('users.index')"
                         :active="route().current('users.index')"
@@ -60,7 +60,7 @@
                         Users
                     </BreezeNavLink>
                 </li>
-                <li class="relative px-6 py-3">
+                <li class="relative px-6 py-3" v-if="roleCheck(['TEACHER'])">
                     <BreezeNavLink
                         :href="route('course.teacher.myCourse')"
                         :active="route().current('course.teacher.myCourse')"
@@ -85,7 +85,7 @@
                     </BreezeNavLink>
                 </li>
 
-                <li class="relative px-6 py-3">
+                <li class="relative px-6 py-3" v-if="roleCheck(['ADMIN'])">
                     <BreezeNavLink
                         :href="route('sessions.index')"
                         :active="route().current('sessions.index')"
@@ -109,7 +109,7 @@
                         Session
                     </BreezeNavLink>
                 </li>
-                <li class="relative px-6 py-3">
+                <li class="relative px-6 py-3" v-if="roleCheck(['ADMIN'])">
                     <BreezeNavLink
                         :href="route('semesters.index')"
                         :active="route().current('semesters.index')"
@@ -133,7 +133,7 @@
                         Semester
                     </BreezeNavLink>
                 </li>
-                <li class="relative px-6 py-3">
+                <li class="relative px-6 py-3" v-if="roleCheck(['ADMIN'])">
                     <BreezeNavLink
                         :href="route('batches.index')"
                         :active="route().current('batches.index')"
@@ -158,7 +158,7 @@
                     </BreezeNavLink>
                 </li>
 
-                <li class="relative px-6 py-3">
+                <li class="relative px-6 py-3" v-if="roleCheck(['ADMIN'])">
                     <button
                         @click="showingTwoLevelMenu = !showingTwoLevelMenu"
                         class="inline-flex items-center justify-between w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800"
@@ -221,7 +221,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="relative px-6 py-3">
+                <li class="relative px-6 py-3" >
                     <BreezeNavLink
                         :href="route('course.index')"
                         :active="route().current('course.index')"
@@ -245,7 +245,7 @@
                         Subject
                     </BreezeNavLink>
                 </li>
-                <li class="relative px-6 py-3">
+                <li class="relative px-6 py-3" v-if="roleCheck(['ADMIN'])">
                     <BreezeNavLink
                         :href="route('course.assignTeacherShow')"
                         :active="route().current('course.assignTeacherShow')"

@@ -81,7 +81,7 @@
                                 {{ run.rel_semester.name }}
                             </td>
                             <Link
-                                :href="route('course.assignTeacherCreate')"
+                                :href="route('course.teacher.makeExam',run.id)"
                                 class="inline-block m-2 text-md font-weight-bold p-2 rounded bg-green-500 text-white"
                             >
                                 Exam Assign

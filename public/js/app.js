@@ -23201,15 +23201,14 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      infos: [] //form: this.$inertia.form({ name: "", marks: "", copo: "" }),
-
+      infos: []
     };
   },
   mounted: function mounted() {
-    this.markp();
+    this.infoSanitize();
   },
   methods: {
-    markp: function markp() {
+    infoSanitize: function infoSanitize() {
       var _this = this;
 
       var info = {};
@@ -23224,6 +23223,7 @@ __webpack_require__.r(__webpack_exports__);
             exam_id: exam.id,
             exam_name: exam.name,
             mark: "",
+            copo_id: exam.copo_id,
             co_id: exam.co_id,
             po_id: exam.po_id,
             t_assign_courses_id: exam.t_assign_courses_id,
@@ -23238,9 +23238,11 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     markCreate: function markCreate() {
+      var _this2 = this;
+
       this.$inertia.post(this.route("exam.markStore", this.teacherAssigns.id), this.infos, {
         onSuccess: function onSuccess() {
-          return alert("o");
+          return _this2.infoSanitize();
         }
       });
     }

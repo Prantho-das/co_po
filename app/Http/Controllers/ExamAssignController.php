@@ -62,7 +62,9 @@ class ExamAssignController extends Controller
     public function markStore(Request $req, $id)
     {
         $teacherAssigns = TeacherAssignCourse::findOrFail($id);
-        //dd($req->all());
+        // $req->validate([
+
+        // ]);
         try {
             DB::transaction(function () use ($req, $teacherAssigns,$id) {
                 foreach ($req->all() as $value) {
@@ -74,7 +76,7 @@ class ExamAssignController extends Controller
                             'batch_id' => $teacherAssigns->batch_id,
                             'roll' => $roll,
                             'course_id' => $teacherAssigns->course_id,
-                            'copo_id' => 1,
+                            'copo_id' => $mark['copo_id'],
                             'co_id' => $mark['co_id'],
                             'po_id' => $mark['po_id'],
                             't_assign_courses_id' => $id,

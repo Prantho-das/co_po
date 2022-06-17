@@ -52,14 +52,13 @@ export default {
     data() {
         return {
             infos: [],
-            //form: this.$inertia.form({ name: "", marks: "", copo: "" }),
         };
     },
     mounted() {
-        this.markp();
+        this.infoSanitize();
     },
     methods: {
-        markp() {
+        infoSanitize() {
             let info = {};
             this.students.forEach((student) => {
                 info["student_name"] = student.name;
@@ -71,6 +70,7 @@ export default {
                         exam_id: exam.id,
                         exam_name: exam.name,
                         mark: "",
+                        copo_id: exam.copo_id,
                         co_id: exam.co_id,
                         po_id: exam.po_id,
                         t_assign_courses_id: exam.t_assign_courses_id,
@@ -86,7 +86,7 @@ export default {
             this.$inertia.post(
                 this.route("exam.markStore", this.teacherAssigns.id),
                 this.infos,
-                { onSuccess: () => alert("o") }
+                { onSuccess: () => this.infoSanitize() }
             );
         },
     },

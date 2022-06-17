@@ -15,6 +15,10 @@ class TeacherAssignCourse extends Model
     {
         return $this->hasOne(User::class,'id','user_id');
     }
+    public function relExam()
+    {
+        return $this->hasMany(ExamAssign::class, 't_assign_courses_id','id');
+    }
     public function relSemester()
     {
         return $this->hasOne(Semester::class,'id', 'semester_id');

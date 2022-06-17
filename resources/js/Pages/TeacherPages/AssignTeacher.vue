@@ -56,6 +56,7 @@
                             <th class="px-4 py-3">Course Code</th>
                             <th class="px-4 py-3">Batch</th>
                             <th class="px-4 py-3">Semester</th>
+                            <th class="px-4 py-3">Exam Assign</th>
                             <th class="px-4 py-3">Satisfy</th>
                         </tr>
                     </thead>
@@ -80,6 +81,9 @@
                             <td class="px-4 py-3 text-sm">
                                 {{ run.rel_semester.name }}
                             </td>
+                             <td class="px-4 py-3 text-sm">
+                             {{ run.rel_exam_count }}
+                             </td>
                             <Link
                                 :href="route('course.teacher.makeExam',run.id)"
                                 class="inline-block m-2 text-md font-weight-bold p-2 rounded bg-green-500 text-white"
@@ -117,6 +121,7 @@
                             <th class="px-4 py-3">Course Code</th>
                             <th class="px-4 py-3">Batch</th>
                             <th class="px-4 py-3">Semester</th>
+                             <th class="px-4 py-3">Exam Assign</th>
                             <th class="px-4 py-3">Satisfy By</th>
                         </tr>
                     </thead>
@@ -141,6 +146,9 @@
                             <td class="px-4 py-3 text-sm">
                                 {{ comp.rel_semester.name }}
                             </td>
+                             <td class="px-4 py-3 text-sm">
+                             {{ comp.rel_exam_count }}
+                             </td>
                             <Link
                                 :href="route('course.assignTeacherCreate')"
                                 class="inline-block m-2 text-md font-weight-bold p-2 rounded bg-green-500 text-white"

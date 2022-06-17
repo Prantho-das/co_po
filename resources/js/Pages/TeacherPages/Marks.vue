@@ -4,20 +4,31 @@
     <BreezeAuthenticatedLayout>
         <template #header> Assign Marks </template>
 
-        <div class="flex justify-between" v-for="(info, i) in infos" :key="i">
-            <h2>{{ info.student_name }}</h2>
-            <div v-for="(mk, id) in info.marks" :key="id">
-                <h2>{{ mk.exam_name }}</h2>
-                <h2>Total{{ mk.id }}</h2>
-                <input
-                    type="number"
-                    min="0"
-                    :max="mk.total"
-                    v-model="info.marks[id].mark"
-                />
+        <div class="flex flex-wrap items-center" v-for="(info, i) in infos" :key="i">
+            <div class="px-6 w-60">
+                <h2 class="text-lg">{{ info.student_name }}</h2>
+                 <h2>Roll:{{ info.student_roll }}</h2>
+            </div>
+            <div
+                class="my-4 flex-1 flex flex-wrap"
+                v-for="(mk, id) in info.marks"
+                :key="id"
+            >
+                <div>
+                    <BreezeLabel for="mark" :value="mk.exam_name+' ('+mk.total+')'" />
+                    <BreezeInput
+                        id="mark"
+                        type="number"
+                        class="block w-full mt-1 p-1.5 border-2 border-rose-100"
+                        :max="mk.total"
+                        v-model="info.marks[id].mark"
+                        required
+                        autocomplete="off"
+                    />
+                </div>
             </div>
         </div>
-        <button @click="markCreate">done</button>
+        <BreezeButton @click="markCreate"> Submit </BreezeButton>
     </BreezeAuthenticatedLayout>
 </template>
 
@@ -53,6 +64,7 @@ export default {
             this.students.forEach((student) => {
                 info["student_name"] = student.name;
                 info["student_id"] = student.id;
+                info["student_roll"] = student.roll;
                 info["marks"] = [];
                 this.examAssigns.forEach((exam, i) => {
                     info["marks"].push({
@@ -71,7 +83,9 @@ export default {
             });
         },
         markCreate() {
-           this.$inertia.post(this.route("exam.markStore", this.teacherAssigns.id),this.infos,
+            this.$inertia.post(
+                this.route("exam.markStore", this.teacherAssigns.id),
+                this.infos,
                 { onSuccess: () => alert("o") }
             );
         },

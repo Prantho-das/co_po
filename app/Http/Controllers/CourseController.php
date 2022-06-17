@@ -172,9 +172,10 @@ class CourseController extends Controller
 
 
     // teacher
-    public function myCourse(){
-        $completed = TeacherAssignCourse::with("relTeacher", "relSemester", "relBatch", 'relSession', 'relCourse')->where('user_id',auth()->id())->whereNotNull('course_complete_at')->paginate(10);
-        $running =   TeacherAssignCourse::with("relTeacher", "relSemester", "relBatch", 'relSession', 'relCourse')->where('user_id', auth()->id())->whereNull('course_complete_at')->paginate(10);
+    public function myCourse()
+    {
+        $completed = TeacherAssignCourse::with("relTeacher", "relSemester", "relBatch", 'relSession', 'relCourse')->where('user_id', auth()->id())->whereNotNull('course_complete_at')->withCount('relExam')->paginate(10);
+        $running =   TeacherAssignCourse::with("relTeacher", "relSemester", "relBatch", 'relSession', 'relCourse')->where('user_id', auth()->id())->whereNull('course_complete_at')->withCount('relExam')->paginate(10);
         return Inertia::render("TeacherPages/AssignTeacher", ['completed' => $completed, 'running' => $running]);
     }
 }

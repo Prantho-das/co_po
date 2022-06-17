@@ -1,9 +1,11 @@
 <?php
 
+use App\Helper\Helper;
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseOutcomeController;
 use App\Http\Controllers\ExamAssignController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProgramOutcomeController;
 use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\SessionController;
@@ -13,6 +15,7 @@ use App\Models\ExamAssaign;
 use App\Models\StudentBatch;
 use App\Models\Students;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -36,7 +39,7 @@ Route::get('/dashboard', function () {
     $student = Students::count();
     $teacher = User::where('role', "TEACHER")->count();
     $batch = StudentBatch::count();
-    $dashboard=[
+    $dashboard = [
         'course' => $course,
         'student' => $student,
         'teacher' => $teacher,
@@ -78,15 +81,15 @@ Route::middleware('auth')->group(function () {
 
 
     // Users
-    Route::get('users',[UserController::class, 'index'])->name('users.index');
-    Route::get('users/create',[UserController::class, 'create'])->name('users.create');
-    Route::post('users/create',[UserController::class, 'store'])->name('users.store');
+    Route::get('users', [UserController::class, 'index'])->name('users.index');
+    Route::get('users/create', [UserController::class, 'create'])->name('users.create');
+    Route::post('users/create', [UserController::class, 'store'])->name('users.store');
 
-    Route::get('students',[UserController::class, 'studentShow'])->name('users.studentShow');
-    Route::get('students/create',[UserController::class, 'studentCreate'])->name('users.studentCreate');
-    Route::post('students',[UserController::class, 'studentStore'])->name('users.studentStore');
-    Route::post('studentsBluk',[UserController::class, 'studentBluk'])->name('users.studentBluk');
+    Route::get('students', [UserController::class, 'studentShow'])->name('users.studentShow');
+    Route::get('students/create', [UserController::class, 'studentCreate'])->name('users.studentCreate');
+    Route::post('students', [UserController::class, 'studentStore'])->name('users.studentStore');
+    Route::post('studentsBluk', [UserController::class, 'studentBluk'])->name('users.studentBluk');
 
-    Route::get('profile',[UrofileController::class, 'show'])->name('profile.show');
-    Route::put('profile',[UrofileController::class, 'update'])->name('profile.update');
+    Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
 });

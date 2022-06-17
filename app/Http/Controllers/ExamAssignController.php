@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\CourseAssign;
 use App\Models\ExamAssign;
+use App\Models\Marks;
 use App\Models\Students;
 use App\Models\TeacherAssignCourse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class ExamAssignController extends Controller
@@ -59,6 +61,38 @@ class ExamAssignController extends Controller
     }
     public function markStore(Request $req, $id)
     {
-        return $req->all();
+        $teacherAssigns = TeacherAssignCourse::findOrFail($id);
+        //dd($req->all());
+        try {
+            DB::transaction(function () use ($req, $teacherAssigns,$id) {
+                foreach ($req->all() as $value) {
+                    $s_id = $value['student_id'];
+                    $roll = $value['student_roll'];
+                    foreach ($value['marks'] as $mark) {
+                        Marks::create([
+                            'student_id' => $s_id,
+                            'batch_id' => $teacherAssigns->batch_id,
+                            'roll' => $roll,
+                            'course_id' => $teacherAssigns->course_id,
+                            'copo_id' => 1,
+                            'co_id' => $mark['co_id'],
+                            'po_id' => $mark['po_id'],
+                            't_assign_courses_id' => $id,
+                            'teacher_id' => $teacherAssigns->user_id,
+                            'exam_id' => $mark['exam_id'],
+                            'marks' => $mark['mark'],
+                            'p_marks' => ($mark['mark'] / $mark['total']) * 100,
+                        ]);
+                    };
+                }
+            });
+            return back()->with('success', 'Mark Submitted Successfully');
+
+        } catch (\Exception $e) {
+            info("$e->getMessage() in $e->getFile() line $e->getLine()");
+            throw $e;
+        }
+
+
     }
 }

@@ -18,15 +18,15 @@ return new class extends Migration
             $table->integer('student_id');
             $table->integer('batch_id');
             $table->string('roll');
-            $table->integer('course_id');
             $table->integer('copo_id');
+            $table->integer('course_id');
             $table->integer('co_id');
             $table->integer('po_id');
             $table->foreignId('t_assign_courses_id')->nullable()->constrained('teacher_assign_courses', 'id')->nullOnDelete();
             $table->integer('teacher_id');
             $table->integer('exam_id');
             $table->string('marks');
-            $table->string('total');
+            $table->string('p_marks');
             $table->timestamps();
         });
     }

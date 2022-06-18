@@ -16,10 +16,10 @@ return new class extends Migration
         Schema::create('students', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('roll');
+            $table->string('roll');
             $table->string('reg_no');
-            $table->id('session_id');
-            $table->id('batch_id');
+            $table->integer('session_id');
+            $table->integer('batch_id');
             $table->string('semester')->nullable();
             $table->string('shift')->comment('Day or Evening');
             $table->string('email')->unique()->nullable();

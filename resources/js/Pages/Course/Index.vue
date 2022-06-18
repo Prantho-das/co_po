@@ -84,7 +84,7 @@
                                     {{ course.credit }}
                                 </td>
                                  <td class="px-4 py-3 text-sm">
-                                    {{ course.semester }}
+                                    {{ course.semester_name }}
                                 </td>
                                 <td class="px-4 py-3 text-sm">
                                     <Link class="text-blue-500 font-weight-bold" :href="route('course.show',course.id)">Assign</Link>

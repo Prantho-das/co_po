@@ -51,13 +51,18 @@ class CourseController extends Controller
             'name' => 'required',
             'code' => 'required|unique:courses,c_code',
             'semester' => 'required|exists:semesters,id',
-            'credit' => 'required|numeric'
+            'credit' => 'required|numeric|min:1'
         ]);
+        // $course=Course::where('c_code', $req->code)->where('semester_id',$req->semester)->first();
+        // if($course) {
+        //     return back()->withErrors('Course', 'Course Already Exists In One Semester');
+        // }
         $semester = Semester::findOrFail($req->semester);
         Course::create([
             'c_name' => $req->name,
             'c_code' => $req->code,
-            'semester' => $semester->name,
+            'semester_id' => $req->semester,
+            'semester_name' => $semester->name,
             'credit' => $req->credit,
         ]);
         return back()->with("success", "Course Created Successfully");
@@ -113,15 +118,19 @@ class CourseController extends Controller
     public function assignCoPo(Request $req)
     {
 
-        $coValidate = CourseAssign::where('course_id', $req->course)->where('co_id', $req->co)->exists();
-        if ($coValidate) {
-            return back()->withErrors(['co' => 'Co Already Assign']);
-        }
         $req->validate([
             'course' => 'required|exists:courses,id',
             'co' => 'required|exists:course_outcomes,id',
             'po' => 'required|exists:program_outcomes,id'
         ]);
+        $coValidate = CourseAssign::where('course_id', $req->course)->where('co_id', $req->co)->exists();
+      //  $copoValidate = CourseAssign::where('course_id', $req->course)->where('co_id', $req->co)->where('po_id', $req->po)->exists();
+        if ($coValidate) {
+            return back()->withErrors(['co' => 'Co Already Assign']);
+        }
+        // if ($copoValidate) {
+        //     return back()->withErrors(['co' => 'One Po Is For One Po & Its Already Assign']);
+        // }
         CourseAssign::create([
             "course_id" => $req->course,
             "co_id" => $req->co,

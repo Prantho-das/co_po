@@ -25,7 +25,7 @@
             <form @submit.prevent="coCreate" class="mb-4">
                 <h3 class="text-lg">Create Program Outcome</h3>
                 <div class="my-4">
-                    <BreezeLabel for="year" value="po Name" />
+                    <BreezeLabel for="year" value="Po Name" />
                     <BreezeInput id="year" type="text" class="block w-full mt-1 p-1.5 border-2 border-rose-100"
                         v-model="form.name" required autopomplete="off" />
                     <h2 class="text-red-500" v-if="form.errors.name">{{ form.errors.name }}</h2>

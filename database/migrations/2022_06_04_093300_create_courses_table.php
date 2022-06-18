@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('c_name');
             $table->string('c_code');
             $table->integer('credit');
-            $table->string('semester');
+            $table->string('semester_id');
+            $table->string('semester_name');
             $table->timestamps();
         });
     }

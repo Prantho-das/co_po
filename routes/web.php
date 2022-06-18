@@ -12,6 +12,7 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\UserController;
 use App\Models\Course;
 use App\Models\ExamAssaign;
+use App\Models\Marks;
 use App\Models\StudentBatch;
 use App\Models\Students;
 use App\Models\User;
@@ -31,6 +32,25 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
+    // $marks = Marks::with('relCo', 'relPo')->where('roll', 41)->where('course_id', 1)->where('batch_id', 1)->get()->groupBy('co_id');
+    // echo "<pre>";
+    // $m = [];
+    // foreach ($marks as $key => $value) {
+    //     $mk = 0;
+    //     $tok = 0;
+    //     foreach ($value as $k => $v) {
+    //         $mk = $mk + (int)$v->marks;
+    //         $tok = $tok + (int)$v->total;
+    //         $m['co_name'] = $v->relCo->co_name;
+    //         $m['po_name'] = $v->relPo->po_name;
+    //         $m['mTotal'] = $mk;
+    //         $m['tTotal'] = $tok;
+    //     }
+    //     $mk = 0;
+    //     $tok = 0;
+    // }
+    // dump($m);
+    // echo "</pre>";
     return Inertia::render('Welcome', ['canLogin' => Route::has('login')]);
 });
 

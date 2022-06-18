@@ -66,6 +66,7 @@
                                 <th class="px-4 py-3">Course Code</th>
                                 <th class="px-4 py-3">Course Credit</th>
                                 <th class="px-4 py-3">Course Semester</th>
+                                <th class="px-4 py-3">Co Po Assign</th>
                                 <th class="px-4 py-3">Assign Co Po</th>
                             </tr>
                         </thead>
@@ -85,6 +86,9 @@
                                 </td>
                                  <td class="px-4 py-3 text-sm">
                                     {{ course.semester_name }}
+                                </td>
+                                 <td class="px-4 py-3 text-sm">
+                                    {{ course.copoAssign }}
                                 </td>
                                 <td class="px-4 py-3 text-sm">
                                     <Link class="text-blue-500 font-weight-bold" :href="route('course.show',course.id)">Assign</Link>

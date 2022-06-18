@@ -14,21 +14,7 @@
             <h2 class="mb-2 text-md">Course Semester: {{ course.semester }}</h2>
         </div>
         <form @submit.prevent="assignCoPo">
-            <div class="my-4">
-                <BreezeLabel for="sessionId" value="Program Outcome" />
-                <select id="sessionId" v-model="form.po"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option selected value="" disabled>
-                        Choose a Program Outcome
-                    </option>
-                    <option class="text-black" v-for="(po, i) in pos" :key="i" :value="po.id">
-                        {{ po.po_name }}
-                    </option>
-                    <h2 class="text-red-500" v-if="form.errors.po">
-                        {{ form.errors.po }}
-                    </h2>
-                </select>
-            </div>
+
             <div class="my-4">
                 <BreezeLabel for="sessionId" value="Course OutCome" />
                 <select id="sessionId" v-model="form.co"
@@ -39,10 +25,25 @@
                     <option class="text-black" v-for="(co, i) in cos" :key="i" :value="co.id">
                         {{ co.co_name }}
                     </option>
+                </select>
                     <h2 class="text-red-500" v-if="form.errors.co">
                         {{ form.errors.co }}
                     </h2>
+            </div>
+             <div class="my-4">
+                <BreezeLabel for="sessionId" value="Program Outcome" />
+                <select id="sessionId" v-model="form.po"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option selected value="" disabled>
+                        Choose a Program Outcome
+                    </option>
+                    <option class="text-black" v-for="(po, i) in pos" :key="i" :value="po.id">
+                        {{ po.po_name }}
+                    </option>
                 </select>
+                    <h2 class="text-red-500" v-if="form.errors.po">
+                        {{ form.errors.po }}
+                    </h2>
             </div>
             <BreezeButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                 Create

@@ -10,6 +10,7 @@ use App\Models\TeacherAssignCourse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use phpDocumentor\Reflection\DocBlock\Tags\Example;
 
 class ExamAssignController extends Controller
 {
@@ -19,6 +20,7 @@ class ExamAssignController extends Controller
         $copos = CourseAssign::where('course_id', $tcourse->course_id)
             ->with('relCo', 'relPo')->get();
         $exams = ExamAssign::where('t_assign_courses_id', $id)->with('relCo', 'relPo', 'relBatch')->get();
+
         return Inertia::render('TeacherPages/ExamMake', [
             'copos' => $copos,
             'tcourse' => $tcourse,
@@ -51,7 +53,13 @@ class ExamAssignController extends Controller
     public function markCreate(Request $req, $id)
     {
         $teacherAssigns = TeacherAssignCourse::findOrFail($id);
-        $examAssigns = ExamAssign::where('t_assign_courses_id', $id)->get();
+        $examAssigns = ExamAssign::where('t_assign_courses_id', $id)->whereNull('mark_assign_done')->get();
+        if (count($examAssigns) == 0) {
+            return back()->with('error', 'Mark Assign Done');
+        }
+        if(count($examAssigns) == 0){
+            return back()->with('error', 'No Exam Assigned');
+        }
         $students = Students::where('batch_id', $teacherAssigns->batch_id)->get();
         return Inertia::render('TeacherPages/Marks', [
             'examAssigns' => $examAssigns,
@@ -71,6 +79,10 @@ class ExamAssignController extends Controller
                     $s_id = $value['student_id'];
                     $roll = $value['student_roll'];
                     foreach ($value['marks'] as $mark) {
+                        $examInfo=ExamAssign::findOrFail($mark['exam_id']);
+                        if($examInfo->marks < 0 || (int)$mark['mark']> $examInfo->marks ){
+                            return back()->with('error', 'Marks must be between 0 and total marks');
+                        }
                         Marks::create([
                             'student_id' => $s_id,
                             'batch_id' => $teacherAssigns->batch_id,
@@ -89,10 +101,11 @@ class ExamAssignController extends Controller
                     };
                 }
             });
-            return back()->with('success', 'Mark Submitted Successfully');
+            ExamAssign::where('t_assign_courses_id', $id)->update(['mark_assign_done' => now()]);
+            return redirect()->route('course.teacher.myCourse')->with('success', 'Mark Submitted Successfully');
 
         } catch (\Exception $e) {
-            info("$e->getMessage() in $e->getFile() line $e->getLine()");
+            info($e->getMessage()??"some problem occured" ."in $e->getFile() line $e->getLine()");
             throw $e;
         }
 

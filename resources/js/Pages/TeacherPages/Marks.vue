@@ -4,10 +4,14 @@
     <BreezeAuthenticatedLayout>
         <template #header> Assign Marks </template>
 
-        <div class="flex flex-wrap items-center" v-for="(info, i) in infos" :key="i">
+        <div
+            class="flex flex-wrap items-center"
+            v-for="(info, i) in infos"
+            :key="i"
+        >
             <div class="px-6 w-60">
                 <h2 class="text-lg">{{ info.student_name }}</h2>
-                 <h2>Roll:{{ info.student_roll }}</h2>
+                <h2>Roll:{{ info.student_roll }}</h2>
             </div>
             <div
                 class="my-4 flex-1 flex flex-wrap"
@@ -15,7 +19,10 @@
                 :key="id"
             >
                 <div>
-                    <BreezeLabel for="mark" :value="mk.exam_name+' ('+mk.total+')'" />
+                    <BreezeLabel
+                        for="mark"
+                        :value="mk.exam_name + ' (' + mk.total + ')'"
+                    />
                     <BreezeInput
                         id="mark"
                         type="number"
@@ -85,8 +92,7 @@ export default {
         markCreate() {
             this.$inertia.post(
                 this.route("exam.markStore", this.teacherAssigns.id),
-                this.infos,
-                { onSuccess: () => this.infoSanitize() }
+                this.infos,{ onSuccess: (page) => console.warn(page)}
             );
         },
     },

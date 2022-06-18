@@ -25,7 +25,7 @@ class CourseController extends Controller
     public function index()
     {
 
-        $courses = Course::paginate();
+        $courses = Course::withCount('relcopoAssign as copoAssign')->paginate();
         $semesters = Semester::all();
         return Inertia::render("Course/Index", ["courses" => $courses, "semesters" => $semesters]);
     }
@@ -124,7 +124,7 @@ class CourseController extends Controller
             'po' => 'required|exists:program_outcomes,id'
         ]);
         $coValidate = CourseAssign::where('course_id', $req->course)->where('co_id', $req->co)->exists();
-      //  $copoValidate = CourseAssign::where('course_id', $req->course)->where('co_id', $req->co)->where('po_id', $req->po)->exists();
+        //  $copoValidate = CourseAssign::where('course_id', $req->course)->where('co_id', $req->co)->where('po_id', $req->po)->exists();
         if ($coValidate) {
             return back()->withErrors(['co' => 'Co Already Assign']);
         }
@@ -164,6 +164,13 @@ class CourseController extends Controller
             'session'   => 'required|exists:session_years,id',
             'batch'     => 'required|exists:student_batches,id',
         ]);
+        $teacherAssign = TeacherAssignCourse::where('course_id', $req->course)
+            ->where('user_id', $req->teacher)
+            ->where('batch_id', $req->batch)
+            ->exists();
+        if ($teacherAssign) {
+            return back()->withErrors(['teacher' => 'Teacher Already Assign To This Course']);
+        }
         TeacherAssignCourse::create([
             'course_id' => $req->course,
             'user_id' => $req->teacher,

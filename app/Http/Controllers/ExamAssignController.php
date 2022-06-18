@@ -83,7 +83,8 @@ class ExamAssignController extends Controller
                             'teacher_id' => $teacherAssigns->user_id,
                             'exam_id' => $mark['exam_id'],
                             'marks' => $mark['mark'],
-                            'p_marks' => ($mark['mark'] / $mark['total']) * 100,
+                            'total'=>$mark['total']
+                            // 'p_marks' => ($mark['mark'] / $mark['total']) * 100,
                         ]);
                     };
                 }

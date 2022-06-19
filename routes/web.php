@@ -16,6 +16,7 @@ use App\Models\Marks;
 use App\Models\StudentBatch;
 use App\Models\Students;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -32,6 +33,9 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
+    $pdf=Pdf::loadView('pdf.index');
+   return $pdf->download('prantho.pdf');
+    return view('pdf.index');
     // $marks = Marks::with('relCo', 'relPo')->where('roll', 41)->where('course_id', 1)->where('batch_id', 1)->get()->groupBy('co_id');
     // echo "<pre>";
     // $m = [];

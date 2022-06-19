@@ -32,6 +32,7 @@ return new class extends Migration
             $table->integer('teacher_id');
             $table->string('name');
             $table->string('marks');
+            $table->timestamp('mark_assign_done')->nullable();
             $table->timestamps();
         });
     }

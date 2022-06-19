@@ -27,7 +27,6 @@ return new class extends Migration
             $table->integer('exam_id');
             $table->string('marks');
             $table->string('total');
-            $table->timestamp('mark_assign_done')->nullable();
             $table->timestamps();
         });
     }

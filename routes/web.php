@@ -11,7 +11,7 @@ use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\UserController;
 use App\Models\Course;
-use App\Models\ExamAssaign;
+use App\Models\CourseAssign;
 use App\Models\Marks;
 use App\Models\StudentBatch;
 use App\Models\Students;
@@ -32,10 +32,37 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    $pdf=Pdf::loadView('pdf.index');
-   return $pdf->download('prantho.pdf');
-    return view('pdf.index');
+Route::post('/test', function () {
+    $pdf = Pdf::loadView('pdf.index', ['data' => request()->html]);
+    $copos = CourseAssign::where('course_id', 1)->get();
+    $infos = [];
+    foreach ($copos as $key => $value) {
+        echo $value->id;
+        $mrks = Marks::with('relCo', 'relPo')
+            ->where('roll', 87)
+            ->where('course_id', 1)
+            ->where('batch_id', 1)
+            ->where('co_id', $value->id)
+            ->get();
+        $info = [];
+        $mk = 0;
+        $tok = 0;
+        foreach ($mrks as $k => $v) {
+            $mk = $mk + (int)$v->marks;
+            $tok = $tok + (int)$v->total;
+            $info['co_name'] = $v->relCo->co_name;
+            $info['po_name'] = $v->relPo->po_name;
+            $info['mTotal'] = $mk;
+            $info['tTotal'] = $tok;
+        }
+        $mk = 0;
+        $tok = 0;
+        $infos[$value->id] = $info;
+        $info = [];
+    }
+    return $infos;
+    // return $cp;
+    //return $copos;
     // $marks = Marks::with('relCo', 'relPo')->where('roll', 41)->where('course_id', 1)->where('batch_id', 1)->get()->groupBy('co_id');
     // echo "<pre>";
     // $m = [];
@@ -55,6 +82,11 @@ Route::get('/', function () {
     // }
     // dump($m);
     // echo "</pre>";
+    return $pdf->download('prantho.pdf');
+    return view('pdf.index');
+});
+Route::get('/', function () {
+
     return Inertia::render('Welcome', ['canLogin' => Route::has('login')]);
 });
 

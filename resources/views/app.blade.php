@@ -18,6 +18,7 @@
     <script src="{{ mix('js/app.js') }}" defer></script>
     {{-- <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
     <script src="{{ asset('js/sweetalert.js') }}"></script>
+    <script src="{{ asset('js/chart.min.js') }}"></script>
     @inertiaHead
 
 </head>

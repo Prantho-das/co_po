@@ -54,6 +54,7 @@ class ExamAssignController extends Controller
     {
         $teacherAssigns = TeacherAssignCourse::findOrFail($id);
         $examAssigns = ExamAssign::where('t_assign_courses_id', $id)->whereNull('mark_assign_done')->get();
+
         if (count($examAssigns) == 0) {
             return back()->with('error', 'Mark Assign Done');
         }

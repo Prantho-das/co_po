@@ -1,0 +1,65 @@
+<template>
+    <canvas :id="name" width="400" height="400"></canvas>
+</template>
+
+<script>
+export default {
+    name: "PieChart",
+    data() {
+        return {};
+    },
+    mounted() {
+        console.log(this.name);
+        const data = {
+            labels: ["Below 40%", "60%-79%", "40%-59%", "Above 80%"],
+            datasets: [
+                {
+                    label: "My First Dataset",
+                    data: [
+                        this.below_40,
+                        this.below_80,
+                        this.below_60,
+                        this.above_80,
+                    ],
+                    backgroundColor: [
+                        "rgb(255, 99, 132)",
+                        "rgb(54, 162, 235)",
+                        "rgb(255, 205, 86)",
+                        "rgb(0,255,0) ",
+                    ],
+                    weight: 0.5,
+                    hoverOffset: 4,
+                },
+            ],
+        };
+        const config = {
+            type: "pie",
+            data: data,
+            options: {
+                maintainAspectRatio: false,
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: "bottom",
+                    },
+                    title: {
+                        display: true,
+                        text: this.po_name,
+                    },
+                },
+            },
+        };
+        const myChart = new Chart(
+            document.getElementById(this.name).getContext("2d"),
+            config
+        );
+    },
+    props: ["name", "po_name", "below_40", "below_80", "below_60", "above_80"],
+};
+</script>
+<style>
+canvas {
+    max-width: 30% !important;
+    height: 500px !important;
+}
+</style>

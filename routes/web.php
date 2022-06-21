@@ -10,6 +10,7 @@ use App\Http\Controllers\ProgramOutcomeController;
 use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\UserController;
+use App\Models\AssignMark;
 use App\Models\Course;
 use App\Models\CourseAssign;
 use App\Models\Marks;
@@ -20,6 +21,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
+use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,35 +35,74 @@ use Inertia\Inertia;
 |
 */
 
-Route::post('/test', function () {
-    $pdf = Pdf::loadView('pdf.index', ['data' => request()->html]);
+Route::get('/test', function () {
     $copos = CourseAssign::where('course_id', 1)->get();
-    $infos = [];
+    $arr = [];
     foreach ($copos as $key => $value) {
-        echo $value->id;
-        $mrks = Marks::with('relCo', 'relPo')
-            ->where('roll', 87)
+        //dump($value->co_id);
+        $mrks = AssignMark::with('relCo:id,co_name', 'relPo:id,po_name', 'relMarks')
             ->where('course_id', 1)
             ->where('batch_id', 1)
-            ->where('co_id', $value->id)
+            ->where('co_id', $value->co_id)
+            ->withSum('relMarks', 'marks')
+            ->withSum('relMarks', 'total')
             ->get();
-        $info = [];
-        $mk = 0;
-        $tok = 0;
-        foreach ($mrks as $k => $v) {
-            $mk = $mk + (int)$v->marks;
-            $tok = $tok + (int)$v->total;
-            $info['co_name'] = $v->relCo->co_name;
-            $info['po_name'] = $v->relPo->po_name;
-            $info['mTotal'] = $mk;
-            $info['tTotal'] = $tok;
+        //   dump($mrks);
+        foreach ($mrks as $key => $val) {
+            $percentage = ((int)$val->rel_marks_sum_marks / (int)$val->rel_marks_sum_total) * 100;
+            $arr_index = Str::slug($val->relCo->co_name, '_');
+            $arr[$arr_index]['co_name'] = $val->relCo->co_name;
+            $arr[$arr_index]['po_name'] = $val->relPo->po_name;
+            $arr[$arr_index]['co_id'] = $value->co_id;
+            $arr[$arr_index]['po_id']  = $value->po_id;
+            if ($percentage >= 80) {
+                $arr[$arr_index]['80'] = isset($arr[$arr_index]['80']) ? $arr[$arr_index]['80'] + 1 : 1;
+            } elseif ($percentage <= 79 && $percentage >= 60) {
+                $arr[$arr_index]['79-60'] = isset($arr[$arr_index]['79-60']) ? $arr[$arr_index]['79-60'] + 1 : 1;
+            } elseif ($percentage <= 59 && $percentage >= 40) {
+                $arr[$arr_index]['59-40'] = isset($arr[$arr_index]['59-40']) ? $arr[$arr_index]['59-40'] + 1 : 1;
+            } else {
+                $arr[$arr_index]['below_40'] = isset($arr[$arr_index]['below_40']) ? $arr[$arr_index]['below_40'] + 1 : 1;
+            }
         }
-        $mk = 0;
-        $tok = 0;
-        $infos[$value->id] = $info;
-        $info = [];
     }
-    return $infos;
+    // $arr[$arr_index]['below_40'] = [
+    //     'co_id' => $value->co_id,
+    //     'po_id' => $value->po_id,
+    //     'student_count' => isset($arr[$arr_index]['below_40']['student_count']) ? $arr[$arr_index]['below_40']['student_count'] + 1 : 1,
+    // ];
+    // echo '<pre>';
+    // return response()->json($arr);
+    // echo '</pre>';
+    // return false;
+    // $pdf = Pdf::loadView('pdf.index', ['data' => request()->html]);
+    // $copos = CourseAssign::where('course_id', 1)->get();
+    // $infos = [];
+    // foreach ($copos as $key => $value) {
+    //     echo $value->id;
+    //     $mrks = Marks::with('relCo', 'relPo')
+    //         ->where('roll', 87)
+    //         ->where('course_id', 1)
+    //         ->where('batch_id', 1)
+    //         ->where('co_id', $value->id)
+    //         ->get();
+    //     $info = [];
+    //     $mk = 0;
+    //     $tok = 0;
+    //     foreach ($mrks as $k => $v) {
+    //         $mk = $mk + (int)$v->marks;
+    //         $tok = $tok + (int)$v->total;
+    //         $info['co_name'] = $v->relCo->co_name;
+    //         $info['po_name'] = $v->relPo->po_name;
+    //         $info['mTotal'] = $mk;
+    //         $info['tTotal'] = $tok;
+    //     }
+    //     $mk = 0;
+    //     $tok = 0;
+    //     $infos[$value->id] = $info;
+    //     $info = [];
+    // }
+    // return $infos;
     // return $cp;
     //return $copos;
     // $marks = Marks::with('relCo', 'relPo')->where('roll', 41)->where('course_id', 1)->where('batch_id', 1)->get()->groupBy('co_id');
@@ -82,8 +124,8 @@ Route::post('/test', function () {
     // }
     // dump($m);
     // echo "</pre>";
-    return $pdf->download('prantho.pdf');
-    return view('pdf.index');
+    // return $pdf->download('prantho.pdf');
+    return Inertia::render('PieChart', ['data' => $arr]);
 });
 Route::get('/', function () {
 

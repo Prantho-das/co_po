@@ -13,11 +13,12 @@ class Marks extends Model
 
 
 
-    public function relCo(){
-        return $this->hasOne(CourseOutcome::class, 'id', 'co_id');
-    }
-    public function relPo()
+    public function relStudent()
     {
-        return $this->hasOne(ProgramOutcome::class, 'id', 'co_id');
+        return $this->belongsTo(Students::class, 'student_id');
+    }
+    public function relExam()
+    {
+        return $this->hasOne(ExamAssign::class, 'id', 'exam_id');
     }
 }

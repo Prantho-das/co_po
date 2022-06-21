@@ -16,14 +16,10 @@ return new class extends Migration
         Schema::create('marks', function (Blueprint $table) {
             $table->id();
             $table->integer('student_id');
-            $table->integer('batch_id');
-            $table->string('roll');
-            $table->integer('copo_id');
-            $table->integer('course_id');
-            $table->integer('co_id');
-            $table->integer('po_id');
-            $table->foreignId('t_assign_courses_id')->nullable()->constrained('teacher_assign_courses', 'id')->nullOnDelete();
-            $table->integer('teacher_id');
+            $table->foreignId('assign_marks_id')
+                ->nullable()
+                ->constrained('assign_marks', 'id')
+                ->nullOnDelete();;
             $table->integer('exam_id');
             $table->string('marks');
             $table->string('total');

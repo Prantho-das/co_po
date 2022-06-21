@@ -58,7 +58,7 @@ class ExamAssignController extends Controller
         if (count($examAssigns) == 0) {
             return back()->with('error', 'Mark Assign Done');
         }
-        if(count($examAssigns) == 0){
+        if (count($examAssigns) == 0) {
             return back()->with('error', 'No Exam Assigned');
         }
         $students = Students::where('batch_id', $teacherAssigns->batch_id)->get();
@@ -70,46 +70,93 @@ class ExamAssignController extends Controller
     }
     public function markStore(Request $req, $id)
     {
+        //dd($req->all());
         $teacherAssigns = TeacherAssignCourse::findOrFail($id);
-        // $req->validate([
-
-        // ]);
-        try {
-            DB::transaction(function () use ($req, $teacherAssigns,$id) {
-                foreach ($req->all() as $value) {
-                    $s_id = $value['student_id'];
-                    $roll = $value['student_roll'];
-                    foreach ($value['marks'] as $mark) {
-                        $examInfo=ExamAssign::findOrFail($mark['exam_id']);
-                        if($examInfo->marks < 0 || (int)$mark['mark']> $examInfo->marks ){
-                            return back()->with('error', 'Marks must be between 0 and total marks');
-                        }
-                        Marks::create([
-                            'student_id' => $s_id,
-                            'batch_id' => $teacherAssigns->batch_id,
-                            'roll' => $roll,
-                            'course_id' => $teacherAssigns->course_id,
-                            'copo_id' => $mark['copo_id'],
-                            'co_id' => $mark['co_id'],
-                            'po_id' => $mark['po_id'],
-                            't_assign_courses_id' => $id,
-                            'teacher_id' => $teacherAssigns->user_id,
-                            'exam_id' => $mark['exam_id'],
-                            'marks' => $mark['mark'],
-                            'total'=>$mark['total']
-                            // 'p_marks' => ($mark['mark'] / $mark['total']) * 100,
-                        ]);
-                    };
+        foreach ($req->all() as $value) {
+            $s_id = $value['student_id'];
+            $roll = $value['student_roll'];
+            foreach ($value['marks'] as $mark) {
+                $examInfo = ExamAssign::findOrFail($mark['exam_id']);
+                if ($examInfo->marks < 0 || (int)$mark['mark'] > $examInfo->marks) {
+                    return back()->with('error', 'Marks must be between 0 and total marks');
                 }
-            });
-            ExamAssign::where('t_assign_courses_id', $id)->update(['mark_assign_done' => now()]);
+                $assignMark = DB::table('assign_marks')
+                    ->where('student_id', $s_id)
+                    ->where('copo_id', $mark['copo_id'])
+                    ->where('co_id', $mark['co_id'])
+                    ->where('course_id', $teacherAssigns->course_id)
+                    ->first();
+                if ($assignMark) {
+                    DB::table('marks')->insert([
+                        'student_id' => $s_id,
+                        'assign_marks_id' => $assignMark->id,
+                        'exam_id' => $mark['exam_id'],
+                        'marks' => $mark['mark'],
+                        'total' => $mark['total']
+                    ]);
+                } else {
+                    $newAssginMark = DB::table('assign_marks')->insertGetId([
+                        'student_id' => $s_id,
+                        'batch_id' => $teacherAssigns->batch_id,
+                        'roll' => $roll,
+                        'course_id' => $teacherAssigns->course_id,
+                        'copo_id' => $mark['copo_id'],
+                        'co_id' => $mark['co_id'],
+                        'po_id' => $mark['po_id'],
+                        't_assign_courses_id' => $id,
+                        'teacher_id' => $teacherAssigns->user_id,
+                    ]);
+                    DB::table('marks')->insert([
+                        'student_id' => $s_id,
+                        'assign_marks_id' => $newAssginMark,
+                        'exam_id' => $mark['exam_id'],
+                        'marks' => $mark['mark'],
+                        'total' => $mark['total']
+                    ]);
+                }
+            }
+
+
+            // $req->validate([
+            // ]);
+            // try {
+            //     DB::transaction(function () use ($req, $teacherAssigns,$id) {
+            //         foreach ($req->all() as $value) {
+            //             $s_id = $value['student_id'];
+            //             $roll = $value['student_roll'];
+            //             foreach ($value['marks'] as $mark) {
+            //                 $examInfo=ExamAssign::findOrFail($mark['exam_id']);
+            //                 if($examInfo->marks < 0 || (int)$mark['mark']> $examInfo->marks ){
+            //                     return back()->with('error', 'Marks must be between 0 and total marks');
+            //                 }
+            //                 Marks::create([
+            //                     'student_id' => $s_id,
+            //                     'batch_id' => $teacherAssigns->batch_id,
+            //                     'roll' => $roll,
+            //                     'course_id' => $teacherAssigns->course_id,
+            //                     'copo_id' => $mark['copo_id'],
+            //                     'co_id' => $mark['co_id'],
+            //                     'po_id' => $mark['po_id'],
+            //                     't_assign_courses_id' => $id,
+            //                     'teacher_id' => $teacherAssigns->user_id,
+            //                     'exam_id' => $mark['exam_id'],
+            //                     'marks' => $mark['mark'],
+            //                     'total'=>$mark['total']
+            //                     // 'p_marks' => ($mark['mark'] / $mark['total']) * 100,
+            //                 ]);
+            //             };
+            //         }
+            //     });
+            //     ExamAssign::where('t_assign_courses_id', $id)->update(['mark_assign_done' => now()]);
+            //     return redirect()->route('course.teacher.myCourse')->with('success', 'Mark Submitted Successfully');
+
+            // } catch (\Exception $e) {
+                //     info($e->getMessage()??"some problem occured" ."in $e->getFile() line $e->getLine()");
+                //     throw $e;
+                // }
+
+
+            }
             return redirect()->route('course.teacher.myCourse')->with('success', 'Mark Submitted Successfully');
-
-        } catch (\Exception $e) {
-            info($e->getMessage()??"some problem occured" ."in $e->getFile() line $e->getLine()");
-            throw $e;
-        }
-
-
     }
 }

@@ -81,20 +81,26 @@
                             <td class="px-4 py-3 text-sm">
                                 {{ run.rel_semester.name }}
                             </td>
-                             <td class="px-4 py-3 text-sm">
-                             {{ run.rel_exam_count }}
-                             </td>
+                            <td class="px-4 py-3 text-sm">
+                                {{ run.rel_exam_count }}
+                            </td>
                             <Link
-                                :href="route('course.teacher.makeExam',run.id)"
+                                :href="route('course.teacher.makeExam', run.id)"
                                 class="inline-block m-2 text-md font-weight-bold p-2 rounded bg-green-500 text-white"
                             >
                                 Exam Assign
                             </Link>
-                             <Link
-                                :href="route('exam.markCreate',run.id)"
+                            <Link
+                                :href="route('exam.markCreate', run.id)"
                                 class="inline-block m-2 text-md font-weight-bold p-2 rounded bg-indigo-500 text-white"
                             >
                                 Assign Marks
+                            </Link>
+                            <Link
+                                :href="route('exam.markBatchShow', run.id)"
+                                class="inline-block m-2 text-md font-weight-bold p-2 rounded bg-indigo-500 text-white"
+                            >
+                                Batch Result
                             </Link>
                         </tr>
                     </tbody>
@@ -121,7 +127,7 @@
                             <th class="px-4 py-3">Course Code</th>
                             <th class="px-4 py-3">Batch</th>
                             <th class="px-4 py-3">Semester</th>
-                             <th class="px-4 py-3">Exam Assign</th>
+                            <th class="px-4 py-3">Exam Assign</th>
                             <th class="px-4 py-3">Satisfy By</th>
                         </tr>
                     </thead>
@@ -146,16 +152,15 @@
                             <td class="px-4 py-3 text-sm">
                                 {{ comp.rel_semester.name }}
                             </td>
-                             <td class="px-4 py-3 text-sm">
-                             {{ comp.rel_exam_count }}
-                             </td>
+                            <td class="px-4 py-3 text-sm">
+                                {{ comp.rel_exam_count }}
+                            </td>
                             <Link
                                 :href="route('course.assignTeacherCreate')"
                                 class="inline-block m-2 text-md font-weight-bold p-2 rounded bg-green-500 text-white"
                             >
                                 Exam List
                             </Link>
-
                         </tr>
                     </tbody>
                 </table>

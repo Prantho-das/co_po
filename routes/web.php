@@ -22,7 +22,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
-use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 
 /*
 |--------------------------------------------------------------------------
@@ -165,6 +164,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/teacher/co-po-exam/{id}', [ExamAssignController::class, 'makeExamStore'])->name('course.teacher.makeExamStore');
     Route::get('/exam-mark/{id}', [ExamAssignController::class, 'markCreate'])->name('exam.markCreate');
     Route::post('/exam-mark/{id}', [ExamAssignController::class, 'markStore'])->name('exam.markStore');
+
+
+    Route::get('/mark-shw/batch/{id}', [ExamAssignController::class, 'markBatchShow'])->name('exam.markBatchShow');
 
 
 

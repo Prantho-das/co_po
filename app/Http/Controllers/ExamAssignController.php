@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AssignMark;
 use App\Models\CourseAssign;
 use App\Models\ExamAssign;
 use App\Models\Marks;
@@ -10,7 +11,7 @@ use App\Models\TeacherAssignCourse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
-use phpDocumentor\Reflection\DocBlock\Tags\Example;
+use Illuminate\Support\Str;
 
 class ExamAssignController extends Controller
 {
@@ -151,12 +152,50 @@ class ExamAssignController extends Controller
             //     return redirect()->route('course.teacher.myCourse')->with('success', 'Mark Submitted Successfully');
 
             // } catch (\Exception $e) {
-                //     info($e->getMessage()??"some problem occured" ."in $e->getFile() line $e->getLine()");
-                //     throw $e;
-                // }
+            //     info($e->getMessage()??"some problem occured" ."in $e->getFile() line $e->getLine()");
+            //     throw $e;
+            // }
 
 
+        }
+        return redirect()->route('course.teacher.myCourse')->with('success', 'Mark Submitted Successfully');
+    }
+
+
+    public function markBatchShow($id)
+    {
+        $teacherAssigns = TeacherAssignCourse::findOrFail($id);
+
+        $copos = CourseAssign::where('course_id', $teacherAssigns->course_id)->get();
+        $arr = [];
+        foreach ($copos as $key => $value) {
+            //dump($value->co_id);
+            $mrks = AssignMark::with('relCo:id,co_name', 'relPo:id,po_name', 'relMarks')
+                ->where('course_id', $teacherAssigns->course_id)
+                ->where('batch_id', $teacherAssigns->batch_id)
+                ->where('co_id', $value->co_id)
+                ->withSum('relMarks', 'marks')
+                ->withSum('relMarks', 'total')
+                ->get();
+            //   dump($mrks);
+            foreach ($mrks as $key => $val) {
+                $percentage = ((int)$val->rel_marks_sum_marks / (int)$val->rel_marks_sum_total) * 100;
+                $arr_index = Str::slug($val->relCo->co_name, '_');
+                $arr[$arr_index]['co_name'] = $val->relCo->co_name;
+                $arr[$arr_index]['po_name'] = $val->relPo->po_name;
+                $arr[$arr_index]['co_id'] = $value->co_id;
+                $arr[$arr_index]['po_id']  = $value->po_id;
+                if ($percentage >= 80) {
+                    $arr[$arr_index]['80'] = isset($arr[$arr_index]['80']) ? $arr[$arr_index]['80'] + 1 : 1;
+                } elseif ($percentage <= 79 && $percentage >= 60) {
+                    $arr[$arr_index]['79-60'] = isset($arr[$arr_index]['79-60']) ? $arr[$arr_index]['79-60'] + 1 : 1;
+                } elseif ($percentage <= 59 && $percentage >= 40) {
+                    $arr[$arr_index]['59-40'] = isset($arr[$arr_index]['59-40']) ? $arr[$arr_index]['59-40'] + 1 : 1;
+                } else {
+                    $arr[$arr_index]['below_40'] = isset($arr[$arr_index]['below_40']) ? $arr[$arr_index]['below_40'] + 1 : 1;
+                }
             }
-            return redirect()->route('course.teacher.myCourse')->with('success', 'Mark Submitted Successfully');
+        }
+        return Inertia::render('PieChart', ['data' => $arr]);
     }
 }

@@ -22,10 +22,10 @@ export default {
                         this.above_80,
                     ],
                     backgroundColor: [
-                        "rgb(255, 99, 132)",
-                        "rgb(54, 162, 235)",
+                        "rgb(255,0,0)",
+                        "rgb(70,130,180)",
                         "rgb(255, 205, 86)",
-                        "rgb(0,255,0) ",
+                        "rgb(0,128,0)",
                     ],
                     weight: 0.5,
                     hoverOffset: 4,

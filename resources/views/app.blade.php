@@ -16,9 +16,9 @@
     <!-- Scripts -->
     @routes
     <script src="{{ mix('js/app.js') }}" defer></script>
-
     <script src="{{ asset('js/sweetalert.js') }}"></script>
     <script src="{{ asset('js/chart.min.js') }}"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     @inertiaHead
 
 </head>

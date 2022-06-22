@@ -98,7 +98,7 @@
                             </Link>
                             <Link
                                 :href="route('exam.markBatchShow', run.id)"
-                                class="inline-block m-2 text-md font-weight-bold p-2 rounded bg-indigo-500 text-white"
+                                class="inline-block m-2 text-md font-weight-bold p-2 rounded bg-blue-500 text-white"
                             >
                                 Batch Result
                             </Link>
@@ -160,6 +160,18 @@
                                 class="inline-block m-2 text-md font-weight-bold p-2 rounded bg-green-500 text-white"
                             >
                                 Exam List
+                            </Link>
+                            <Link
+                                :href="route('exam.markCreate', comp.id)"
+                                class="inline-block m-2 text-md font-weight-bold p-2 rounded bg-indigo-500 text-white"
+                            >
+                                Assign Marks
+                            </Link>
+                            <Link
+                                :href="route('exam.markBatchShow', comp.id)"
+                                class="inline-block m-2 text-md font-weight-bold p-2 rounded bg-blue-500 text-white"
+                            >
+                                Batch Result
                             </Link>
                         </tr>
                     </tbody>

@@ -9,12 +9,11 @@ export default {
         return {};
     },
     mounted() {
-        console.log(this.name);
         const data = {
             labels: ["Below 40%", "60%-79%", "40%-59%", "Above 80%"],
             datasets: [
                 {
-                    label: "My First Dataset",
+                    label: "CO PO In A Batch",
                     data: [
                         this.below_40,
                         this.below_80,
@@ -23,8 +22,8 @@ export default {
                     ],
                     backgroundColor: [
                         "rgb(255,0,0)",
-                        "rgb(70,130,180)",
-                        "rgb(255, 205, 86)",
+                        "rgb(0, 110, 189)",
+                        "rgb(255, 251, 1)",
                         "rgb(0,128,0)",
                     ],
                     weight: 0.5,
@@ -40,10 +39,11 @@ export default {
                 responsive: true,
                 plugins: {
                     legend: {
-                        position: "bottom",
+                        position: "right",
                     },
                     title: {
                         display: true,
+                        position: "bottom",
                         text: this.po_name,
                     },
                 },

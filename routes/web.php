@@ -34,37 +34,37 @@ use Illuminate\Support\Str;
 |
 */
 
-Route::get('/test', function () {
-    $copos = CourseAssign::where('course_id', 1)->get();
-    $arr = [];
-    foreach ($copos as $key => $value) {
-        //dump($value->co_id);
-        $mrks = AssignMark::with('relCo:id,co_name', 'relPo:id,po_name', 'relMarks')
-            ->where('course_id', 1)
-            ->where('batch_id', 1)
-            ->where('co_id', $value->co_id)
-            ->withSum('relMarks', 'marks')
-            ->withSum('relMarks', 'total')
-            ->get();
-        //   dump($mrks);
-        foreach ($mrks as $key => $val) {
-            $percentage = ((int)$val->rel_marks_sum_marks / (int)$val->rel_marks_sum_total) * 100;
-            $arr_index = Str::slug($val->relCo->co_name, '_');
-            $arr[$arr_index]['co_name'] = $val->relCo->co_name;
-            $arr[$arr_index]['po_name'] = $val->relPo->po_name;
-            $arr[$arr_index]['co_id'] = $value->co_id;
-            $arr[$arr_index]['po_id']  = $value->po_id;
-            if ($percentage >= 80) {
-                $arr[$arr_index]['80'] = isset($arr[$arr_index]['80']) ? $arr[$arr_index]['80'] + 1 : 1;
-            } elseif ($percentage <= 79 && $percentage >= 60) {
-                $arr[$arr_index]['79-60'] = isset($arr[$arr_index]['79-60']) ? $arr[$arr_index]['79-60'] + 1 : 1;
-            } elseif ($percentage <= 59 && $percentage >= 40) {
-                $arr[$arr_index]['59-40'] = isset($arr[$arr_index]['59-40']) ? $arr[$arr_index]['59-40'] + 1 : 1;
-            } else {
-                $arr[$arr_index]['below_40'] = isset($arr[$arr_index]['below_40']) ? $arr[$arr_index]['below_40'] + 1 : 1;
-            }
-        }
-    }
+Route::post('/test', function () {
+    // $copos = CourseAssign::where('course_id', 1)->get();
+    // $arr = [];
+    // foreach ($copos as $key => $value) {
+    //     //dump($value->co_id);
+    //     $mrks = AssignMark::with('relCo:id,co_name', 'relPo:id,po_name', 'relMarks')
+    //         ->where('course_id', 1)
+    //         ->where('batch_id', 1)
+    //         ->where('co_id', $value->co_id)
+    //         ->withSum('relMarks', 'marks')
+    //         ->withSum('relMarks', 'total')
+    //         ->get();
+    //     //   dump($mrks);
+    //     foreach ($mrks as $key => $val) {
+    //         $percentage = ((int)$val->rel_marks_sum_marks / (int)$val->rel_marks_sum_total) * 100;
+    //         $arr_index = Str::slug($val->relCo->co_name, '_');
+    //         $arr[$arr_index]['co_name'] = $val->relCo->co_name;
+    //         $arr[$arr_index]['po_name'] = $val->relPo->po_name;
+    //         $arr[$arr_index]['co_id'] = $value->co_id;
+    //         $arr[$arr_index]['po_id']  = $value->po_id;
+    //         if ($percentage >= 80) {
+    //             $arr[$arr_index]['80'] = isset($arr[$arr_index]['80']) ? $arr[$arr_index]['80'] + 1 : 1;
+    //         } elseif ($percentage <= 79 && $percentage >= 60) {
+    //             $arr[$arr_index]['79-60'] = isset($arr[$arr_index]['79-60']) ? $arr[$arr_index]['79-60'] + 1 : 1;
+    //         } elseif ($percentage <= 59 && $percentage >= 40) {
+    //             $arr[$arr_index]['59-40'] = isset($arr[$arr_index]['59-40']) ? $arr[$arr_index]['59-40'] + 1 : 1;
+    //         } else {
+    //             $arr[$arr_index]['below_40'] = isset($arr[$arr_index]['below_40']) ? $arr[$arr_index]['below_40'] + 1 : 1;
+    //         }
+    //     }
+    // }
     // $arr[$arr_index]['below_40'] = [
     //     'co_id' => $value->co_id,
     //     'po_id' => $value->po_id,
@@ -123,11 +123,13 @@ Route::get('/test', function () {
     // }
     // dump($m);
     // echo "</pre>";
-    // return $pdf->download('prantho.pdf');
-    return Inertia::render('PieChart', ['data' => $arr]);
+    $content = '<style>' . file_get_contents(public_path().'/css/app.css') . '</style>';
+    $pdf = Pdf::loadView('pdf.index', ['data' => request()->html, 'content' => $content, 'teacherName'=>request()->teacherName, 'batchName'=>request()->batchName, 'courseName'=>request()->courseName, 'courseCode'=> request()->courseCode]);
+
+    return $pdf->download('test.pdf');
+    return Inertia::render('PieChart', ['data'=>['prantho']]);
 });
 Route::get('/', function () {
-
     return Inertia::render('Welcome', ['canLogin' => Route::has('login')]);
 });
 

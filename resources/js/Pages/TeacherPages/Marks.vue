@@ -32,6 +32,7 @@
                         required
                         autocomplete="off"
                     />
+                    <span v-if="errors && Object.keys(errors).length > 0" class="text-red-500">Mark Is Required</span>
                 </div>
             </div>
         </div>
@@ -62,6 +63,7 @@ export default {
         };
     },
     mounted() {
+        console.log(this.errors)
         this.infoSanitize();
     },
     methods: {
@@ -96,6 +98,6 @@ export default {
             );
         },
     },
-    props: ["examAssigns", "students", "teacherAssigns"],
+    props: ["examAssigns", "students", "teacherAssigns","errors"],
 };
 </script>

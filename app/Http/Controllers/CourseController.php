@@ -27,7 +27,8 @@ class CourseController extends Controller
 
         $courses = Course::withCount('relcopoAssign as copoAssign')->paginate();
         $semesters = Semester::all();
-        return Inertia::render("Course/Index", ["courses" => $courses, "semesters" => $semesters]);
+        $cos = CourseOutcome::all();
+        return Inertia::render("Course/Index", ["courses" => $courses, "semesters" => $semesters, "cos" => $cos]);
     }
 
     /**
@@ -51,20 +52,27 @@ class CourseController extends Controller
             'name' => 'required',
             'code' => 'required|unique:courses,c_code',
             'semester' => 'required|exists:semesters,id',
-            'credit' => 'required|numeric|min:1'
+            'credit' => 'required|numeric|min:1',
+            'co' => 'required|array',
         ]);
         // $course=Course::where('c_code', $req->code)->where('semester_id',$req->semester)->first();
         // if($course) {
         //     return back()->withErrors('Course', 'Course Already Exists In One Semester');
         // }
         $semester = Semester::findOrFail($req->semester);
-        Course::create([
+        $course = Course::create([
             'c_name' => $req->name,
             'c_code' => $req->code,
             'semester_id' => $req->semester,
             'semester_name' => $semester->name,
             'credit' => $req->credit,
         ]);
+        foreach (request()->co as $val) {
+            CourseAssign::create([
+                'course_id' => $course->id,
+                'co_id' => $val,
+            ]);
+        }
         return back()->with("success", "Course Created Successfully");
     }
 
@@ -78,9 +86,8 @@ class CourseController extends Controller
     {
         $course = Course::findOrFail($id);
         $assigns = CourseAssign::where('course_id', $id)->with("relCo", "relPo")->get();
-        $cos = CourseOutcome::all();
         $pos = ProgramOutcome::all();
-        return Inertia::render("Course/AssignCoPo", ["course" => $course, 'cos' => $cos, 'pos' => $pos, 'assigns' => $assigns]);
+        return Inertia::render("Course/AssignCoPo", ["course" => $course, 'pos' => $pos, 'assigns' => $assigns]);
     }
 
     /**
@@ -123,7 +130,7 @@ class CourseController extends Controller
             'co' => 'required|exists:course_outcomes,id',
             'po' => 'required|exists:program_outcomes,id'
         ]);
-        $coValidate = CourseAssign::where('course_id', $req->course)->where('co_id', $req->co)->exists();
+        $coValidate = CourseAssign::where('course_id', $req->course)->where('co_id', $req->co)->whereNot('po_id',null)->exists();
         //  $copoValidate = CourseAssign::where('course_id', $req->course)->where('co_id', $req->co)->where('po_id', $req->po)->exists();
         if ($coValidate) {
             return back()->withErrors(['co' => 'Co Already Assign']);
@@ -131,11 +138,10 @@ class CourseController extends Controller
         // if ($copoValidate) {
         //     return back()->withErrors(['co' => 'One Po Is For One Po & Its Already Assign']);
         // }
-        CourseAssign::create([
-            "course_id" => $req->course,
-            "co_id" => $req->co,
-            "po_id" => $req->po
-        ]);
+        CourseAssign::where('course_id', $req->course)
+            ->where('co_id', $req->co)->firstOrFail()->update([
+                'po_id' => $req->po
+            ]);
         return back()->with('success', 'Course Assign Successfully');
     }
 

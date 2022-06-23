@@ -20,7 +20,16 @@
     <script src="{{ asset('js/chart.min.js') }}"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     @inertiaHead
+    <style>
+        .v-calendar .input-field.long {
+            min-width: 500px !important;
+        }
 
+        .v-calendar .input-field input {
+            height: 40px !important;
+        }
+
+    </style>
 </head>
 
 <body class="font-sans antialiased">

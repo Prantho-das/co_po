@@ -86,7 +86,7 @@
                             <th class="px-4 py-3">Po Name</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y">
+                    <!-- <tbody class="bg-white divide-y">
                         <tr
                             v-for="(assign, i) in assigns"
                             :key="assign.id"
@@ -110,7 +110,7 @@
                                 }}
                             </td>
                         </tr>
-                    </tbody>
+                    </tbody> -->
                 </table>
             </div>
         </div>
@@ -135,7 +135,7 @@ export default {
         Link,
         Head,
     },
-    props: ["course", "pos", "assigns"],
+    props: [],
     data() {
         return {
             form: this.$inertia.form({

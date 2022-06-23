@@ -168,8 +168,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/exam-mark/{id}', [ExamAssignController::class, 'markStore'])->name('exam.markStore');
 
 
-    Route::get('/mark-shw/batch/{id}', [ExamAssignController::class, 'markBatchShow'])->name('exam.markBatchShow');
+    Route::get('/mark-show/batch/{id}', [ExamAssignController::class, 'markBatchShow'])->name('exam.markBatchShow');
 
+    Route::get('/mark-show/student', [ExamAssignController::class, 'markStudentIndex'])->name('exam.markStudentIndex');
+    Route::get('/mark-show/student/{id}', [ExamAssignController::class, 'markStudentShow'])->name('exam.markStudentShow');
+   // Route::post('/mark-download/batch/{id}', [ExamAssignController::class, 'markBatchDownload'])->name('exam.markBatchDownload');
 
 
     Route::get('/teacher-assign-show', [CourseController::class, 'assignTeacherShow'])->name('course.assignTeacherShow');
@@ -190,7 +193,7 @@ Route::middleware('auth')->group(function () {
     Route::get('students', [UserController::class, 'studentShow'])->name('users.studentShow');
     Route::get('students/create', [UserController::class, 'studentCreate'])->name('users.studentCreate');
     Route::post('students', [UserController::class, 'studentStore'])->name('users.studentStore');
-    Route::post('studentsBluk', [UserController::class, 'studentBluk'])->name('users.studentBluk');
+    Route::post('studentsBluk', [UserController::class, 'studentBulk'])->name('users.studentBluk');
 
     Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');

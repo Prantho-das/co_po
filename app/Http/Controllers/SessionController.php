@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SessionYear;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -40,11 +41,25 @@ class SessionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'year'=>"required|unique:session_years,session_year",
+            'year'=>"array|required",
+            'year.0'=>"required",
+            'year.1'=>"required",
             'session_type'=>'required|in:FALL,SPRING,SUMMER',
+        ],[
+            'year.0.required'=>"Please Select Start Year",
+            'year.1.required'=>"Please Select End Year",
+
         ]);
+        $start=Carbon::parse($request->year[0])->format('Y');
+        $end= Carbon::parse($request->year[1])->format('Y');
+        if($start==$end){
+            return back()->withErrors([
+                'year'=>"Start and End Year can't be same"
+            ]);
+        }
+        $session_year="$start-$end";
         SessionYear::create([
-            'session_year'=>$request->year,
+            'session_year'=>$session_year,
             'session_type'=>$request->session_type,
         ]);
         session()->flash('success','Session Created Successfully');

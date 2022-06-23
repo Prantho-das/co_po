@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\StudentImport;
 use App\Models\SessionYear;
 use App\Models\StudentBatch;
 use App\Models\Students;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -64,7 +67,7 @@ class UserController extends Controller
 
     public function studentShow()
     {
-      Students::with('relSession', 'relBatch')->paginate();
+        Students::with('relSession', 'relBatch')->paginate();
         return Inertia::render('Student/Index', [
             'students' => Students::with('relSession', 'relBatch')->paginate()
         ]);
@@ -104,6 +107,19 @@ class UserController extends Controller
 
     public function studentBulk()
     {
-
+        request()->validate([
+            'student_csv' => 'required|mimes:csv,txt'
+        ]);
+        try {
+            //code...
+            DB::transaction(function () {
+                $file = request()->file('student_csv');
+                Excel::import(new StudentImport, $file);
+            });
+            return back()->with('success', 'Students Imported Successfully');
+        } catch (\Exception $e) {
+            throw $e;
+            return redirect('/')->with('error', 'Some Problem Occured');
+        }
     }
 }

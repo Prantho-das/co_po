@@ -247,8 +247,8 @@
                 </li>
                  <li class="relative px-6 py-3" v-if="roleCheck(['TEACHER'])">
                     <BreezeNavLink
-                        :href="route('course.index')"
-                        :active="route().current('course.index')"
+                        :href="route('exam.markStudentIndex')"
+                        :active="route().current('exam.markStudentIndex')"
                     >
                         <template #icon>
                             <svg

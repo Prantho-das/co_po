@@ -1,22 +1,22 @@
 <?php
+
 namespace App\Helper;
 
 use Illuminate\Support\Facades\DB;
 
-class Helper{
+class Helper
+{
 
-    public static function uploadCsv(String $file, String $table){
-        dump($file);
-        dd($table);
+    public static function uploadCsv(String $file, String $table, array $columns)
+    {
         $file = fopen($file, "r");
-        while (!feof($file)) {
-            $item = fgetcsv($file);
+        while ($item = fgetcsv($file)) {
             if ($item) {
                 DB::table($table)->insert([
-                    'name' => $item[0],
-                    's_name' => $item[1],
-                    'f_group' => $item[2],
-                    's_group' => $item[3],
+                    $columns[0] => $item[0],
+                    $columns[1] => $item[1],
+                    $columns[2] => $item[2],
+                    $columns[3] => $item[3],
                 ]);
             }
         }

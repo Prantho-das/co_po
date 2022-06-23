@@ -48,9 +48,9 @@
                             {{ teacher.name }}
                         </option>
                     </select>
-                        <h2 class="text-red-500" v-if="form.errors.teacher">
-                            {{ form.errors.teacher }}
-                        </h2>
+                    <h2 class="text-red-500" v-if="form.errors.teacher">
+                        {{ form.errors.teacher }}
+                    </h2>
                 </div>
                 <div class="my-4">
                     <BreezeLabel for="sessionId" value="Select Course" />
@@ -60,7 +60,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     >
                         <option selected value="" disabled>
-                            Choose a Program Outcome
+                            Choose a Course
                         </option>
                         <option
                             class="text-black"
@@ -71,9 +71,9 @@
                             {{ course.c_name }}
                         </option>
                     </select>
-                        <h2 class="text-red-500" v-if="form.errors.course">
-                            {{ form.errors.course }}
-                        </h2>
+                    <h2 class="text-red-500" v-if="form.errors.course">
+                        {{ form.errors.course }}
+                    </h2>
                 </div>
                 <div class="my-4">
                     <BreezeLabel for="sessionId" value="Select Batch" />
@@ -94,9 +94,9 @@
                             {{ batch.name }}
                         </option>
                     </select>
-                        <h2 class="text-red-500" v-if="form.errors.batch">
-                            {{ form.errors.batch }}
-                        </h2>
+                    <h2 class="text-red-500" v-if="form.errors.batch">
+                        {{ form.errors.batch }}
+                    </h2>
                 </div>
                 <div class="my-4">
                     <BreezeLabel for="sessionId" value="Select Semester" />
@@ -117,12 +117,12 @@
                             {{ semester.name }}
                         </option>
                     </select>
-                        <h2 class="text-red-500" v-if="form.errors.semester">
-                            {{ form.errors.semester }}
-                        </h2>
+                    <h2 class="text-red-500" v-if="form.errors.semester">
+                        {{ form.errors.semester }}
+                    </h2>
                 </div>
                 <div class="my-4">
-                    <BreezeLabel for="sessionId" value="Select Semester" />
+                    <BreezeLabel for="sessionId" value="Select Session" />
                     <select
                         id="sessionId"
                         v-model="form.session"
@@ -140,9 +140,10 @@
                             {{ session.session_year }}
                         </option>
                     </select>
-                        <h2 class="text-red-500" v-if="form.errors.session">
-                            {{ form.errors.session }}
-                        </h2>
+                    <h2 class="text-red-500" v-if="form.errors.session">
+                        {{ form.errors.session }}
+                    </h2>
+
                 </div>
                 <BreezeButton
                     :class="{ 'opacity-25': form.processing }"
@@ -186,7 +187,7 @@ export default {
             this.form.post(this.route("course.assignTeacherStore"), {
                 onSuccess: (res) => {
                     this.form.reset();
-                    Swal.fire("Course Assigned Successfully",'','success');
+                    Swal.fire("Course Assigned Successfully", "", "success");
                 },
             });
         },

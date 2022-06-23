@@ -766,6 +766,10 @@ select {
   margin-top: 2rem;
   margin-bottom: 2rem;
 }
+.my-5 {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+}
 .ml-3 {
   margin-left: 0.75rem;
 }
@@ -847,6 +851,12 @@ select {
 .mb-2 {
   margin-bottom: 0.5rem;
 }
+.mt-5 {
+  margin-top: 1.25rem;
+}
+.mb-5 {
+  margin-bottom: 1.25rem;
+}
 .block {
   display: block;
 }
@@ -864,6 +874,9 @@ select {
 }
 .grid {
   display: grid;
+}
+.list-item {
+  display: list-item;
 }
 .hidden {
   display: none;
@@ -1684,6 +1697,10 @@ select {
 
   .md\:block {
     display: block;
+  }
+
+  .md\:flex {
+    display: flex;
   }
 
   .md\:hidden {

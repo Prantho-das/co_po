@@ -22,8 +22,9 @@ return new class extends Migration
                 ->constrained('course_outcomes', 'id')
                 ->onDelete('cascade');
             $table->foreignId('po_id')
+                ->nullable()
                 ->constrained('program_outcomes', 'id')
-                ->onDelete('cascade');
+                ->onDelete('nullable');
             $table->timestamps();
         });
     }

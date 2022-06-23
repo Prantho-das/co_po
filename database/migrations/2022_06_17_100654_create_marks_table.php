@@ -19,9 +19,9 @@ return new class extends Migration
             $table->foreignId('assign_marks_id')
                 ->nullable()
                 ->constrained('assign_marks', 'id')
-                ->nullOnDelete();;
+                ->nullOnDelete();
             $table->integer('exam_id');
-            $table->string('marks');
+            $table->string('marks')->nullable();
             $table->string('total');
             $table->timestamps();
         });

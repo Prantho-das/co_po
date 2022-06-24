@@ -20,6 +20,10 @@ return new class extends Migration
             $table->string('reg_no');
             $table->integer('session_id');
             $table->integer('batch_id');
+            $table->foreignId('department_id')
+                ->nullable()
+                ->constrained('departments', 'id')
+                ->nullOnDelete();
             $table->string('shift')->comment('Day or Evening');
             $table->string('semester')->nullable();
             $table->string('email')->unique()->nullable();

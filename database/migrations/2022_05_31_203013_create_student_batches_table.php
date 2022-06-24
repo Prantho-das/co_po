@@ -16,11 +16,16 @@ return new class extends Migration
         Schema::create('student_batches', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->foreignId('department_id')
+                ->nullable()
+                ->constrained('departments', 'id')
+                ->nullOnDelete();
+
             $table->foreignId('session_id')
-                    ->constrained('session_years', 'id')
-                    ->onDelete('cascade');
+                ->constrained('session_years', 'id')
+                ->onDelete('cascade');
             $table->timestamp('batch_end_at')->nullable();
-            $table->tinyInteger('status')->default(0);
+            $table->tinyInteger('status')->default(1);
             $table->timestamps();
         });
     }

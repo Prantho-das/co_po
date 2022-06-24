@@ -4,6 +4,7 @@ use App\Helper\Helper;
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseOutcomeController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ExamAssignController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProgramOutcomeController;
@@ -152,6 +153,8 @@ require __DIR__ . '/auth.php';
 Route::middleware('auth')->group(function () {
     // Session
     Route::resource('/sessions', SessionController::class);
+    // Department
+    Route::resource('/department', DepartmentController::class);
     // Batch
     Route::resource('/batches', BatchController::class);
     //semester
@@ -192,6 +195,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('students', [UserController::class, 'studentShow'])->name('users.studentShow');
     Route::get('students/create', [UserController::class, 'studentCreate'])->name('users.studentCreate');
+    Route::get('students/batch-info/{batchId}', [UserController::class, 'studentBatchInfo'])->name('users.studentBatchInfo');
     Route::post('students', [UserController::class, 'studentStore'])->name('users.studentStore');
     Route::post('studentsBluk', [UserController::class, 'studentBulk'])->name('users.studentBluk');
 

@@ -1,113 +1,40 @@
 <template>
-    <div style="display: flex">
-        <div class="table100" style="flex-grow:1.5">
-            <table>
-                <thead>
-                    <tr class="table100-head">
-                        <th class="column1">Roll</th>
-                        <th class="column2">Mark</th>
-                        <th class="column3">Total</th>
-                        <th class="column4">%</th>
-                    </tr>
-                </thead>
-                <!-- {{results}} -->
-                <tbody>
-                    <tr v-for="(result, i) in results" :key="i">
-                        <td class="column1">
-                            {{ result.roll }}
-                        </td>
-                        <td class="column2">
-                            {{
-                                result.rel_marks_sum_marks
-                                    ? result.rel_marks_sum_marks
-                                    : "_"
-                            }}
-                        </td>
-                        <td class="column3">
-                            {{
-                                result.rel_marks_sum_total
-                                    ? result.rel_marks_sum_total
-                                    : "_"
-                            }}
-                        </td>
-                        <td class="column4">
-                            {{
-                                result.rel_marks_sum_total &&
-                                result.rel_marks_sum_marks
-                                    ? ((result.rel_marks_sum_marks /
-                                          result.rel_marks_sum_total) *
-                                      100).toFixed(3)
-                                    : "_"
-                            }}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div :id="name" style="height: 400px;flex-grow: 1;"></div>
+    <div class="table100">
+        <table>
+            <thead>
+                <tr class="table100-head">
+                    <th class="column1">Roll</th>
+                    <th class="column2">Mark</th>
+                    <th class="column3">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="result in results" :key="result.id">
+                    <td class="column1">2017-09-29 01:22</td>
+                    <td class="column1">2017-09-29 01:22</td>
+                    <td class="column1">2017-09-29 01:22</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </template>
 
 <script>
-import ResultTable from "./ResultTable.vue";
 export default {
-    name: "PieChart",
+    name: "ResultTable",
     data() {
         return {};
     },
-    mounted() {
-        let self = this;
-        if (self.name) {
-            google.charts.load("current", { packages: ["corechart"] });
-            google.charts.setOnLoadCallback(drawChart);
-            function drawChart() {
-                var data = google.visualization.arrayToDataTable([
-                    ["Task", "Co Po In A Batch"],
-                    ["Below 40%", self.below_40],
-                    ["60%-79%", self.below_80],
-                    ["40%-59%", self.below_60],
-                    ["Above 80%", self.above_80],
-                ]);
-                var options = {
-                    title: self.po_name,
-                    colors: [
-                        "rgb(255,0,0)",
-                        "rgb(0, 110, 189)",
-                        "rgb(255, 251, 1)",
-                        "rgb(0,128,0)",
-                    ],
-                    is3D: true,
-                };
-                let chart_div = document.getElementById(self.name);
-                var chart = new google.visualization.PieChart(chart_div);
-                google.visualization.events.addListener(
-                    chart,
-                    "ready",
-                    function () {
-                        chart_div.innerHTML = `<img src="${chart.getImageURI()}" alt="Pie Chart">`;
-                    }
-                );
-                chart.draw(data, options);
-            }
-        }
+    props: {
+        results: {
+            type: Array,
+            required: true,
+        },
     },
-    props: [
-        "name",
-        "po_name",
-        "below_40",
-        "below_80",
-        "below_60",
-        "above_80",
-        "results",
-    ],
-    components: { ResultTable },
 };
 </script>
-<style>
-img {
-    max-width: 100% !important;
-}
 
+<style>
 * {
     margin: 0px;
     padding: 0px;
@@ -295,22 +222,21 @@ tbody tr:hover {
 }
 
 .column1 {
-    width: 100px;
+    width: 260px;
     padding-left: 40px;
 }
 
 .column2 {
-    width: 100px;
+    width: 160px;
 }
 
 .column3 {
-    width: 100px;
+    width: 245px;
 }
 
 .column4 {
     width: 110px;
     text-align: right;
-    padding-right: 1rem;
 }
 
 .column5 {

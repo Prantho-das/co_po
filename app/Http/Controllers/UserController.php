@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Imports\StudentImport;
+use App\Models\Department;
 use App\Models\SessionYear;
 use App\Models\StudentBatch;
 use App\Models\Students;
@@ -22,7 +23,10 @@ class UserController extends Controller
     }
     public function create()
     {
-        return Inertia::render('Users/Create');
+        $departments=Department::all();
+        return Inertia::render('Users/Create', [
+            'departments' => $departments
+        ]);
     }
     public function store()
     {
@@ -30,12 +34,13 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
-            'department' => 'required',
+            'department' => 'required|exists:departments,id',
             'designation' => 'nullable|array',
             'phone' => 'required|digits:11',
             'role_type' => 'required',
             'avatar' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
         ]);
+        $department=Department::find(request('department'));
         $filePath = null;
         if (request()->hasFile('avatar')) {
             $fileName = request()->file('avatar')->hashName();
@@ -46,7 +51,8 @@ class UserController extends Controller
             'name' => request('name'),
             'email' => request('email'),
             'password' => Hash::make(request('password')),
-            'department' => request('department'),
+            'department' => $department->name,
+            'department_id' => request('department'),
             'designation' => request('designation') ? json_encode(request('designation')) : null,
             'address' => request()->address ?? null,
             'phone' => request()->phone,
@@ -76,9 +82,11 @@ class UserController extends Controller
     {
         $batches = StudentBatch::all();
         $sessions = SessionYear::all();
+        $departments = Department::all();
         return Inertia::render('Student/Create', [
             'batches' => $batches,
-            'sessions' => $sessions
+            'sessions' => $sessions,
+            'departments' => $departments,
         ]);
     }
     public function studentStore()
@@ -91,6 +99,7 @@ class UserController extends Controller
             "shift" => "required",
             "batch" => "required",
             "session" => "required",
+            "department"=>"required",
         ]);
         Students::create([
             "name" => request("name"),
@@ -99,6 +108,7 @@ class UserController extends Controller
             "reg_no" => request("reg"),
             "shift" => request("shift"),
             "batch_id" => request("batch"),
+            "department_id" => request("department"),
             "session_id" => request("session"),
             "password" => Hash::make(request("email")),
         ]);
@@ -121,5 +131,9 @@ class UserController extends Controller
             throw $e;
             return redirect('/')->with('error', 'Some Problem Occured');
         }
+    }
+    public function studentBatchInfo($batchId){
+        $students=Students::where('batch_id', $batchId)->get();
+        return response($students);
     }
 }

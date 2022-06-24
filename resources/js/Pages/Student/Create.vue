@@ -145,6 +145,33 @@
                         {{ form.errors.shift }}
                     </h2>
                 </div>
+                  <div class="my-4">
+                    <BreezeLabel
+                        for="department"
+                        value="department"
+                        class="text-blue-500"
+                    />
+                    <select
+                        id="department"
+                        v-model="form.department"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
+                        <option class="text-black" selected value="" disabled>
+                            Choose a department Type
+                        </option>
+                        <option
+                            class="text-black"
+                            v-for="(department, i) in departments"
+                            :key="i"
+                            :value="department.id"
+                        >
+                            {{ department.name }}
+                        </option>
+                        <h2 class="text-red-500" v-if="form.errors.department">
+                            {{ form.errors.department }}
+                        </h2>
+                    </select>
+                </div>
                 <div class="my-4">
                     <BreezeLabel
                         for="batch"
@@ -246,6 +273,7 @@ export default {
                 shift: "",
                 batch: "",
                 session: "",
+                department:"",
             }),
         };
     },
@@ -274,6 +302,7 @@ export default {
         batches: Array,
         sessions: Array,
         errors: Array,
+        departments: Array,
     },
 };
 </script>

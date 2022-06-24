@@ -7,16 +7,6 @@
         <div
             class="p-3 shadow-md rounded-md mx-auto md:w-4/5 w sm:w-11/12 w-full bg-white"
         >
-            <div>
-                <h2 class="mb-2 text-xl text-green-600 font-bold">
-                    Course Name: {{ course.c_name }}
-                </h2>
-                <h2 class="mb-2 text-lg">Course Code: {{ course.c_code }}</h2>
-                <h2 class="mb-2 text-md">Course Credit: {{ course.credit }}</h2>
-                <h2 class="mb-2 text-md">
-                    Course Semester: {{ course.semester }}
-                </h2>
-            </div>
             <form @submit.prevent="assignCoPo">
                 <div class="my-4">
                     <BreezeLabel for="sessionId" value="Course Outcome" />
@@ -39,6 +29,29 @@
                     </select>
                     <h2 class="text-red-500" v-if="form.errors.co">
                         {{ form.errors.co }}
+                    </h2>
+                </div>
+                <div class="my-4">
+                    <BreezeLabel for="sessionId" value="Program Outcome" />
+                    <select
+                        id="sessionId"
+                        v-model="form.po"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
+                        <option selected value="" disabled>
+                            Choose a Program Outcome
+                        </option>
+                        <option
+                            class="text-black"
+                            v-for="(po, i) in pos"
+                            :key="i"
+                            :value="po.id"
+                        >
+                            {{ po.po_name }}
+                        </option>
+                    </select>
+                    <h2 class="text-red-500" v-if="form.errors.po">
+                        {{ form.errors.po }}
                     </h2>
                 </div>
                 <div class="my-4">
@@ -135,22 +148,18 @@ export default {
         Link,
         Head,
     },
-    props: [],
+    props: ['batches'],
     data() {
         return {
             form: this.$inertia.form({
                 co: "",
                 po: "",
-                course: this.course.id,
+               // course: this.course.id,
             }),
         };
     },
     methods: {
-        assignCoPo() {
-            this.form.post(this.route("course.assignCoPo"), {
-                onSuccess: () => this.form.reset(),
-            });
-        },
+
     },
 };
 </script>

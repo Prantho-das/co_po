@@ -68,16 +68,10 @@
                     </button>
                 </div>
             </div>
+
             <div id="pdf">
                 <div
                     class="chart_wrapper"
-                    style="
-                        display: flex;
-                        flex-wrap: wrap;
-                        justify-content: space-between;
-                        flex-shrink: 1;
-                        gap: 1.2rem;
-                    "
                 >
                     <PieGoogle
                         v-for="(dt, i) in data"
@@ -89,6 +83,7 @@
                         :below_80="dt['79-60']"
                         :below_60="dt['59-40']"
                         :above_80="dt['80']"
+                        :results="dt.result"
                     />
                 </div>
             </div>
@@ -104,11 +99,11 @@ import PieGoogle from "@/Components/PieGoogle.vue";
 
 export default {
     components: {
-        BreezeAuthenticatedLayout,
-        Head,
-        Pie,
-        PieGoogle,
-    },
+    BreezeAuthenticatedLayout,
+    Head,
+    Pie,
+    PieGoogle,
+},
     props: ["data", "teacherAssigns"],
     methods: {
         downloadPdf() {

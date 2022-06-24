@@ -24,7 +24,7 @@ return new class extends Migration
             $table->foreignId('po_id')
                 ->nullable()
                 ->constrained('program_outcomes', 'id')
-                ->onDelete('nullable');
+                ->nullOnDelete();
             $table->timestamps();
         });
     }

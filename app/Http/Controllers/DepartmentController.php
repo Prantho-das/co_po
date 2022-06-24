@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Department;
-use App\Models\SessionYear;
-use App\Models\StudentBatch;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class BatchController extends Controller
+class DepartmentController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     /**
      * Display a listing of the resource.
      *
@@ -17,13 +20,8 @@ class BatchController extends Controller
      */
     public function index()
     {
-        $batches = StudentBatch::with('relSession')->paginate();
-        $sessions = SessionYear::all();
-        $departments = Department::all();
-
-        return Inertia::render('Batch/Index', [
-            'batches' => $batches,
-            'sessions' => $sessions,
+        $departments = Department::paginate();
+        return Inertia::render('Department/Index', [
             'departments' => $departments,
         ]);
     }
@@ -35,7 +33,6 @@ class BatchController extends Controller
      */
     public function create()
     {
-        //
     }
 
     /**
@@ -46,23 +43,14 @@ class BatchController extends Controller
      */
     public function store(Request $request)
     {
-    //dd($request->all());
         $request->validate([
-            'session' => "required|exists:session_years,id",
-            'department' => "required|exists:departments,id",
-            'batch_name' => "required|min:1|max:12",
+            'name' => "required|unique:departments,name|min:1|max:12",
         ]);
-        $uniquevalidation=StudentBatch::where('session_id',$request->session)->where('department_id',$request->department)->where('name',$request->batch_name)->exists();
-        if($uniquevalidation){
-            return back()->withErrors(['batch_name'=>'Batch Already Exists']);
-        }
-        StudentBatch::create([
-            'session_id' => $request->session,
-            'department_id' => $request->department,
-            'name' => $request->batch_name,
+        Department::create([
+            'name' => $request->name,
         ]);
 
-        return back()->with('success', 'Batch Created Successfully');
+        return back()->with('success', 'Department Created Successfully');
     }
 
     /**

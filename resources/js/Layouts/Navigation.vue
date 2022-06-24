@@ -11,7 +11,10 @@
             </Link>
 
             <ul class="mt-6">
-                <li class="relative px-6 py-3" v-if="roleCheck(['ADMIN','TEACHER'])">
+                <li
+                    class="relative px-6 py-3"
+                    v-if="roleCheck(['ADMIN', 'TEACHER'])"
+                >
                     <BreezeNavLink
                         :href="route('dashboard')"
                         :active="route().current('dashboard')"
@@ -84,7 +87,30 @@
                         My Course
                     </BreezeNavLink>
                 </li>
-
+                <li class="relative px-6 py-3" v-if="roleCheck(['ADMIN'])">
+                    <BreezeNavLink
+                        :href="route('department.index')"
+                        :active="route().current('department.index')"
+                    >
+                        <template #icon>
+                            <svg
+                                class="w-5 h-5"
+                                aria-hidden="true"
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
+                                ></path>
+                            </svg>
+                        </template>
+                        Department
+                    </BreezeNavLink>
+                </li>
                 <li class="relative px-6 py-3" v-if="roleCheck(['ADMIN'])">
                     <BreezeNavLink
                         :href="route('sessions.index')"
@@ -245,7 +271,7 @@
                         Subject
                     </BreezeNavLink>
                 </li>
-                 <li class="relative px-6 py-3" v-if="roleCheck(['TEACHER'])">
+                <li class="relative px-6 py-3" v-if="roleCheck(['TEACHER'])">
                     <BreezeNavLink
                         :href="route('exam.markStudentIndex')"
                         :active="route().current('exam.markStudentIndex')"

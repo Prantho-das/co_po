@@ -1,8 +1,8 @@
 <template>
-    <Head title="Semester" />
+    <Head title="Department" />
 
     <BreezeAuthenticatedLayout>
-        <template #header> Semester </template>
+        <template #header> Department </template>
 
         <div class="p-4 bg-white rounded-lg shadow-xs">
             <div
@@ -27,21 +27,22 @@
                     </div>
                 </div>
             </div>
-            <form @submit.prevent="semesterCreate" class="mb-4">
-            <h3 class="text-lg">Create semester</h3>
+            <form @submit.prevent="departmentCreate" class="mb-4">
+                <h3 class="text-lg">Create Department Now</h3>
                 <div class="my-4">
-                    <BreezeLabel for="semester" value="Enter Semester" />
+                    <BreezeLabel for="name" value="Enter Department Name" />
                     <BreezeInput
-                        id="semester"
-                        type="semester"
+                        id="name"
+                        type="name"
                         class="block w-full mt-1 p-1.5 border-2 border-rose-100"
-                        v-model="form.semester"
-
+                        v-model="form.name"
+                        required
                         autocomplete="off"
                     />
-                    <h2 class="text-red-500" v-if="form.errors.semester">{{ form.errors.semester }}</h2>
+                    <h2 class="text-red-500" v-if="form.errors.name">
+                        {{ form.errors.name }}
+                    </h2>
                 </div>
-
                 <BreezeButton
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
@@ -59,20 +60,20 @@
                                 class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase bg-gray-50 border-b"
                             >
                                 <th class="px-4 py-3">*</th>
-                                <th class="px-4 py-3">Semester</th>
+                                <th class="px-4 py-3">Department</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y">
                             <tr
-                                v-for="(semester, i) in semesters.data"
-                                :key="semester.id"
+                                v-for="(department, i) in departments.data"
+                                :key="department.id"
                                 class="text-gray-700"
                             >
                                 <td class="px-4 py-3 text-sm">
                                     {{ i + 1 }}
                                 </td>
                                 <td class="px-4 py-3 text-sm">
-                                    {{ semester.name }}
+                                    {{ department.name }}
                                 </td>
                             </tr>
                         </tbody>
@@ -81,7 +82,7 @@
                 <div
                     class="px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase bg-gray-50 border-t sm:grid-cols-9"
                 >
-                    <pagination :links="semesters.links" />
+                    <pagination :links="departments.links" />
                 </div>
             </div>
         </div>
@@ -93,7 +94,7 @@ import BreezeButton from "@/Components/Button.vue";
 import BreezeInput from "@/Components/Input.vue";
 import BreezeAuthenticatedLayout from "@/Layouts/Authenticated.vue";
 import Pagination from "@/Components/Pagination.vue";
-import BreezeLabel from '@/Components/Label.vue';
+import BreezeLabel from "@/Components/Label.vue";
 
 export default {
     components: {
@@ -101,20 +102,22 @@ export default {
         Pagination,
         BreezeButton,
         BreezeInput,
-        BreezeLabel
+        BreezeLabel,
     },
     data() {
         return {
-            form: this.$inertia.form({ semester: "" }),
+            form: this.$inertia.form({ name: "" }),
         };
     },
     methods: {
-        semesterCreate() {
-            this.form.post(this.route("semesters.store"),{onSuccess: () => this.form.reset(),});
+        departmentCreate() {
+            this.form.post(this.route("department.store"), {
+                onSuccess: () => this.form.reset(),
+            });
         },
     },
     props: {
-        semesters: Object,
+        departments: Object,
     },
 };
 </script>

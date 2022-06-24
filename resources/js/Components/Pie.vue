@@ -1,8 +1,12 @@
 <template>
-    <canvas :id="name" width="400" height="400"></canvas>
+    <div>
+        <canvas :id="name" width="400" height="400"></canvas>
+        
+    </div>
 </template>
 
 <script>
+import ResultTable from "./ResultTable.vue";
 export default {
     name: "PieChart",
     data() {
@@ -55,6 +59,7 @@ export default {
         );
     },
     props: ["name", "po_name", "below_40", "below_80", "below_60", "above_80"],
+    components: { ResultTable },
 };
 </script>
 <style>

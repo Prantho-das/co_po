@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\AssignMark;
 use App\Models\CourseAssign;
+use App\Models\Department;
 use App\Models\ExamAssign;
 use App\Models\Marks;
+use App\Models\StudentBatch;
 use App\Models\Students;
 use App\Models\TeacherAssignCourse;
 use Illuminate\Http\Request;
@@ -101,35 +103,35 @@ class ExamAssignController extends Controller
                     ->where('course_id', $teacherAssigns->course_id)
                     ->first();
                 // if ($mark['mark']) {
-                    if ($assignMark) {
-                        DB::table('marks')->insert([
-                            'student_id' => $s_id,
-                            'assign_marks_id' => $assignMark->id,
-                            'exam_id' => $mark['exam_id'],
-                            'marks' => $mark['mark'],
-                            'total' => $mark['total']
-                        ]);
-                    } else {
-                        $newAssginMark = DB::table('assign_marks')->insertGetId([
-                            'student_id' => $s_id,
-                            'batch_id' => $teacherAssigns->batch_id,
-                            'roll' => $roll,
-                            'course_id' => $teacherAssigns->course_id,
-                            'copo_id' => $mark['copo_id'],
-                            'co_id' => $mark['co_id'],
-                            'po_id' => $mark['po_id'],
-                            't_assign_courses_id' => $id,
-                            'teacher_id' => $teacherAssigns->user_id,
-                        ]);
-                        DB::table('marks')->insert([
-                            'student_id' => $s_id,
-                            'assign_marks_id' => $newAssginMark,
-                            'exam_id' => $mark['exam_id'],
-                            'marks' => $mark['mark'],
-                            'total' => $mark['total']
-                        ]);
-                    }
-                    ExamAssign::findOrFail($mark['exam_id'])->update(['mark_assign_done' => now()]);
+                if ($assignMark) {
+                    DB::table('marks')->insert([
+                        'student_id' => $s_id,
+                        'assign_marks_id' => $assignMark->id,
+                        'exam_id' => $mark['exam_id'],
+                        'marks' => $mark['mark'],
+                        'total' => $mark['total']
+                    ]);
+                } else {
+                    $newAssginMark = DB::table('assign_marks')->insertGetId([
+                        'student_id' => $s_id,
+                        'batch_id' => $teacherAssigns->batch_id,
+                        'roll' => $roll,
+                        'course_id' => $teacherAssigns->course_id,
+                        'copo_id' => $mark['copo_id'],
+                        'co_id' => $mark['co_id'],
+                        'po_id' => $mark['po_id'],
+                        't_assign_courses_id' => $id,
+                        'teacher_id' => $teacherAssigns->user_id,
+                    ]);
+                    DB::table('marks')->insert([
+                        'student_id' => $s_id,
+                        'assign_marks_id' => $newAssginMark,
+                        'exam_id' => $mark['exam_id'],
+                        'marks' => $mark['mark'],
+                        'total' => $mark['total']
+                    ]);
+                }
+                ExamAssign::findOrFail($mark['exam_id'])->update(['mark_assign_done' => now()]);
                 // }
             }
 
@@ -185,7 +187,6 @@ class ExamAssignController extends Controller
         $copos = CourseAssign::where('course_id', $teacherAssigns->course_id)->get();
         $arr = [];
         foreach ($copos as $key => $value) {
-            //dump($value->co_id);
             $mrks = AssignMark::with('relCo:id,co_name', 'relPo:id,po_name', 'relMarks')
                 ->where('course_id', $teacherAssigns->course_id)
                 ->where('batch_id', $teacherAssigns->batch_id)
@@ -193,7 +194,7 @@ class ExamAssignController extends Controller
                 ->withSum('relMarks', 'marks')
                 ->withSum('relMarks', 'total')
                 ->get();
-            //   dump($mrks);
+
             foreach ($mrks as $key => $val) {
                 $percentage = ((int)$val->rel_marks_sum_marks / (int)$val->rel_marks_sum_total) * 100;
                 $arr_index = Str::slug($val->relCo->co_name, '_');
@@ -201,6 +202,7 @@ class ExamAssignController extends Controller
                 $arr[$arr_index]['po_name'] = $val->relPo->po_name;
                 $arr[$arr_index]['co_id'] = $value->co_id;
                 $arr[$arr_index]['po_id']  = $value->po_id;
+                $arr[$arr_index]['result']  = $mrks;
                 if ($percentage >= 80) {
                     $arr[$arr_index]['80'] = isset($arr[$arr_index]['80']) ? $arr[$arr_index]['80'] + 1 : 1;
                 } elseif ($percentage <= 79 && $percentage >= 60) {
@@ -212,12 +214,17 @@ class ExamAssignController extends Controller
                 }
             }
         }
+       // return $arr;
         return Inertia::render('Mark/PieChart', ['data' => $arr, 'teacherAssigns' => $teacherAssigns]);
     }
-    public function markStudentIndex(){
-        return Inertia::render('Mark/MarkStudentShow');
+    public function markStudentIndex()
+    {
+        $departments = Department::get();
+        $batches=StudentBatch::where('status',1)->get();
+        return Inertia::render('Mark/MarkStudentShow',['batches'=>$batches,'departments'=>$departments]);
     }
-    public function markStudentShow(){
+    public function markStudentShow()
+    {
 
     }
 }

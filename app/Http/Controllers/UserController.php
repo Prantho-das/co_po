@@ -23,7 +23,7 @@ class UserController extends Controller
     }
     public function create()
     {
-        $departments=Department::all();
+        $departments = Department::all();
         return Inertia::render('Users/Create', [
             'departments' => $departments
         ]);
@@ -40,7 +40,7 @@ class UserController extends Controller
             'role_type' => 'required',
             'avatar' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
         ]);
-        $department=Department::find(request('department'));
+        $department = Department::find(request('department'));
         $filePath = null;
         if (request()->hasFile('avatar')) {
             $fileName = request()->file('avatar')->hashName();
@@ -99,7 +99,7 @@ class UserController extends Controller
             "shift" => "required",
             "batch" => "required",
             "session" => "required",
-            "department"=>"required",
+            "department" => "required",
         ]);
         Students::create([
             "name" => request("name"),
@@ -132,8 +132,14 @@ class UserController extends Controller
             return redirect('/')->with('error', 'Some Problem Occured');
         }
     }
-    public function studentBatchInfo($batchId){
-        $students=Students::where('batch_id', $batchId)->get();
+    public function studentBatchInfo($departmentId)
+    {
+        $batches = StudentBatch::where('department_id', $departmentId)->get();
+        return response($batches);
+    }
+    public function studentInfoByBatch($batchId)
+    {
+        $students = Students::where('batch_id', $batchId)->select('id','name','roll')->get();
         return response($students);
     }
 }

@@ -190,7 +190,8 @@ export default {
         BreezeButton,
         BreezeInput,
         BreezeLabel,
-        Link,Select2
+        Link,
+        Select2
     },
     data() {
         return {

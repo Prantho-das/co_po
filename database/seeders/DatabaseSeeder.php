@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Department;
 use App\Models\SessionYear;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -23,28 +24,34 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-
+        //session table
+        Department::create([
+            'name' => 'boat',
+        ]);
         //user table
         User::create([
             'name' => 'Admin',
             'email' =>'admin@gmail.com',
             'password'=>Hash::make(12345678910),
             'department' => 'boat',
-            'role'=>"ADMIN"
+            'role'=>"ADMIN",
+            'department_id' => 1,
         ]);
         User::create([
             'name' => 'teacher',
             'email' => 'teacher@gmail.com',
             'password' => Hash::make(12345678910),
             'department' => 'CSE',
-            'role' => "TEACHER"
+            'role' => "TEACHER",
+            'department_id' => 1,
         ]);
         User::create([
             'name' => 'dean',
             'email' => 'dean@gmail.com',
             'password' => Hash::make(12345678910),
             'department' => 'CSE',
-            'role' => "DEAN"
+            'role' => "DEAN",
+            'department_id' => 1,
         ]);
         //session table
         SessionYear::create([

@@ -25,6 +25,6 @@ class AssignMark extends Model
     }
     public function relPo()
     {
-        return $this->hasOne(ProgramOutcome::class, 'id', 'co_id');
+        return $this->hasOne(ProgramOutcome::class, 'id', 'po_id');
     }
 }

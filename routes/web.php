@@ -124,11 +124,11 @@ Route::post('/test', function () {
     // }
     // dump($m);
     // echo "</pre>";
-    $content = '<style>' . file_get_contents(public_path().'/css/app.css') . '</style>';
-    $pdf = Pdf::loadView('pdf.index', ['data' => request()->html, 'content' => $content, 'teacherName'=>request()->teacherName, 'batchName'=>request()->batchName, 'courseName'=>request()->courseName, 'courseCode'=> request()->courseCode]);
+    // $content = '<style>' . file_get_contents(public_path().'/css/app.css') . '</style>';
+    // $pdf = Pdf::loadView('pdf.index', ['data' => request()->html, 'content' => $content, 'teacherName'=>request()->teacherName, 'batchName'=>request()->batchName, 'courseName'=>request()->courseName, 'courseCode'=> request()->courseCode]);
 
-    return $pdf->download('test.pdf');
-    return Inertia::render('PieChart', ['data'=>['prantho']]);
+    // return $pdf->download('test.pdf');
+    // return Inertia::render('PieChart', ['data'=>['prantho']]);
 });
 Route::get('/', function () {
     return Inertia::render('Welcome', ['canLogin' => Route::has('login')]);
@@ -174,8 +174,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/mark-show/batch/{id}', [ExamAssignController::class, 'markBatchShow'])->name('exam.markBatchShow');
 
     Route::get('/mark-show/student', [ExamAssignController::class, 'markStudentIndex'])->name('exam.markStudentIndex');
-    Route::get('/mark-show/student/{id}', [ExamAssignController::class, 'markStudentShow'])->name('exam.markStudentShow');
-   // Route::post('/mark-download/batch/{id}', [ExamAssignController::class, 'markBatchDownload'])->name('exam.markBatchDownload');
+    Route::get('/mark-show/student/{did}/{bid}/{sid}/{cid}', [ExamAssignController::class, 'markStudentShow'])->name('exam.markStudentShow');
+    Route::post('/mark-download/batch', [ExamAssignController::class, 'markBatchDownload'])->name('exam.markBatchDownload');
 
 
     Route::get('/teacher-assign-show', [CourseController::class, 'assignTeacherShow'])->name('course.assignTeacherShow');
@@ -195,7 +195,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('students', [UserController::class, 'studentShow'])->name('users.studentShow');
     Route::get('students/create', [UserController::class, 'studentCreate'])->name('users.studentCreate');
-    Route::get('students/batch-info/{batchId}', [UserController::class, 'studentBatchInfo'])->name('users.studentBatchInfo');
+    Route::get('students/batch-info/{departmentId}', [UserController::class, 'studentBatchInfo'])->name('users.studentBatchInfo');
+    Route::get('students/batch-student-info/{batchId}', [UserController::class, 'studentInfoByBatch'])->name('users.studentInfoByBatch');
+
+
     Route::post('students', [UserController::class, 'studentStore'])->name('users.studentStore');
     Route::post('studentsBluk', [UserController::class, 'studentBulk'])->name('users.studentBluk');
 

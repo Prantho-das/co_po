@@ -1,87 +1,112 @@
 <template>
-    <Head title="Course Co Po Assign" />
+    <Head title="Student Result" />
 
     <BreezeAuthenticatedLayout>
-        <template #header> Course Co Po Assign </template>
+        <template #header> Student Result </template>
 
         <div
             class="p-3 shadow-md rounded-md mx-auto md:w-4/5 w sm:w-11/12 w-full bg-white"
         >
-            <form @submit.prevent="assignCoPo">
+            <form @submit.prevent="findResult">
                 <div class="my-4">
-                    <BreezeLabel for="sessionId" value="Course Outcome" />
+                    <BreezeLabel for="sessionId" value="Department" />
                     <select
+                        @change="getBatches"
                         id="sessionId"
-                        v-model="form.co"
+                        v-model="form.department"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     >
                         <option selected value="" disabled>
-                            Choose a Course Outcome
+                            Choose a Department
                         </option>
                         <option
                             class="text-black"
-                            v-for="(co, i) in assigns"
+                            v-for="(dpt, i) in departments"
                             :key="i"
-                            :value="co.rel_co.id"
+                            :value="dpt.id"
                         >
-                            {{ co.rel_co.co_name }}
+                            {{ dpt.name }}
                         </option>
                     </select>
-                    <h2 class="text-red-500" v-if="form.errors.co">
-                        {{ form.errors.co }}
+                    <h2 class="text-red-500" v-if="form.errors.department">
+                        {{ form.errors.department }}
                     </h2>
                 </div>
                 <div class="my-4">
-                    <BreezeLabel for="sessionId" value="Program Outcome" />
+                    <BreezeLabel for="sessionId" value="Batch" />
                     <select
+                    @change="studentInfoByBatch"
                         id="sessionId"
-                        v-model="form.po"
+                        v-model="form.batch"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     >
                         <option selected value="" disabled>
-                            Choose a Program Outcome
+                            Choose a Batch
                         </option>
                         <option
                             class="text-black"
-                            v-for="(po, i) in pos"
+                            v-for="(batch, i) in batches"
                             :key="i"
-                            :value="po.id"
+                            :value="batch.id"
                         >
-                            {{ po.po_name }}
+                            {{ batch.name }}
                         </option>
                     </select>
-                    <h2 class="text-red-500" v-if="form.errors.po">
-                        {{ form.errors.po }}
+                    <h2 class="text-red-500" v-if="form.errors.batch">
+                        {{ form.errors.batch }}
                     </h2>
                 </div>
                 <div class="my-4">
-                    <BreezeLabel for="sessionId" value="Program Outcome" />
+                    <BreezeLabel for="sessionId" value="Roll" />
                     <select
                         id="sessionId"
-                        v-model="form.po"
+                        v-model="form.student"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     >
                         <option selected value="" disabled>
-                            Choose a Program Outcome
+                            Choose a Roll
                         </option>
                         <option
                             class="text-black"
-                            v-for="(po, i) in pos"
+                            v-for="(student, i) in students"
                             :key="i"
-                            :value="po.id"
+                            :value="student.id"
                         >
-                            {{ po.po_name }}
+                            {{ student.roll }}
                         </option>
                     </select>
-                    <h2 class="text-red-500" v-if="form.errors.po">
-                        {{ form.errors.po }}
+                    <h2 class="text-red-500" v-if="form.errors.roll">
+                        {{ form.errors.roll }}
+                    </h2>
+                </div>
+                 <div class="my-4">
+                    <BreezeLabel for="sessionId" value="Course" />
+                    <select
+                        id="sessionId"
+                        v-model="form.course"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
+                        <option selected value="" disabled>
+                            Choose a Course
+                        </option>
+                        <option
+                            class="text-black"
+                            v-for="(course, i) in courses"
+                            :key="i"
+                            :value="course.id"
+                        >
+                            {{ course.c_name }}
+                        </option>
+                    </select>
+                    <h2 class="text-red-500" v-if="form.errors.course">
+                        {{ form.errors.course }}
                     </h2>
                 </div>
                 <BreezeButton
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    Create
+                    Find
                 </BreezeButton>
             </form>
         </div>
@@ -148,18 +173,38 @@ export default {
         Link,
         Head,
     },
-    props: ['batches'],
+    props: ["departments",'courses'],
     data() {
         return {
+            batches: "",
+            students: "",
             form: this.$inertia.form({
-                co: "",
-                po: "",
-               // course: this.course.id,
+                department: "",
+                batch:"",
+                student:"",
+                course:""
             }),
         };
     },
     methods: {
-
+        getBatches() {
+            axios
+                .get(this.route("users.studentBatchInfo",this.form.department))
+                .then((res) =>this.batches=res.data)
+                .catch((err)=>console.log(err));
+        },
+        studentInfoByBatch() {
+            axios
+                .get(this.route("users.studentInfoByBatch",this.form.batch))
+                .then((res) =>this.students=res.data)
+                .catch((err)=>console.log(err));
+        },
+        findResult() {
+            axios
+                .get(this.route("exam.markStudentShow",[this.form.department,this.form.batch,this.form.student,this.form.course]))
+                .then((res) =>this.students=res.data)
+                .catch((err)=>console.log(err));
+        },
     },
 };
 </script>

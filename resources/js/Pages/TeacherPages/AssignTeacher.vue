@@ -91,6 +91,7 @@
                                 Exam Assign
                             </Link>
                             <Link
+                                v-if="run.rel_exam_count > 0"
                                 :href="route('exam.markCreate', run.id)"
                                 class="inline-block m-2 text-md font-weight-bold p-2 rounded bg-indigo-500 text-white"
                             >

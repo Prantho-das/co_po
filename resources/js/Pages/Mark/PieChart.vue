@@ -115,7 +115,7 @@ export default {
             data.append("courseCode", this.teacherAssigns.rel_course.c_code);
             data.append("html", html);
             axios
-                .post("/test", data, {
+                .post(this.route('exam.markBatchDownload'), data, {
                     responseType: "blob",
                 })
                 .then((response) => {

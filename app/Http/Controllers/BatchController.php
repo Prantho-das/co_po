@@ -19,7 +19,7 @@ class BatchController extends Controller
     {
         $batches = StudentBatch::with('relSession')->paginate();
         $sessions = SessionYear::all();
-        $departments = Department::all();
+        $departments = Department::whereNot('name', 'boat')->get();
 
         return Inertia::render('Batch/Index', [
             'batches' => $batches,

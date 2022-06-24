@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AssignMark;
+use App\Models\Course;
 use App\Models\CourseAssign;
 use App\Models\Department;
 use App\Models\ExamAssign;
@@ -10,6 +11,7 @@ use App\Models\Marks;
 use App\Models\StudentBatch;
 use App\Models\Students;
 use App\Models\TeacherAssignCourse;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -179,7 +181,13 @@ class ExamAssignController extends Controller
         return redirect()->route('course.teacher.myCourse')->with('success', 'Mark Submitted Successfully');
     }
 
+    public function markBatchDownload()
+    {
+        $content = '<style>' . file_get_contents(public_path() . '/css/app.css') . '</style>';
+        $pdf = Pdf::loadView('pdf.index', ['data' => request()->html, 'content' => $content, 'teacherName' => request()->teacherName, 'batchName' => request()->batchName, 'courseName' => request()->courseName, 'courseCode' => request()->courseCode]);
 
+        return $pdf->download('test.pdf');
+    }
     public function markBatchShow($id)
     {
         $teacherAssigns = TeacherAssignCourse::with('relTeacher', 'relBatch', 'relCourse')->findOrFail($id);
@@ -190,41 +198,55 @@ class ExamAssignController extends Controller
             $mrks = AssignMark::with('relCo:id,co_name', 'relPo:id,po_name', 'relMarks')
                 ->where('course_id', $teacherAssigns->course_id)
                 ->where('batch_id', $teacherAssigns->batch_id)
+                ->where('batch_id', $teacherAssigns->batch_id)
                 ->where('co_id', $value->co_id)
                 ->withSum('relMarks', 'marks')
                 ->withSum('relMarks', 'total')
                 ->get();
-
-            foreach ($mrks as $key => $val) {
-                $percentage = ((int)$val->rel_marks_sum_marks / (int)$val->rel_marks_sum_total) * 100;
-                $arr_index = Str::slug($val->relCo->co_name, '_');
-                $arr[$arr_index]['co_name'] = $val->relCo->co_name;
-                $arr[$arr_index]['po_name'] = $val->relPo->po_name;
-                $arr[$arr_index]['co_id'] = $value->co_id;
-                $arr[$arr_index]['po_id']  = $value->po_id;
-                $arr[$arr_index]['result']  = $mrks;
-                if ($percentage >= 80) {
-                    $arr[$arr_index]['80'] = isset($arr[$arr_index]['80']) ? $arr[$arr_index]['80'] + 1 : 1;
-                } elseif ($percentage <= 79 && $percentage >= 60) {
-                    $arr[$arr_index]['79-60'] = isset($arr[$arr_index]['79-60']) ? $arr[$arr_index]['79-60'] + 1 : 1;
-                } elseif ($percentage <= 59 && $percentage >= 40) {
-                    $arr[$arr_index]['59-40'] = isset($arr[$arr_index]['59-40']) ? $arr[$arr_index]['59-40'] + 1 : 1;
-                } else {
-                    $arr[$arr_index]['below_40'] = isset($arr[$arr_index]['below_40']) ? $arr[$arr_index]['below_40'] + 1 : 1;
+            if (!empty($mrks) && count($mrks) > 0) {
+                foreach ($mrks as $key => $val) {
+                    $percentage = ((int)$val->rel_marks_sum_marks / (int)$val->rel_marks_sum_total) * 100;
+                    $arr_index = Str::slug($val->relCo->co_name, '_');
+                    $arr[$arr_index]['co_name'] = $val->relCo->co_name;
+                    $arr[$arr_index]['po_name'] = $val->relPo->po_name;
+                    $arr[$arr_index]['co_id'] = $value->co_id;
+                    $arr[$arr_index]['po_id']  = $value->po_id;
+                    $arr[$arr_index]['result']  = $mrks;
+                    if ($percentage >= 80) {
+                        $arr[$arr_index]['80'] = isset($arr[$arr_index]['80']) ? $arr[$arr_index]['80'] + 1 : 1;
+                    } elseif ($percentage <= 79 && $percentage >= 60) {
+                        $arr[$arr_index]['79-60'] = isset($arr[$arr_index]['79-60']) ? $arr[$arr_index]['79-60'] + 1 : 1;
+                    } elseif ($percentage <= 59 && $percentage >= 40) {
+                        $arr[$arr_index]['59-40'] = isset($arr[$arr_index]['59-40']) ? $arr[$arr_index]['59-40'] + 1 : 1;
+                    } else {
+                        $arr[$arr_index]['below_40'] = isset($arr[$arr_index]['below_40']) ? $arr[$arr_index]['below_40'] + 1 : 1;
+                    }
                 }
             }
         }
-       // return $arr;
+        // return $arr;
         return Inertia::render('Mark/PieChart', ['data' => $arr, 'teacherAssigns' => $teacherAssigns]);
     }
     public function markStudentIndex()
     {
         $departments = Department::get();
-        $batches=StudentBatch::where('status',1)->get();
-        return Inertia::render('Mark/MarkStudentShow',['batches'=>$batches,'departments'=>$departments]);
+        $batches = StudentBatch::where('status', 1)->get();
+        $courses = Course::get();
+        return Inertia::render('Mark/MarkStudentShow', ['batches' => $batches, 'departments' => $departments, 'courses' => $courses]);
     }
-    public function markStudentShow()
+    public function markStudentShow($did, $bid, $sid, $cid)
     {
+        // $dpt = Department::findOrFail($did);
+        // $sbatch = StudentBatch::findOrFail($bid);
+        // $crs = Course::findOrFail($cid);
+        // $stu = Students::findOrFail($sid);
 
+        return $marks = AssignMark::with('relCo', 'relPo', 'relMarks.relExam')
+            ->where('course_id', $cid)
+            ->where('batch_id', $bid)
+            ->where('student_id', $sid)
+            ->withSum('relMarks', 'marks')
+            ->withSum('relMarks', 'total')
+            ->get();
     }
 }

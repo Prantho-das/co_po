@@ -102,7 +102,7 @@
                 </div>
                 <div class="my-4">
                     <BreezeLabel for="address" value="Enter Address" class="text-blue-500" />
-                    <textarea name="" v-model="form.address" id="address" class="rounded w-full" rows="5"></textarea>
+                    <textarea name="" v-model="form.address" id="address" class="rounded w-full border-indigo-500" rows="5"></textarea>
                     <h2 class="text-red-500" v-if="form.errors.name">
                         {{ form.errors.address }}
                     </h2>
@@ -110,12 +110,20 @@
                 <div class="my-4">
                     <BreezeLabel for="avatar" value="Enter Avatar" class="text-blue-500" />
                     <BreezeInput id="avatar" accept="images/*" @input="form.avatar = $event.target.files[0]" type="file"
-                        class="block w-full mt-1 p-1.5 border-2 border-rose-100" required
+                        class="block w-full mt-1 p-1.5 border-2 border-rose-100"
                         autopomplete="off" />
                     <h2 class="text-red-500" v-if="form.errors.avatar">
                         {{ form.errors.avatar }}
                     </h2>
                 </div>
+                <div class="my-4">
+                    <BreezeLabel for="designation" value="Enter designation" class="text-blue-500" />
+                    <Select2 v-model="form.designation" :settings="{width:'100%',multiple:true, tags: true,tokenSeparators: [',']}" />
+                    <h2 class="text-red-500" v-if="form.errors.designation">
+                        {{ form.errors.designation }}
+                    </h2>
+                </div>
+
                 <BreezeButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Create
                 </BreezeButton>
@@ -130,7 +138,7 @@ import BreezeInput from "@/Components/Input.vue";
 import BreezeAuthenticatedLayout from "@/Layouts/Authenticated.vue";
 import Pagination from "@/Components/Pagination.vue";
 import BreezeLabel from "@/Components/Label.vue";
-
+import Select2 from 'vue3-select2-component';
 export default {
     components: {
         BreezeAuthenticatedLayout,
@@ -138,6 +146,7 @@ export default {
         BreezeButton,
         BreezeInput,
         BreezeLabel,
+        Select2
     },
     data() {
         return {
@@ -149,7 +158,8 @@ export default {
                 phone: "",
                 role_type: "",
                 avatar: "",
-                address:""
+                address:"",
+                designation:[],
             }),
         };
     },

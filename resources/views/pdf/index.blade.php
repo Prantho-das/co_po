@@ -11,6 +11,7 @@
         img {
             max-width: 100% !important;
         }
+
         /* ------------------------------------ */
 
         .table100 {
@@ -108,8 +109,6 @@
             text-align: right;
             padding-right: 1rem;
         }
-
-
     </style>
 </head>
 
@@ -119,12 +118,16 @@
             Dhaka International University
         </h1>
         <h1>
-            Teacher Name: <span style="color:blue;">{{$teacherName}}</span>
+            Teacher Name: <span style="color:blue;">{{ $teacherName }}</span>
         </h1>
-        <h2>Batch Name: {{$batchName}}</h2>
-        <h2>Course Name: {{$courseName}}</h2>
-        <h2>Course Code: {{$courseCode}}</h2>
+        <h2>Batch Name: {{ $batchName }}</h2>
+        <h2>Course Name: {{ $courseName }}</h2>
+        <h2>Course Code: {{ $courseCode }}</h2>
     </div>
+    @if ($comment != null)
+        <hr style="margin:1rem 0rem;" />
+        <h3><span style='font-weight:bold;'>Comment:</span> {{ $comment }}</h3>
+    @endif
     <hr style="margin:1rem 0rem;" />
     <div style="border-left: 1px solid blue;border-right: 1px solid blue;">
         {!! $data !!}

@@ -66,13 +66,43 @@
                             />
                         </svg>
                     </button>
+                    <button
+                        class="float-right mr-4"
+                        @click="commentStatus = !commentStatus"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+                            />
+                        </svg>
+                    </button>
                 </div>
             </div>
-
+            <div
+                v-if="commentStatus"
+                class="my-3 bg-white rounded-lg shadow-md p-2"
+            >
+                <textarea
+                    v-model="comment"
+                    placeholder="Enter Your Comment"
+                    name=""
+                    id=""
+                    cols="30"
+                    class="w-full border-1 border-indigo-400 rounded-lg"
+                    rows="4"
+                ></textarea>
+            </div>
             <div id="pdf">
-                <div
-                    class="chart_wrapper"
-                >
+                <div class="chart_wrapper">
                     <PieGoogle
                         v-for="(dt, i) in data"
                         :key="i"
@@ -99,11 +129,18 @@ import PieGoogle from "@/Components/PieGoogle.vue";
 
 export default {
     components: {
-    BreezeAuthenticatedLayout,
-    Head,
-    Pie,
-    PieGoogle,
-},
+        BreezeAuthenticatedLayout,
+        Head,
+        Pie,
+        PieGoogle,
+    },
+    data() {
+        return {
+            commentStatus: false,
+            loading: false,
+            comment: '',
+        };
+    },
     props: ["data", "teacherAssigns"],
     methods: {
         downloadPdf() {
@@ -114,8 +151,9 @@ export default {
             data.append("courseName", this.teacherAssigns.rel_course.c_name);
             data.append("courseCode", this.teacherAssigns.rel_course.c_code);
             data.append("html", html);
+            data.append("comment", this.comment);
             axios
-                .post(this.route('exam.markBatchDownload'), data, {
+                .post(this.route("exam.markBatchDownload"), data, {
                     responseType: "blob",
                 })
                 .then((response) => {

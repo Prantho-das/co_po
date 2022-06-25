@@ -14,7 +14,7 @@
                 <h2>Roll:{{ info.student_roll }}</h2>
             </div>
             <div
-                class="my-4 flex-1 flex flex-wrap"
+                class="my-4 flex flex-wrap gap-4 space"
                 v-for="(mk, id) in info.marks"
                 :key="id"
             >
@@ -32,7 +32,11 @@
                         required
                         autocomplete="off"
                     />
-                    <span v-if="errors && Object.keys(errors).length > 0" class="text-red-500">Mark Is Required</span>
+                    <span
+                        v-if="errors && Object.keys(errors).length > 0"
+                        class="text-red-500"
+                        >Mark Is Required</span
+                    >
                 </div>
             </div>
         </div>
@@ -63,7 +67,6 @@ export default {
         };
     },
     mounted() {
-        console.log(this.errors)
         this.infoSanitize();
     },
     methods: {
@@ -94,10 +97,11 @@ export default {
         markCreate() {
             this.$inertia.post(
                 this.route("exam.markStore", this.teacherAssigns.id),
-                this.infos,{ onSuccess: (page) => console.warn(page)}
+                this.infos,
+                { onSuccess: (page) => console.warn(page) }
             );
         },
     },
-    props: ["examAssigns", "students", "teacherAssigns","errors"],
+    props: ["examAssigns", "students", "teacherAssigns", "errors"],
 };
 </script>

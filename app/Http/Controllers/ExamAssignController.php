@@ -184,7 +184,7 @@ class ExamAssignController extends Controller
     public function markBatchDownload()
     {
         $content = '<style>' . file_get_contents(public_path() . '/css/app.css') . '</style>';
-        $pdf = Pdf::loadView('pdf.index', ['data' => request()->html, 'content' => $content, 'teacherName' => request()->teacherName, 'batchName' => request()->batchName, 'courseName' => request()->courseName, 'courseCode' => request()->courseCode]);
+        $pdf = Pdf::loadView('pdf.index', ['data' => request()->html, 'content' => $content, 'teacherName' => request()->teacherName, 'batchName' => request()->batchName, 'courseName' => request()->courseName, 'courseCode' => request()->courseCode, 'comment' => request()->comment]);
 
         return $pdf->download('test.pdf');
     }

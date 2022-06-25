@@ -10,7 +10,6 @@
                         <th class="column4">%</th>
                     </tr>
                 </thead>
-                <!-- {{results}} -->
                 <tbody>
                     <tr v-for="(result, i) in results" :key="i">
                         <td class="column1">
@@ -30,7 +29,7 @@
                                     : "_"
                             }}
                         </td>
-                        <td class="column4">
+                        <td class="column4" >
                             {{
                                 result.rel_marks_sum_total &&
                                 result.rel_marks_sum_marks
@@ -359,25 +358,6 @@ tbody tr:hover {
         left: 30px;
         top: 0;
     }
-    table tbody tr td:nth-child(1):before {
-        content: "Date";
-    }
-    table tbody tr td:nth-child(2):before {
-        content: "Order ID";
-    }
-    table tbody tr td:nth-child(3):before {
-        content: "Name";
-    }
-    table tbody tr td:nth-child(4):before {
-        content: "Price";
-    }
-    table tbody tr td:nth-child(5):before {
-        content: "Quantity";
-    }
-    table tbody tr td:nth-child(6):before {
-        content: "Total";
-    }
-
     .column4,
     .column5,
     .column6 {

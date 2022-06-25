@@ -31,6 +31,7 @@ return new class extends Migration
                 ->constrained('session_years', 'id')
                 ->onDelete('cascade');
             $table->timestamp('course_complete_at')->nullable();
+            $table->tinyInteger('exam_assign_status')->default(0);
             $table->timestamps();
         });
     }

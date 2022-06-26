@@ -6,27 +6,153 @@
         <div class="p-4 bg-white rounded-lg shadow-xs mb-5">
             <h3 class="text-lg">Import Csv</h3>
             <form @submit.prevent="StudentBulkCreate">
-                <BreezeInput
-                    id="name"
-                    type="file"
-                    class="block mt-1 p-1.5 border-2"
-                    @change="(e) => (student_csv = e.target.files[0])"
-                    required
-                    autopomplete="off"
-                />
-                <h2 class="text-red-500" v-if="errors && errors.student_csv">
-                    {{ errors.student_csv }}
-                </h2>
-                <ol
-                    style="list-style-type: decimal; display: flex"
-                    class="ml-4"
-                >
-                    <li class="text-red-500 mr-5">Name</li>
-                    <li class="text-red-500 mr-5">Roll</li>
-                    <li class="text-red-500 mr-5">Reg</li>
-                    <li class="text-red-500 mr-5">Shift</li>
-                    <li class="text-red-500 mr-5">Batch</li>
-                </ol>
+                <div class="flex flex-wrap justify-between gap-4 items-start">
+                    <div class="my-4 flex-1">
+                        <BreezeLabel
+                            for="department"
+                            value="Csv"
+                            class="text-blue-500"
+                        />
+                        <BreezeInput
+                            id="name"
+                            type="file"
+                            class="block p-1 mb-1 border border-gray-300"
+                            @change="(e) => (student_csv = e.target.files[0])"
+                            required
+                            autopomplete="off"
+                        />
+                        <h2
+                            class="text-red-500"
+                            v-if="errors && errors.student_csv"
+                        >
+                            {{ errors.student_csv }}
+                        </h2>
+                        <ol
+                            style="list-style-type: decimal; display: flex"
+                            class="ml-4"
+                        >
+                            <li class="text-red-500 mr-5">Name</li>
+                            <li class="text-red-500 mr-5">Roll</li>
+                            <li class="text-red-500 mr-5">Reg</li>
+                            <li class="text-red-500 mr-5">Shift</li>
+                            <li class="text-red-500 mr-5">Batch</li>
+                        </ol>
+                    </div>
+                    <div class="my-4 flex-1">
+                        <BreezeLabel
+                            for="department"
+                            value="Department"
+                            class="text-blue-500"
+                        />
+                        <select
+                            id="department"
+                            v-model="department"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        >
+                            <option
+                                class="text-black"
+                                selected
+                                value=""
+                                disabled
+                            >
+                                Choose a department Type
+                            </option>
+                            <option
+                                class="text-black"
+                                v-for="(dpt, i) in departments"
+                                :key="i"
+                                :value="dpt.id"
+                            >
+                                {{ dpt.name }}
+                            </option>
+                        </select>
+                        <h2 class="text-red-500" v-if="errors.department">
+                            {{ errors.department }}
+                        </h2>
+                    </div>
+                    <div class="my-4 flex-1">
+                        <BreezeLabel
+                            for="batch"
+                            value="Batch"
+                            class="text-blue-500"
+                        />
+                        <select
+                            id="batch"
+                            v-model="batch"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        >
+                            <option
+                                class="text-black"
+                                selected
+                                value=""
+                                disabled
+                            >
+                                Choose a Batch Type
+                            </option>
+                            <option
+                                class="text-black"
+                                v-for="(bt, i) in batches"
+                                :key="i"
+                                :value="bt.id"
+                            >
+                                {{ bt.name }}
+                            </option>
+                        </select>
+                        <h2 class="text-red-500" v-if="errors.batch">
+                            {{ errors.batch }}
+                        </h2>
+                    </div>
+                    <div class="my-4 flex-1">
+                        <BreezeLabel
+                            for="session"
+                            value="Session"
+                            class="text-blue-500"
+                        />
+                        <select
+                            id="session"
+                            v-model="session"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        >
+                            <option
+                                class="text-black"
+                                selected
+                                value=""
+                                disabled
+                            >
+                                Choose a Student Session
+                            </option>
+                            <option
+                                class="text-black"
+                                v-for="(ses, i) in sessions"
+                                :key="i"
+                                :value="ses.id"
+                            >
+                                {{ ses.session_year }}
+                            </option>
+                        </select>
+                        <h2 class="text-red-500" v-if="errors.session">
+                            {{ errors.session }}
+                        </h2>
+                    </div>
+                    <div class="my-4">
+                        <BreezeLabel
+                            for="shift"
+                            value="Enter shift"
+                            class="text-blue-500"
+                        />
+                        <BreezeInput
+                            id="shift"
+                            type="tel"
+                            class="block w-full mt-1 p-1.5 border-2 border-rose-100"
+                            v-model="shift"
+                            required
+                            autopomplete="off"
+                        />
+                        <h2 class="text-red-500" v-if="errors.shift">
+                            {{ errors.shift }}
+                        </h2>
+                    </div>
+                </div>
                 <BreezeButton class="mt-2"> Bulk Create </BreezeButton>
             </form>
         </div>
@@ -145,7 +271,7 @@
                         {{ form.errors.shift }}
                     </h2>
                 </div>
-                  <div class="my-4">
+                <div class="my-4">
                     <BreezeLabel
                         for="department"
                         value="department"
@@ -167,10 +293,10 @@
                         >
                             {{ department.name }}
                         </option>
-                        <h2 class="text-red-500" v-if="form.errors.department">
-                            {{ form.errors.department }}
-                        </h2>
                     </select>
+                    <h2 class="text-red-500" v-if="form.errors.department">
+                        {{ form.errors.department }}
+                    </h2>
                 </div>
                 <div class="my-4">
                     <BreezeLabel
@@ -194,10 +320,10 @@
                         >
                             {{ batch.name }}
                         </option>
-                        <h2 class="text-red-500" v-if="form.errors.batch">
-                            {{ form.errors.batch }}
-                        </h2>
                     </select>
+                    <h2 class="text-red-500" v-if="form.errors.batch">
+                        {{ form.errors.batch }}
+                    </h2>
                 </div>
                 <div class="my-4">
                     <BreezeLabel
@@ -221,10 +347,10 @@
                         >
                             {{ session.session_year }}
                         </option>
-                        <h2 class="text-red-500" v-if="form.errors.session">
-                            {{ form.errors.session }}
-                        </h2>
                     </select>
+                    <h2 class="text-red-500" v-if="form.errors.session">
+                        {{ form.errors.session }}
+                    </h2>
                 </div>
                 <!-- <div class="my-4">
                     <BreezeLabel for="avatar" value="Enter Avatar" class="text-blue-500" />
@@ -265,6 +391,10 @@ export default {
         return {
             loading: false,
             student_csv: "",
+            batch: "",
+            session: "",
+            department: "",
+            shift: "",
             form: this.$inertia.form({
                 name: "",
                 email: "",
@@ -273,7 +403,7 @@ export default {
                 shift: "",
                 batch: "",
                 session: "",
-                department:"",
+                department: "",
             }),
         };
     },
@@ -288,11 +418,26 @@ export default {
         StudentBulkCreate() {
             this.loading = true;
             let formData = new FormData();
+            formData.append("shift", this.shift);
+            formData.append("batch", this.batch);
+            formData.append("session", this.session);
+            formData.append("department", this.department);
             formData.append("student_csv", this.student_csv);
             this.$inertia.post(this.route("users.studentBluk"), formData, {
                 onSuccess: () => {
                     this.loading = false;
-                    this.form.reset();
+                    this.student_csv = "";
+                    this.batch = "";
+                    this.session = "";
+                    this.department = "";
+                    this.shift = "";
+                    document.querySelector('input').value=""
+                },
+                onError: (error) => {
+                    this.loading = false;
+                    if (error[0]) {
+                        alert("This Registration Number is already exist");
+                    }
                 },
             });
             this.loading = false;
@@ -303,6 +448,7 @@ export default {
         sessions: Array,
         errors: Array,
         departments: Array,
+        errors: Array,
     },
 };
 </script>

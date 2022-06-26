@@ -117,14 +117,18 @@ class UserController extends Controller
 
     public function studentBulk()
     {
+
         request()->validate([
-            'student_csv' => 'required|mimes:csv,txt'
+            'student_csv' => 'required|mimes:csv',
+            'department' => 'required|exists:departments,id',
+            'batch' => 'required|exists:student_batches,id',
+            'session' => 'required|exists:session_years,id',
+            'shift' => 'required',
         ]);
         try {
-            //code...
             DB::transaction(function () {
                 $file = request()->file('student_csv');
-                Excel::import(new StudentImport, $file);
+                Excel::import(new StudentImport(request('batch'),request('session'),request('department'), request('shift')), $file);
             });
             return back()->with('success', 'Students Imported Successfully');
         } catch (\Exception $e) {

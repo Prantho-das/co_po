@@ -95,7 +95,7 @@ class UserController extends Controller
             "name" => "required",
             "email" => "required",
             "roll" => "required|numeric",
-            "reg" => "required",
+            "reg" => "required|unique:students,reg_no",
             "shift" => "required",
             "batch" => "required",
             "session" => "required",

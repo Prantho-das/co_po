@@ -6,6 +6,7 @@ use App\Models\AssignMark;
 use App\Models\Course;
 use App\Models\CourseAssign;
 use App\Models\Department;
+use App\Models\DraftMark;
 use App\Models\ExamAssign;
 use App\Models\Marks;
 use App\Models\StudentBatch;
@@ -41,6 +42,9 @@ class ExamAssignController extends Controller
             'name'  => 'required'
         ]);
         $tcourse = TeacherAssignCourse::findOrFail($id);
+        if ($tcourse->course_complete_at == 1) {
+            return back()->with('error', 'Exam Assign Done');
+        }
         $copos = CourseAssign::where('id', request('copo'))->with('relCo', 'relPo')->firstOrFail();
         ExamAssign::create([
             'course_id' => $tcourse->course_id,
@@ -52,12 +56,16 @@ class ExamAssignController extends Controller
             'marks' => request('marks'),
             'name' => request('name'),
         ]);
+        $tcourse->exam_assign_status = 1;
+        $tcourse->save();
         return back()->with('success', 'Exam Created Successfully');
     }
 
     public function markCreate(Request $req, $id)
     {
         $teacherAssigns = TeacherAssignCourse::findOrFail($id);
+        $draft = DraftMark::where('t_assign_courses_id', $id)->get();
+
         $examAssigns = ExamAssign::where('t_assign_courses_id', $id)->whereNull('mark_assign_done')->get();
 
         if (count($examAssigns) == 0) {
@@ -67,11 +75,46 @@ class ExamAssignController extends Controller
             return back()->with('error', 'No Exam Assigned');
         }
         $students = Students::where('batch_id', $teacherAssigns->batch_id)->get();
+        // mark
+        $info = [];
+        $examInfo = [];
+        foreach ($students as $key => $student) {
+            $info["student_name"] = $student->name;
+            $info["student_id"] = $student->id;
+            $info["student_roll"] = $student->roll;
+            $info["marks"] = [];
+            foreach ($examAssigns as $key => $exam) {
+                array_push($info["marks"], [
+                    "exam_id" => $exam->id,
+                    "exam_name" => $exam->name,
+                    "copo_id" => $exam->copo_id,
+                    "co_id" => $exam->co_id,
+                    "po_id" => $exam->po_id,
+                    "t_assign_courses_id" => $exam->t_assign_courses_id,
+                    "teacher_id" => $exam->teacher_id,
+                    "mark" => $this->getDraftMark($draft, $student->id, $exam->id) ?? "",
+                    "total" => $exam->marks,
+                ]);
+            }
+            array_push($examInfo, $info);
+            $info = [];
+        }
         return Inertia::render('TeacherPages/Marks', [
             'examAssigns' => $examAssigns,
             'students' => $students,
-            'teacherAssigns' => $teacherAssigns
+            'teacherAssigns' => $teacherAssigns,
+            'examInfo' => $examInfo
         ]);
+    }
+    private function getDraftMark($draft, $sId, $eId)
+    {
+
+        foreach ($draft as $key => $value) {
+            if ($value->student_id == $sId && $value->exam_id == $eId) {
+                return $value->mark;
+            }
+        }
+        return null;
     }
     public function markStore(Request $req, $id)
     {
@@ -90,6 +133,7 @@ class ExamAssignController extends Controller
         //     '*.marks.*.mark.required' => 'Marks is required',
         // ]);
         $teacherAssigns = TeacherAssignCourse::findOrFail($id);
+
         foreach ($req->all() as $value) {
             $s_id = $value['student_id'];
             $roll = $value['student_roll'];
@@ -98,6 +142,7 @@ class ExamAssignController extends Controller
                 if ($examInfo->marks < 0 || (int)$mark['mark'] > $examInfo->marks) {
                     return back()->with('error', 'Marks must be between 0 and total marks');
                 }
+
                 $assignMark = DB::table('assign_marks')
                     ->where('student_id', $s_id)
                     ->where('copo_id', $mark['copo_id'])
@@ -114,7 +159,7 @@ class ExamAssignController extends Controller
                         'total' => $mark['total']
                     ]);
                 } else {
-                    $newAssginMark = DB::table('assign_marks')->insertGetId([
+                    $newAssignMark = DB::table('assign_marks')->insertGetId([
                         'student_id' => $s_id,
                         'batch_id' => $teacherAssigns->batch_id,
                         'roll' => $roll,
@@ -127,13 +172,14 @@ class ExamAssignController extends Controller
                     ]);
                     DB::table('marks')->insert([
                         'student_id' => $s_id,
-                        'assign_marks_id' => $newAssginMark,
+                        'assign_marks_id' => $newAssignMark,
                         'exam_id' => $mark['exam_id'],
                         'marks' => $mark['mark'],
                         'total' => $mark['total']
                     ]);
                 }
                 ExamAssign::findOrFail($mark['exam_id'])->update(['mark_assign_done' => now()]);
+                DraftMark::where('t_assign_courses_id',$id)->delete();
                 // }
             }
 
@@ -225,7 +271,7 @@ class ExamAssignController extends Controller
             }
         }
         // return $arr;
-        return Inertia::render('Mark/PieChart', ['data' => $arr, 'teacherAssigns' => $teacherAssigns]);
+        return Inertia::render('Mark/MarkBatchShow', ['data' => $arr, 'teacherAssigns' => $teacherAssigns]);
     }
     public function markStudentIndex()
     {
@@ -236,6 +282,7 @@ class ExamAssignController extends Controller
     }
     public function markStudentShow($did, $bid, $sid, $cid)
     {
+
         // $dpt = Department::findOrFail($did);
         // $sbatch = StudentBatch::findOrFail($bid);
         // $crs = Course::findOrFail($cid);
@@ -248,5 +295,35 @@ class ExamAssignController extends Controller
             ->withSum('relMarks', 'marks')
             ->withSum('relMarks', 'total')
             ->get();
+    }
+
+    public function draftMark(Request $req, $id)
+    {
+        $teacherAssigns = TeacherAssignCourse::findOrFail($id);
+
+        foreach ($req->all() as $value) {
+            $s_id = $value['student_id'];
+            foreach ($value['marks'] as $mark) {
+                // DraftMark::createOrUpdate(
+                //     [],
+                //     []
+                // );
+                $draftMark = DraftMark::where("student_id", $s_id)
+                    ->where("t_assign_courses_id", $id)
+                    ->where("exam_id", $mark['exam_id'])->first();
+                if ($draftMark) {
+                    $draftMark->mark = $mark['mark'];
+                    $draftMark->save();
+                } else {
+                    DraftMark::create([
+                        "student_id" => $s_id,
+                        "t_assign_courses_id" => $id,
+                        "exam_id" => $mark['exam_id'],
+                        "mark" => $mark['mark'],
+                    ]);
+                }
+            }
+        }
+        return back()->with('success', 'Marks Drafted Successfully');
     }
 }

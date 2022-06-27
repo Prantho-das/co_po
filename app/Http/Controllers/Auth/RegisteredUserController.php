@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Students;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
@@ -34,22 +35,35 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+
+        request()->validate([
+            "name" => "required",
+            "email" => "required",
+            "roll" => "required|numeric",
+            "reg" => "required|unique:students,reg_no",
+            "shift" => "required",
+            "batch" => "required",
+            "session" => "required",
+            "department" => "required",
+            'email' => 'required|string|email|max:255|unique:students',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+        Students::create([
+            "name" => request("name"),
+            "email" => request("email"),
+            "roll" => request("roll"),
+            "reg_no" => request("reg"),
+            "shift" => request("shift"),
+            "batch_id" => request("batch"),
+            "department_id" => request("department"),
+            "session_id" => request("session"),
+            "password" => Hash::make(request("password")),
         ]);
+        return redirect()->route('users.studentShow')->with('success', 'Student Created Successfully');
+        // event(new Registered($user));
 
-        event(new Registered($user));
+        // Auth::login($user);
 
-        Auth::login($user);
-
-        return redirect(RouteServiceProvider::HOME);
+        // return redirect(RouteServiceProvider::HOME);
     }
 }

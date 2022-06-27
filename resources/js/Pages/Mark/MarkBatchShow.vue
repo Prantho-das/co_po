@@ -20,10 +20,6 @@
                 </div>
 
                 <div class="px-4 flex-1 py-2 -mx-3">
-                    <div class="mx-3">
-                        <span class="font-semibold text-blue-500">Info</span>
-                        <p class="text-sm text-gray-600">Batch Co Po Result</p>
-                    </div>
                     <div class="m-3">
                         <h1 class="text-2xl text-bold mb-3">
                             Teacher Name:

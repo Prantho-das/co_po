@@ -110,7 +110,7 @@
                 </BreezeButton>
             </form>
         </div>
-        <div class="overflow-hidden my-8 w-full rounded-lg border shadow-xs">
+        <div v-if="result" class="overflow-hidden my-8 w-full rounded-lg border shadow-xs">
             <div class="overflow-x-auto w-full">
                 <table class="w-full whitespace-no-wrap">
                     <thead>
@@ -178,6 +178,7 @@ export default {
         return {
             batches: "",
             students: "",
+            result:"",
             form: this.$inertia.form({
                 department: "",
                 batch:"",
@@ -202,7 +203,7 @@ export default {
         findResult() {
             axios
                 .get(this.route("exam.markStudentShow",[this.form.department,this.form.batch,this.form.student,this.form.course]))
-                .then((res) =>this.students=res.data)
+                .then((res) =>this.result=res.data)
                 .catch((err)=>console.log(err));
         },
     },

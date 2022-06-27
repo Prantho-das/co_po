@@ -1,6 +1,6 @@
 <template>
     <div style="display: flex">
-        <div class="table100" style="flex-grow:1.5">
+        <div class="table100" style="flex-grow:1">
             <table>
                 <thead>
                     <tr class="table100-head">

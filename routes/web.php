@@ -169,6 +169,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/teacher/co-po-exam/{id}', [ExamAssignController::class, 'makeExamStore'])->name('course.teacher.makeExamStore');
     Route::get('/exam-mark/{id}', [ExamAssignController::class, 'markCreate'])->name('exam.markCreate');
     Route::post('/exam-mark/{id}', [ExamAssignController::class, 'markStore'])->name('exam.markStore');
+    Route::post('/exam-mark-draft/{id}', [ExamAssignController::class, 'draftMark'])->name('exam.markDraft');
 
 
     Route::get('/mark-show/batch/{id}', [ExamAssignController::class, 'markBatchShow'])->name('exam.markBatchShow');
@@ -200,7 +201,7 @@ Route::middleware('auth')->group(function () {
 
 
     Route::post('students', [UserController::class, 'studentStore'])->name('users.studentStore');
-    Route::post('studentsBluk', [UserController::class, 'studentBulk'])->name('users.studentBluk');
+    Route::post('studentsBluk', [UserController::class, 'studentBulk'])->name('users.studentBulk');
 
     Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -4,21 +4,13 @@
     <BreezeAuthenticatedLayout>
         <template #header> Assign Marks </template>
 
-        <div
-            class="flex flex-wrap items-center"
-            v-for="(info, i) in infos"
-            :key="i"
-        >
-            <div class="px-6 w-60">
+        <div class="grid grid-cols-4" v-for="(info, i) in infos" :key="i">
+            <div class="px-6 w-60 col-span-1">
                 <h2 class="text-lg">{{ info.student_name }}</h2>
                 <h2>Roll:{{ info.student_roll }}</h2>
             </div>
-            <div
-                class="my-4 flex flex-wrap gap-4 space"
-                v-for="(mk, id) in info.marks"
-                :key="id"
-            >
-                <div>
+            <div class="my-4 col-span-3 flex flex-wrap space-between gap-4">
+                <div v-for="(mk, id) in info.marks" :key="id">
                     <BreezeLabel
                         for="mark"
                         :value="mk.exam_name + ' (' + mk.total + ')'"
@@ -40,7 +32,12 @@
                 </div>
             </div>
         </div>
-        <BreezeButton @click="markCreate"> Submit </BreezeButton>
+        <div class="flex gap-2">
+            <BreezeButton @click="markCreate"> Submit </BreezeButton>
+            <BreezeButton class="bg-blue-400" @click="markDraft">
+                Draft
+            </BreezeButton>
+        </div>
     </BreezeAuthenticatedLayout>
 </template>
 
@@ -67,7 +64,8 @@ export default {
         };
     },
     mounted() {
-        this.infoSanitize();
+        this.infos = this.examInfo;
+        // this.infoSanitize();
     },
     methods: {
         infoSanitize() {
@@ -81,12 +79,12 @@ export default {
                     info["marks"].push({
                         exam_id: exam.id,
                         exam_name: exam.name,
-                        mark: "",
                         copo_id: exam.copo_id,
                         co_id: exam.co_id,
                         po_id: exam.po_id,
                         t_assign_courses_id: exam.t_assign_courses_id,
                         teacher_id: exam.teacher_id,
+                        mark: "",
                         total: exam.marks,
                     });
                 });
@@ -101,7 +99,14 @@ export default {
                 { onSuccess: (page) => console.warn(page) }
             );
         },
+        markDraft() {
+            this.$inertia.post(
+                this.route("exam.markDraft", this.teacherAssigns.id),
+                this.infos,
+                { onSuccess: (page) => console.warn(page) }
+            );
+        },
     },
-    props: ["examAssigns", "students", "teacherAssigns", "errors"],
+    props: ["examAssigns", "students", "teacherAssigns", "examInfo", "errors"],
 };
 </script>

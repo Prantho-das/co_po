@@ -2,7 +2,7 @@
     <Head title="Register" />
 
     <div class="flex flex-col overflow-y-auto md:flex-row">
-        <div class="h-32 md:h-auto md:w-1/2">
+        <div class="md:h-auto md:w-1/2">
             <img
                 aria-hidden="true"
                 class="object-cover w-full h-full"
@@ -44,7 +44,72 @@
                             autocomplete="username"
                         />
                     </div>
-
+                    <div class="mt-4">
+                        <BreezeLabel for="roll" value="Roll" />
+                        <BreezeInput
+                            id="roll"
+                            type="number"
+                            class="block w-full mt-1"
+                            v-model="form.roll"
+                            required
+                            autocomplete="username"
+                        />
+                    </div>
+                    <div class="mt-4">
+                        <BreezeLabel for="reg" value="Reg" />
+                        <BreezeInput
+                            id="reg"
+                            type="string"
+                            class="block w-full mt-1"
+                            v-model="form.reg"
+                            required
+                            autocomplete="username"
+                        />
+                    </div>
+                    <div class="mt-4">
+                        <BreezeLabel for="shift" value="Shift" />
+                        <BreezeInput
+                            id="shift"
+                            type="text"
+                            class="block w-full mt-1"
+                            v-model="form.shift"
+                            required
+                            autocomplete="username"
+                        />
+                    </div>
+                    <div class="mt-4">
+                        <BreezeLabel for="batch" value="Batch" />
+                        <BreezeInput
+                            id="batch"
+                            type="text"
+                            class="block w-full mt-1"
+                            v-model="form.batch"
+                            required
+                            autocomplete="username"
+                        />
+                    </div>
+                    <div class="mt-4">
+                        <BreezeLabel for="session" value="Session" />
+                        <BreezeInput
+                            id="session"
+                            type="text"
+                            class="block w-full mt-1"
+                            v-model="form.session"
+                            required
+                            autocomplete="username"
+                        />
+                    </div>
+                    <div class="mt-4">
+                        <BreezeLabel for="department" value="Department" />
+                        <BreezeInput
+                            id="department"
+                            type="text"
+                            class="block w-full mt-1"
+                            v-model="form.department"
+                            required
+                            autocomplete="username"
+                        />
+                    </div>
                     <div class="mt-4">
                         <BreezeLabel for="password" value="Password" />
                         <BreezeInput
@@ -75,7 +140,7 @@
                     <div class="flex items-center justify-end mt-4">
                         <Link
                             :href="route('login')"
-                            class="text-sm text-gray-600 underline  hover:text-gray-900"
+                            class="text-sm text-gray-600 underline hover:text-gray-900"
                         >
                             Already registered?
                         </Link>
@@ -119,6 +184,12 @@ export default {
             form: this.$inertia.form({
                 name: "",
                 email: "",
+                roll: "",
+                reg: "",
+                shift: "",
+                batch: "",
+                session: "",
+                department: "",
                 password: "",
                 password_confirmation: "",
                 terms: false,

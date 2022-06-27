@@ -423,7 +423,7 @@ export default {
             formData.append("session", this.session);
             formData.append("department", this.department);
             formData.append("student_csv", this.student_csv);
-            this.$inertia.post(this.route("users.studentBluk"), formData, {
+            this.$inertia.post(this.route("users.studentBulk"), formData, {
                 onSuccess: () => {
                     this.loading = false;
                     this.student_csv = "";

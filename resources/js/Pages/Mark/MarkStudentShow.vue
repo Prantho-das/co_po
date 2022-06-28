@@ -118,37 +118,50 @@
                             class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase bg-gray-50 border-b"
                         >
                             <th class="px-4 py-3">*</th>
-                            <th class="px-4 py-3">Course Name</th>
-                            <th class="px-4 py-3">Course Code</th>
                             <th class="px-4 py-3">Co Name</th>
                             <th class="px-4 py-3">Po Name</th>
+                            <th class="px-4 py-3">Marks</th>
+                            <th class="px-4 py-3">Total</th>
+                            <th class="px-4 py-3">Resutl Info</th>
                         </tr>
                     </thead>
-                    <!-- <tbody class="bg-white divide-y">
+                    <tbody class="bg-white divide-y">
                         <tr
-                            v-for="(assign, i) in assigns"
-                            :key="assign.id"
+                            v-for="(res, i) in result"
+                            :key="i"
                             class="text-gray-700"
                         >
                             <td class="px-4 py-3 text-sm">
                                 {{ i + 1 }}
                             </td>
                             <td class="px-4 py-3 text-sm">
-                                {{ course.c_name }}
+                                {{ res.rel_co.co_name }}
                             </td>
                             <td class="px-4 py-3 text-sm">
-                                {{ course.c_code }}
+                                {{ res.rel_po.po_name }}
                             </td>
                             <td class="px-4 py-3 text-sm">
-                                {{ assign.rel_co.co_name }}
+                                {{ res.rel_marks_sum_marks }}
                             </td>
                             <td class="px-4 py-3 text-sm">
                                 {{
-                                    assign.rel_po ? assign.rel_po.po_name : "-"
+                                    res.rel_marks_sum_total
                                 }}
                             </td>
+                            <td class="px-4 py-3 text-sm bg-gray-100">
+                                <ul>
+                                    <li v-for="info,i in res.rel_marks" :key="i">
+                                        <p class="text-bold">{{info.rel_exam.name}}:<span class="text-blue-600 ml-2">{{info.marks}}</span></p>
+                                    </li>
+                                </ul>
+                            </td>
                         </tr>
-                    </tbody> -->
+                        <tr>
+                            <td colspan="6" class="px-2">
+                                <button @click="downloadPdf">Downlaod Pdf</button>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -205,6 +218,33 @@ export default {
                 .get(this.route("exam.markStudentShow",[this.form.department,this.form.batch,this.form.student,this.form.course]))
                 .then((res) =>this.result=res.data)
                 .catch((err)=>console.log(err));
+        },
+         downloadPdf() {
+            var html = document.getElementById("pdf").innerHTML;
+            let data = new FormData();
+            data.append("teacherName", this.teacherAssigns.rel_teacher.name);
+            data.append("batchName", this.teacherAssigns.rel_batch.name);
+            data.append("courseName", this.teacherAssigns.rel_course.c_name);
+            data.append("courseCode", this.teacherAssigns.rel_course.c_code);
+            data.append("html", html);
+            data.append("comment", this.comment);
+            axios
+                .post(this.route("exam.markBatchDownload"), data, {
+                    responseType: "blob",
+                })
+                .then((response) => {
+                    const url = window.URL.createObjectURL(
+                        new Blob([response.data])
+                    );
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.setAttribute("download", "test.pdf");
+                    document.body.appendChild(link);
+                    link.click();
+                })
+                .catch((error) => {
+                    this.error = error.response.data.errors;
+                });
         },
     },
 };

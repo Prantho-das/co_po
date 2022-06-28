@@ -56,8 +56,8 @@ class ExamAssignController extends Controller
             'marks' => request('marks'),
             'name' => request('name'),
         ]);
-        $tcourse->exam_assign_status = 1;
-        $tcourse->save();
+        // $tcourse->exam_assign_status = 1;
+        // $tcourse->save();
         return back()->with('success', 'Exam Created Successfully');
     }
 
@@ -179,7 +179,7 @@ class ExamAssignController extends Controller
                     ]);
                 }
                 ExamAssign::findOrFail($mark['exam_id'])->update(['mark_assign_done' => now()]);
-                DraftMark::where('t_assign_courses_id',$id)->delete();
+                DraftMark::where('t_assign_courses_id', $id)->delete();
                 // }
             }
 
@@ -275,7 +275,7 @@ class ExamAssignController extends Controller
     }
     public function markStudentIndex()
     {
-        $departments = Department::get();
+        $departments = Department::where('name', '!=', 'boat')->get();
         $batches = StudentBatch::where('status', 1)->get();
         $courses = Course::get();
         return Inertia::render('Mark/MarkStudentShow', ['batches' => $batches, 'departments' => $departments, 'courses' => $courses]);
@@ -288,12 +288,13 @@ class ExamAssignController extends Controller
         // $crs = Course::findOrFail($cid);
         // $stu = Students::findOrFail($sid);
 
-        return $marks = AssignMark::with('relCo', 'relPo', 'relMarks.relExam')
+        return  $marks = AssignMark::with('relCo', 'relPo', 'relMarks.relExam')
             ->where('course_id', $cid)
             ->where('batch_id', $bid)
             ->where('student_id', $sid)
             ->withSum('relMarks', 'marks')
             ->withSum('relMarks', 'total')
+            // ->select('id','co_id','po_id','student_id','t_assign_courses_id')
             ->get();
     }
 

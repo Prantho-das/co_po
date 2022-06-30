@@ -25,7 +25,7 @@ class CourseController extends Controller
     public function index()
     {
 
-        $courses = Course::withCount('relcopoAssign as copoAssign')->paginate();
+         $courses = Course::withCount('relcopoAssign as copoAssign')->with('relcopoAssign.relCo', 'relcopoAssign.relPo')->paginate();
         $semesters = Semester::all();
         $cos = CourseOutcome::all();
         return Inertia::render("Course/Index", ["courses" => $courses, "semesters" => $semesters, "cos" => $cos]);
@@ -53,7 +53,7 @@ class CourseController extends Controller
             'code' => 'required|unique:courses,c_code',
             'semester' => 'required|exists:semesters,id',
             'credit' => 'required|numeric|min:1',
-            'co' => 'required|array',
+            // 'co' => 'required|array',
         ]);
         // $course=Course::where('c_code', $req->code)->where('semester_id',$req->semester)->first();
         // if($course) {
@@ -67,12 +67,12 @@ class CourseController extends Controller
             'semester_name' => $semester->name,
             'credit' => $req->credit,
         ]);
-        foreach (request()->co as $val) {
-            CourseAssign::create([
-                'course_id' => $course->id,
-                'co_id' => $val,
-            ]);
-        }
+        // foreach (request()->co as $val) {
+        //     CourseAssign::create([
+        //         'course_id' => $course->id,
+        //         'co_id' => $val,
+        //     ]);
+        // }
         return back()->with("success", "Course Created Successfully");
     }
 

@@ -97,13 +97,13 @@
                         {{ form.errors.credit }}
                     </h2>
                 </div>
-                <div class="my-4">
+                <!-- <div class="my-4">
                     <BreezeLabel for="courseId" value="Course OutCome" />
                     <Select2 v-model="form.co" :options="coOptions" :settings="{width:'100%',multiple:true}" />
+                </div>
                     <h2 class="text-red-500" v-if="form.errors.co">
                         {{ form.errors.co }}
-                    </h2>
-                </div>
+                    </h2> -->
                 <BreezeButton
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
@@ -126,7 +126,7 @@
                                 <th class="px-4 py-3">Course Credit</th>
                                 <th class="px-4 py-3">Course Semester</th>
                                 <th class="px-4 py-3">Co Assign</th>
-                                <th class="px-4 py-3">Assign Co Po</th>
+                                <!-- <th class="px-4 py-3">Assign Co Po</th> -->
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y">
@@ -153,13 +153,13 @@
                                 <td class="px-4 py-3 text-sm">
                                     {{ course.copoAssign }}
                                 </td>
-                                <td class="px-4 py-3 text-sm">
+                                <!-- <td class="px-4 py-3 text-sm">
                                     <Link
                                         class="text-blue-500 font-weight-bold"
                                         :href="route('course.show', course.id)"
                                         >Assign</Link
                                     >
-                                </td>
+                                </td> -->
                             </tr>
                         </tbody>
                     </table>

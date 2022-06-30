@@ -5,7 +5,7 @@
         <template #header> Assign Teacher Create </template>
 
         <div class="p-4 bg-white rounded-lg shadow-xs">
-            <div
+            <!-- <div
                 class="inline-flex overflow-hidden mb-4 w-full bg-white rounded-lg shadow-md"
             >
                 <div class="flex justify-center items-center w-12 bg-blue-500">
@@ -26,7 +26,7 @@
                         <p class="text-sm text-gray-600">Sample table page</p>
                     </div>
                 </div>
-            </div>
+            </div> -->
             <form @submit.prevent="assignTeacher" class="mb-4">
                 <h3 class="text-lg">Create Users Here</h3>
                 <div class="my-4">

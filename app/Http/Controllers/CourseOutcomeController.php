@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
+use App\Models\CourseAssign;
 use App\Models\CourseOutcome;
+use App\Models\ProgramOutcome;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -16,8 +19,12 @@ class CourseOutcomeController extends Controller
     public function index()
     {
         $cos = CourseOutcome::paginate();
+        $subjects = Course::all();
+        $pos = ProgramOutcome::all();
         return Inertia::render('Co/Index', [
             'cos' => $cos,
+            'courses' => $subjects,
+            'pos' => $pos,
         ]);
     }
 
@@ -41,10 +48,28 @@ class CourseOutcomeController extends Controller
     {
         $request->validate([
             'name' => "required|unique:course_outcomes,co_name|min:1",
+            'course' => "required|exists:courses,id",
+            "po" => "required|exists:program_outcomes,id",
+            "co_position" => "required",
         ]);
-        CourseOutcome::create([
+        $co =  CourseOutcome::create([
             'co_name' => $request->name,
+            'position' => $request->co_position,
         ]);
+        $coValidate = CourseAssign::where('course_id', $request->course)->where('co_id', $co->id)->where('po_id', $request->po)->exists();
+        //  $copoValidate = CourseAssign::where('course_id', $req->course)->where('co_id', $req->co)->where('po_id', $req->po)->exists();
+        if ($coValidate) {
+            return back()->withErrors(['co' => 'Co Already Assign']);
+        }
+        // if ($copoValidate) {
+        //     return back()->withErrors(['co' => 'One Po Is For One Po & Its Already Assign']);
+        // }
+            CourseAssign::create([
+                'course_id' => $request->course,
+                'co_id' => $co->id,
+                'po_id' => $request->po,
+            ]);
+
 
         return back()->with('success', 'Course Outcome Created Successfully');
     }

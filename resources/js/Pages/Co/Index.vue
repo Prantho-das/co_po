@@ -38,7 +38,7 @@
                     </h2>
                 </div>
                 <div class="my-4">
-                    <BreezeLabel for="sessionId" value="Select Course" />
+                    <BreezeLabel for="sessionId" value="Select Co Position" />
                     <select
                         id="sessionId"
                         v-model="form.co_position"

@@ -41,9 +41,11 @@ class ProgramOutcomeController extends Controller
     {
         $request->validate([
             'name' => "required|unique:program_outcomes,po_name|min:1",
+            'po_no'=> "required"
         ]);
         ProgramOutcome::create([
             'po_name' => $request->name,
+            'po_no'=>$request->po_no
         ]);
 
         return back()->with('success', 'Program Outcome Created Successfully');

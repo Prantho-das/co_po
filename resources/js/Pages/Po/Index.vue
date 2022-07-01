@@ -30,6 +30,12 @@
                         v-model="form.name" required autopomplete="off" />
                     <h2 class="text-red-500" v-if="form.errors.name">{{ form.errors.name }}</h2>
                 </div>
+                <div class="my-4">
+                    <BreezeLabel for="position" value="Po No/Position" />
+                    <BreezeInput id="position" type="text" class="block w-full mt-1 p-1.5 border-2 border-rose-100"
+                        v-model="form.po_no" required autopomplete="off" />
+                    <h2 class="text-red-500" v-if="form.errors.po_no">{{ form.errors.po_no }}</h2>
+                </div>
                 <BreezeButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Create
                 </BreezeButton>
@@ -42,6 +48,7 @@
                                 class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase bg-gray-50 border-b">
                                 <th class="px-4 py-3">*</th>
                                 <th class="px-4 py-3">Name</th>
+                                 <th class="px-4 py-3">Po No</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y">
@@ -51,6 +58,9 @@
                                 </td>
                                 <td class="px-4 py-3 text-sm">
                                     {{ po.po_name }}
+                                </td>
+                                <td class="px-4 py-3 text-sm">
+                                    {{ po.po_no }}
                                 </td>
                             </tr>
                         </tbody>
@@ -82,7 +92,7 @@ export default {
     },
     data() {
         return {
-            form: this.$inertia.form({ name: "" }),
+            form: this.$inertia.form({ name: "",po_no:"" }),
         };
     },
     methods: {

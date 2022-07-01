@@ -54,7 +54,7 @@ class CourseOutcomeController extends Controller
         ]);
         $co =  CourseOutcome::create([
             'co_name' => $request->name,
-            'position' => $request->co_position,
+            'co_no' => $request->co_position,
         ]);
         $coValidate = CourseAssign::where('course_id', $request->course)->where('co_id', $co->id)->where('po_id', $request->po)->exists();
         //  $copoValidate = CourseAssign::where('course_id', $req->course)->where('co_id', $req->co)->where('po_id', $req->po)->exists();

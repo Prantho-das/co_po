@@ -8,5 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class CourseOutcome extends Model
 {
     use HasFactory;
-    protected $guarded = [];  
+    protected $guarded = [];
+
+
+    public function relSubject(){
+        return $this->hasOne(CourseAssign::class,'co_id');
+    }
 }

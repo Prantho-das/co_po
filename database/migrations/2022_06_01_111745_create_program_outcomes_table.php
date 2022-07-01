@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('program_outcomes', function (Blueprint $table) {
             $table->id();
+            $table->string('po_no')->nullable();
             $table->string('po_name');
             $table->timestamps();
         });

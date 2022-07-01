@@ -99,7 +99,7 @@
                             :key="i"
                             :value="po.id"
                         >
-                            {{ po.po_name }}
+                            {{ po.po_name }}|{{ po.po_no }}
                         </option>
                     </select>
                     <h2 class="text-red-500" v-if="form.errors.po">
@@ -140,7 +140,7 @@
                                     {{ co.co_name }}
                                 </td>
                                 <td class="px-4 py-3 text-sm">
-                                    {{ co.position }}
+                                    {{ co.co_no }}
                                 </td>
                             </tr>
                         </tbody>

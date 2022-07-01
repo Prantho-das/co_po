@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('course_outcomes', function (Blueprint $table) {
             $table->id();
             $table->string("co_name");
-            $table->string("position")->nullable();
+            $table->string("co_no")->nullable();
             $table->timestamps();
         });
     }

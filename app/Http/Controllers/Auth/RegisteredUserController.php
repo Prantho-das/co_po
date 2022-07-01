@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Department;
+use App\Models\SessionYear;
+use App\Models\StudentBatch;
 use App\Models\Students;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
@@ -22,7 +25,14 @@ class RegisteredUserController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Auth/Register');
+        $batches=StudentBatch::all();
+        $sessions = SessionYear::all();
+        $departments=Department::where('name','!=','boat')->get();
+        return Inertia::render('Auth/Register', [
+            'batches' => $batches,
+            'sessions' => $sessions,
+            'departments' => $departments,
+        ]);
     }
 
     /**
@@ -59,7 +69,7 @@ class RegisteredUserController extends Controller
             "session_id" => request("session"),
             "password" => Hash::make(request("password")),
         ]);
-        return redirect()->route('users.studentShow')->with('success', 'Student Created Successfully');
+        return redirect()->back()->with('success', 'Student Created Successfully');
         // event(new Registered($user));
 
         // Auth::login($user);

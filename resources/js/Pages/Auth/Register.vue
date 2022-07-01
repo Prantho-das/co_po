@@ -59,7 +59,7 @@
                         <BreezeLabel for="reg" value="Reg" />
                         <BreezeInput
                             id="reg"
-                            type="string"
+                            type="text"
                             class="block w-full mt-1"
                             v-model="form.reg"
                             required
@@ -199,7 +199,7 @@ export default {
 
     methods: {
         submit() {
-            this.form.post(this.route("register"), {
+            this.form.post(this.route("register.store"), {
                 onFinish: () =>
                     this.form.reset("password", "password_confirmation"),
             });

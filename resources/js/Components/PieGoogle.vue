@@ -68,7 +68,7 @@ export default {
                     ["Above 80%", self.above_80],
                 ]);
                 var options = {
-                    title: self.po_name,
+                    title: 'po name:'+self.po_name+' | co name:'+self.co_name,
                     colors: [
                         "rgb(255,0,0)",
                         "rgb(0, 110, 189)",
@@ -92,6 +92,7 @@ export default {
     },
     props: [
         "name",
+        "co_name",
         "po_name",
         "below_40",
         "below_80",

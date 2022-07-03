@@ -126,7 +126,7 @@
                                 <th class="px-4 py-3">Course Credit</th>
                                 <th class="px-4 py-3">Course Semester</th>
                                 <th class="px-4 py-3">Co Assign</th>
-                                <!-- <th class="px-4 py-3">Assign Co Po</th> -->
+                                <th class="px-4 py-3">Assign Co Po</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y">
@@ -153,13 +153,19 @@
                                 <td class="px-4 py-3 text-sm">
                                     {{ course.copoAssign }}
                                 </td>
-                                <!-- <td class="px-4 py-3 text-sm">
-                                    <Link
-                                        class="text-blue-500 font-weight-bold"
-                                        :href="route('course.show', course.id)"
-                                        >Assign</Link
-                                    >
-                                </td> -->
+                                <td class="px-4 py-3 text-sm">
+                                    <ul>
+                                        <li
+                                            v-for="(
+                                                copo, i
+                                            ) in course.relcopo_assign"
+                                            :key="i"
+                                        >
+                                            {{ copo.rel_co.co_no }} |
+                                            {{ copo.rel_po.po_no }}
+                                        </li>
+                                    </ul>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -181,7 +187,7 @@ import BreezeAuthenticatedLayout from "@/Layouts/Authenticated.vue";
 import Pagination from "@/Components/Pagination.vue";
 import BreezeLabel from "@/Components/Label.vue";
 import { Link } from "@inertiajs/inertia-vue3";
-import Select2 from 'vue3-select2-component';
+import Select2 from "vue3-select2-component";
 
 export default {
     components: {
@@ -191,7 +197,7 @@ export default {
         BreezeInput,
         BreezeLabel,
         Link,
-        Select2
+        Select2,
     },
     data() {
         return {
@@ -218,7 +224,7 @@ export default {
     },
     computed: {
         coOptions() {
-            return this.cos.map(co => ({
+            return this.cos.map((co) => ({
                 id: co.id,
                 text: co.co_name,
             }));

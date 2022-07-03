@@ -11,7 +11,6 @@ use App\Models\SessionYear;
 use App\Models\StudentBatch;
 use App\Models\TeacherAssignCourse;
 use App\Models\User;
-use Illuminate\Bus\Batch;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -25,7 +24,7 @@ class CourseController extends Controller
     public function index()
     {
 
-         $courses = Course::withCount('relcopoAssign as copoAssign')->with('relcopoAssign.relCo', 'relcopoAssign.relPo')->paginate();
+        $courses = Course::withCount('relcopoAssign as copoAssign')->with('relcopoAssign.relCo', 'relcopoAssign.relPo')->paginate();
         $semesters = Semester::all();
         $cos = CourseOutcome::all();
         return Inertia::render("Course/Index", ["courses" => $courses, "semesters" => $semesters, "cos" => $cos]);

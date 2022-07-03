@@ -157,8 +157,8 @@
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="6" class="px-2">
-                                <button @click="downloadPdf">Downlaod Pdf</button>
+                            <td colspan="6" class="px-2 py-2">
+                                <button class="text-indigo-500 font-weight-bold" @click="downloadPdf">Downlaod Pdf</button>
                             </td>
                         </tr>
                     </tbody>

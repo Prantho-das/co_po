@@ -1,6 +1,5 @@
 <?php
 
-use App\Helper\Helper;
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseOutcomeController;
@@ -23,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+use PhpParser\Node\Expr\Assign;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,7 +35,13 @@ use Illuminate\Support\Str;
 |
 */
 
-Route::post('/test', function () {
+Route::get('/test', function () {
+    return AssignMark::where('student_id', '=', '2')
+        ->withSum('relMarks', 'marks')
+        ->withSum('relMarks', 'total')
+        ->with('relCourse', 'relPo')
+        ->get()
+        ->groupBy('relPo.po_name');
     // $copos = CourseAssign::where('course_id', 1)->get();
     // $arr = [];
     // foreach ($copos as $key => $value) {

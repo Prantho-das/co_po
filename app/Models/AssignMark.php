@@ -16,6 +16,10 @@ class AssignMark extends Model
     {
         return $this->belongsTo(Students::class, 'student_id');
     }
+    public function relCourse()
+    {
+        return $this->belongsTo(Course::class, 'course_id');
+    }
     public function relMarks()
     {
         return $this->hasMany(Marks::class, 'assign_marks_id');

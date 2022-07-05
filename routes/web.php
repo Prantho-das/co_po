@@ -36,12 +36,35 @@ use PhpParser\Node\Expr\Assign;
 */
 
 Route::get('/test', function () {
-    return AssignMark::where('student_id', '=', '2')
+    $pos = AssignMark::where('student_id', '=', '2')
         ->withSum('relMarks', 'marks')
         ->withSum('relMarks', 'total')
         ->with('relCourse', 'relPo')
         ->get()
-        ->groupBy('relPo.po_name');
+        ->groupBy('po_id')
+        // ->groupBy('relPo.po_name')
+    ;
+    $data = [];
+    $tempdata = [];
+    foreach ($pos as $key => $po) {
+        $tempdata['subjects'] = [];
+        $markSum = 0;
+        $totalSum = 0;
+        foreach ($po as $key => $value) {
+            $tempdata['po_name'] = $value->relPo->po_name;
+            $tempdata['po_no'] = $value->relPo->po_no;
+            $markSum += $value->rel_marks_sum_marks;
+            $totalSum += $value->rel_marks_sum_total;
+            array_push($tempdata['subjects'], $value->relCourse->c_name);
+        }
+        $tempdata['markSum'] = $markSum;
+        $tempdata['totalSum'] = $totalSum;
+        $tempdata['percent'] = ($markSum/$totalSum) * 100;
+        array_push($data, $tempdata);
+        $tempdata = [];
+    }
+    return $data;
+
     // $copos = CourseAssign::where('course_id', 1)->get();
     // $arr = [];
     // foreach ($copos as $key => $value) {

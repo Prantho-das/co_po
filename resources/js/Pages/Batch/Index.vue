@@ -48,9 +48,9 @@
                             {{ Syear.session_year }}
                         </option>
                     </select>
-                        <h2 class="text-red-500" v-if="form.errors.session">
-                            {{ form.errors.session }}
-                        </h2>
+                    <h2 class="text-red-500" v-if="form.errors.session">
+                        {{ form.errors.session }}
+                    </h2>
                 </div>
                 <div class="my-4">
                     <BreezeLabel for="sessionId" value="Select Deparment" />
@@ -80,7 +80,7 @@
                     <BreezeInput
                         id="year"
                         type="year"
-                        class="block w-full mt-1 p-1.5 border-2 border-rose-100"
+                        class="block w-full mt-1 p-1.5 border-2 border-indigo-100"
                         v-model="form.batch_name"
                         required
                         autocomplete="off"

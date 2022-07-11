@@ -34,7 +34,7 @@
                     <BreezeInput
                         id="year"
                         type="text"
-                        class="block w-full mt-1 p-1.5 border-2 border-rose-100"
+                        class="block w-full mt-1 p-1.5 border-2 border-indigo-100"
                         v-model="form.name"
                         required
                         autocomplete="off"
@@ -48,7 +48,7 @@
                     <BreezeInput
                         id="year"
                         type="text"
-                        class="block w-full mt-1 p-1.5 border-2 border-rose-100"
+                        class="block w-full mt-1 p-1.5 border-2 border-indigo-100"
                         v-model="form.code"
                         required
                         autocomplete="off"
@@ -88,7 +88,7 @@
                     <BreezeInput
                         id="year"
                         type="number"
-                        class="block w-full mt-1 p-1.5 border-2 border-rose-100"
+                        class="block w-full mt-1 p-1.5 border-2 border-indigo-100"
                         v-model="form.credit"
                         required
                         autocomplete="off"

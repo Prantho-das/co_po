@@ -1,50 +1,69 @@
 <template>
-    <div style="display: flex">
-        <div class="table100" style="flex-grow:1">
-            <table>
-                <thead>
-                    <tr class="table100-head">
-                        <th class="column1">Roll</th>
-                        <th class="column2">Mark</th>
-                        <th class="column3">Total</th>
-                        <th class="column4">%</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(result, i) in results" :key="i">
-                        <td class="column1">
-                            {{ result.roll }}
-                        </td>
-                        <td class="column2">
-                            {{
-                                result.rel_marks_sum_marks
-                                    ? result.rel_marks_sum_marks
-                                    : "_"
-                            }}
-                        </td>
-                        <td class="column3">
-                            {{
-                                result.rel_marks_sum_total
-                                    ? result.rel_marks_sum_total
-                                    : "_"
-                            }}
-                        </td>
-                        <td class="column4" >
-                            {{
-                                result.rel_marks_sum_total &&
-                                result.rel_marks_sum_marks
-                                    ? ((result.rel_marks_sum_marks /
-                                          result.rel_marks_sum_total) *
-                                      100).toFixed(3)
-                                    : "_"
-                            }}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div :id="name" style="height: 400px;flex-grow: 1;"></div>
-    </div>
+    <table style="margin-bottom: 1.2rem">
+        <tbody>
+            <tr>
+                <td style="width:50%;">
+                    <div class="table100">
+                        <h2 class="mb-3">
+                            <span class="text-blue-400"
+                                >Po name:-{{ po_name }}</span
+                            >
+                            |
+                            <span class="text-green-400"
+                                >Co name:-{{ co_name }}</span
+                            >
+                        </h2>
+                        <table>
+                            <thead>
+                                <tr class="table100-head">
+                                    <th class="column1">Roll</th>
+                                    <th class="column2">Mark</th>
+                                    <th class="column3">Total</th>
+                                    <th class="column4">%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(result, i) in results" :key="i">
+                                    <td class="column1">
+                                        {{ result.roll }}
+                                    </td>
+                                    <td class="column2">
+                                        {{
+                                            result.rel_marks_sum_marks
+                                                ? result.rel_marks_sum_marks
+                                                : "_"
+                                        }}
+                                    </td>
+                                    <td class="column3">
+                                        {{
+                                            result.rel_marks_sum_total
+                                                ? result.rel_marks_sum_total
+                                                : "_"
+                                        }}
+                                    </td>
+                                    <td class="column4">
+                                        {{
+                                            result.rel_marks_sum_total &&
+                                            result.rel_marks_sum_marks
+                                                ? (
+                                                      (result.rel_marks_sum_marks /
+                                                          result.rel_marks_sum_total) *
+                                                      100
+                                                  ).toFixed(3)
+                                                : "_"
+                                        }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+                <td style="width:50%;">
+                    <div :id="name" style="height: 400px"></div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </template>
 
 <script>
@@ -62,13 +81,13 @@ export default {
             function drawChart() {
                 var data = google.visualization.arrayToDataTable([
                     ["Task", "Co Po In A Batch"],
-                    ["Below 40%", self.below_40],
-                    ["60%-79%", self.below_80],
-                    ["40%-59%", self.below_60],
-                    ["Above 80%", self.above_80],
+                    [`Below 40%(${self.below_40})`, self.below_40],
+                    [`60%-79%(${self.below_80})`, self.below_80],
+                    [`40%-59%(${self.below_60})`, self.below_60],
+                    [`Above 80%(${self.above_80})`, self.above_80],
                 ]);
                 var options = {
-                    title: 'po name:'+self.po_name+' | co name:'+self.co_name,
+                    title: "Po No:-" + self.po_no + " | Co No:-" + self.co_no,
                     colors: [
                         "rgb(255,0,0)",
                         "rgb(0, 110, 189)",
@@ -94,6 +113,8 @@ export default {
         "name",
         "co_name",
         "po_name",
+        "co_no",
+        "po_no",
         "below_40",
         "below_80",
         "below_60",
@@ -107,7 +128,6 @@ export default {
 img {
     max-width: 100% !important;
 }
-
 
 .limiter {
     width: 100%;
@@ -138,7 +158,7 @@ img {
     width: 1170px;
 }
 
-table {
+.table100 table {
     border-spacing: 1;
     border-collapse: collapse;
     background: white;
@@ -148,37 +168,37 @@ table {
     margin: 0 auto;
     position: relative;
 }
-table * {
+.table100 table * {
     position: relative;
 }
-table td,
-table th {
+.table100 table td,
+.table100 table th {
     padding-left: 8px;
 }
-table thead tr {
+.table100 table thead tr {
     height: 60px;
     background: #36304a;
 }
-table tbody tr {
+.table100 table tbody tr {
     height: 50px;
 }
-table tbody tr:last-child {
+.table100 table tbody tr:last-child {
     border: 0;
 }
-table td,
-table th {
+.table100 table td,
+.table100 table th {
     text-align: left;
 }
-table td.l,
-table th.l {
+.table100 table td.l,
+.table100 table th.l {
     text-align: right;
 }
-table td.c,
-table th.c {
+.table100 table td.c,
+.table100 table th.c {
     text-align: center;
 }
-table td.r,
-table th.r {
+.table100 table td.r,
+.table100 table th.r {
     text-align: center;
 }
 

@@ -34,7 +34,7 @@
                     <BreezeInput
                         id="name"
                         type="text"
-                        class="block w-full mt-1 p-1.5 border-2 border-rose-100"
+                        class="block w-full mt-1 p-1.5 border-2 border-indigo-100"
                         v-model="form.name"
                         required
                         autocomplete="off"
@@ -48,7 +48,7 @@
                     <BreezeInput
                         id="mark"
                         type="number"
-                        class="block w-full mt-1 p-1.5 border-2 border-rose-100"
+                        class="block w-full mt-1 p-1.5 border-2 border-indigo-100"
                         v-model="form.marks"
                         required
                         autocomplete="off"
@@ -123,7 +123,7 @@
                                 <td class="px-4 py-3 text-sm">
                                     {{ exam.marks }}
                                 </td>
-                                 <td class="px-4 py-3 text-sm">
+                                <td class="px-4 py-3 text-sm">
                                     {{ exam.rel_batch.name }}
                                 </td>
                                 <td class="px-4 py-3 text-sm">

@@ -28,7 +28,7 @@
                     <BreezeInput
                         id="year"
                         type="text"
-                        class="block w-full mt-1 p-1.5 border-2 border-rose-100"
+                        class="block w-full mt-1 p-1.5 border-2 border-indigo-100"
                         v-model="form.name"
                         required
                         autocomplete="off"
@@ -60,7 +60,7 @@
                         {{ form.errors.co_position }}
                     </h2>
                 </div>
-                 <div class="my-4">
+                <div class="my-4">
                     <BreezeLabel for="sessionId" value="Select Course" />
                     <select
                         id="sessionId"
@@ -83,16 +83,14 @@
                         {{ form.errors.course }}
                     </h2>
                 </div>
-                 <div class="my-4">
+                <div class="my-4">
                     <BreezeLabel for="sessionId" value="Select Po" />
                     <select
                         id="sessionId"
                         v-model="form.po"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     >
-                        <option selected value="" disabled>
-                            Choose a Po
-                        </option>
+                        <option selected value="" disabled>Choose a Po</option>
                         <option
                             class="text-black"
                             v-for="(po, i) in pos"
@@ -124,7 +122,7 @@
                             >
                                 <th class="px-4 py-3">*</th>
                                 <th class="px-4 py-3">Name</th>
-                                 <th class="px-4 py-3">Position</th>
+                                <th class="px-4 py-3">Position</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y">
@@ -173,7 +171,7 @@ export default {
     },
     data() {
         return {
-            co_positions:[
+            co_positions: [
                 "CO1",
                 "CO2",
                 "CO3",
@@ -185,7 +183,12 @@ export default {
                 "CO9",
                 "CO10",
             ],
-            form: this.$inertia.form({ name: "",course: "",po: "",co_position:"" }),
+            form: this.$inertia.form({
+                name: "",
+                course: "",
+                po: "",
+                co_position: "",
+            }),
         };
     },
     methods: {
@@ -198,7 +201,7 @@ export default {
     props: {
         cos: Object,
         courses: Array,
-        pos:Array
+        pos: Array,
     },
 };
 </script>

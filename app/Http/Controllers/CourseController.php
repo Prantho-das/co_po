@@ -21,6 +21,9 @@ class CourseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function courseSemester($semester){
+       return Course::where('semester_id',$semester)->get();
+    }
     public function index()
     {
 
@@ -195,8 +198,19 @@ class CourseController extends Controller
     // teacher
     public function myCourse()
     {
-        $completed = TeacherAssignCourse::with("relTeacher", "relSemester", "relBatch", 'relSession', 'relCourse')->where('user_id', auth()->id())->whereNotNull('course_complete_at')->withCount('relExam')->paginate(10);
         $running =   TeacherAssignCourse::with("relTeacher", "relSemester", "relBatch", 'relSession', 'relCourse')->where('user_id', auth()->id())->whereNull('course_complete_at')->withCount('relExam')->paginate(10);
-        return Inertia::render("TeacherPages/AssignTeacher", ['completed' => $completed, 'running' => $running]);
+        return Inertia::render("TeacherPages/AssignTeacher", ['running' => $running]);
     }
+    public function myCompletedCourse()
+    {
+        $completed = TeacherAssignCourse::with("relTeacher", "relSemester", "relBatch", 'relSession', 'relCourse')->where('user_id', auth()->id())->whereNotNull('course_complete_at')->withCount('relExam')->paginate(10);
+        return Inertia::render("TeacherPages/TeacherCompletedCourse", ['completed' => $completed]);
+    }
+    public function completeCourse($id){
+        $tCourse=TeacherAssignCourse::findOrFail($id);
+        $tCourse->course_complete_at=now();
+        $tCourse->save();
+        return back()->with('success', 'Course Completed Successfully');
+    }
+
 }

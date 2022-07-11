@@ -1,14 +1,11 @@
 <template>
-    <Head title="Assign Teacher" />
+    <Head title="Completed Teacher" />
 
     <BreezeAuthenticatedLayout>
         <template #header> My Courses </template>
-
-                <div
-            class="overflow-hidden my-8 w-full rounded-lg border shadow-xs mb-4"
-        >
+        <div class="overflow-hidden my-8 w-full rounded-lg border shadow-xs">
             <h2 class="capitalize text-xl font-weight-bold m-2">
-                Running Courses
+                Completed Courses
             </h2>
             <div class="overflow-x-auto w-full">
                 <table class="w-full whitespace-no-wrap">
@@ -22,54 +19,47 @@
                             <th class="px-4 py-3">Batch</th>
                             <th class="px-4 py-3">Semester</th>
                             <th class="px-4 py-3">Exam Assign</th>
-                            <th class="px-4 py-3">Satisfy</th>
+                            <th class="px-4 py-3">Satisfy By</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y">
                         <tr
-                            v-for="(run, i) in running.data"
-                            :key="run.id"
+                            v-for="(comp, i) in completed.data"
+                            :key="comp.id"
                             class="text-gray-700"
                         >
                             <td class="px-4 py-3 text-sm">
                                 {{ i + 1 }}
                             </td>
                             <td class="px-4 py-3 text-sm">
-                                {{ run.rel_course.c_name }}
+                                {{ comp.rel_course.c_name }}
                             </td>
                             <td class="px-4 py-3 text-sm">
-                                {{ run.rel_course.c_code }}
+                                {{ comp.rel_course.c_code }}
                             </td>
                             <td class="px-4 py-3 text-sm">
-                                {{ run.rel_batch.name }}
+                                {{ comp.rel_batch.name }}
                             </td>
                             <td class="px-4 py-3 text-sm">
-                                {{ run.rel_semester.name }}
+                                {{ comp.rel_semester.name }}
                             </td>
                             <td class="px-4 py-3 text-sm">
-                                {{ run.rel_exam_count }}
+                                {{ comp.rel_exam_count }}
                             </td>
                             <Link
-                                :href="route('course.teacher.makeExam', run.id)"
+                                :href="route('course.assignTeacherCreate')"
                                 class="inline-block m-2 text-md font-weight-bold p-2 rounded bg-green-500 text-white"
                             >
-                                Exam Assign
+                                Exam List
                             </Link>
-                            <button
-                               @click="courseComplete(run.id)"
-                                class="inline-block m-2 text-md font-weight-bold p-2 rounded bg-teal-500 text-white"
-                            >
-                                Course Complete
-                            </button>
                             <Link
-                                v-if="run.rel_exam_count > 0"
-                                :href="route('exam.markCreate', run.id)"
+                                :href="route('exam.markCreate', comp.id)"
                                 class="inline-block m-2 text-md font-weight-bold p-2 rounded bg-indigo-500 text-white"
                             >
-                                Assign Marks
+                                Mark Show
                             </Link>
                             <Link
-                                :href="route('exam.markBatchShow', run.id)"
+                                :href="route('exam.markBatchShow', comp.id)"
                                 class="inline-block m-2 text-md font-weight-bold p-2 rounded bg-blue-500 text-white"
                             >
                                 Batch Result
@@ -80,11 +70,10 @@
                 <div
                     class="px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase bg-gray-50 border-t sm:grid-cols-9"
                 >
-                    <pagination :links="running.links" />
+                    <pagination :links="completed.links" />
                 </div>
             </div>
         </div>
-
     </BreezeAuthenticatedLayout>
 </template>
 
@@ -106,19 +95,16 @@ export default {
         Link,
         Head,
     },
-    props: ["running"],
+    props: ["completed"],
     data() {
         // return {
         //     form: this.$inertia.form({ co: "", po: "", "course": this.course.id }),
         // };
     },
     methods: {
-        courseComplete(id) {
-            if(!confirm('Are You Sure?')) return false;
-            this.$inertia.post(this.route('course.teacher.completeCourse', id),{
-                onSuccess:(res)=>console.log(res)
-            })
-        }
+        // assignTeacher() {
+        //     this.form.post(this.route("course.assignCoPo"), { onSuccess: () => this.form.reset(), });
+        // }
     },
 };
 </script>

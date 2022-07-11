@@ -18,6 +18,7 @@ use App\Models\StudentBatch;
 use App\Models\Students;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -36,30 +37,61 @@ use PhpParser\Node\Expr\Assign;
 */
 
 Route::get('/test', function () {
-    $pos = AssignMark::where('student_id', '=', '2')
+
+
+    $poors = AssignMark::where('batch_id', 1)
+        ->where('course_id', 1)
         ->withSum('relMarks', 'marks')
         ->withSum('relMarks', 'total')
         ->with('relCourse', 'relPo')
+        ->with('relStudent')
+        ->get();
+
+    // return $poors;
+
+
+    $mrks = AssignMark::where('batch_id', 1)
+        ->where('course_id', 1)
+        ->withSum('relMarks', 'marks')
+        ->withSum('relMarks', 'total')
+        ->with('relCourse', 'relPo')
+        ->with('relStudent')
+        ->get()->groupBy('co_id');
+
+
+    //return $mrks;
+
+
+    $pos = AssignMark::where('student_id', '=', '2')
+        ->where('course_id', 1)
+        ->withSum('relMarks', 'marks')
+        ->withSum('relMarks', 'total')
+        ->with('relCourse', 'relPo', 'relCo', 'relMarks.relExam')
         ->get()
-        ->groupBy('po_id')
-        // ->groupBy('relPo.po_name')
-    ;
+        ->groupBy('po_id');
+    // return $pos;
     $data = [];
     $tempdata = [];
-    foreach ($pos as $key => $po) {
-        $tempdata['subjects'] = [];
+    foreach ($pos as $po) {
+        $tempdata['co_no'] = [];
         $markSum = 0;
         $totalSum = 0;
-        foreach ($po as $key => $value) {
+        foreach ($po as $value) {
             $tempdata['po_name'] = $value->relPo->po_name;
             $tempdata['po_no'] = $value->relPo->po_no;
             $markSum += $value->rel_marks_sum_marks;
             $totalSum += $value->rel_marks_sum_total;
-            array_push($tempdata['subjects'], $value->relCourse->c_name);
+            array_push($tempdata['co_no'], $value->relCo->co_no);
+            $marks = [];
+            foreach ($value->relMarks as $val) {
+                array_push($marks, ['mark' => $val->marks, 'co_no' => $value->relCo->co_no, 'total' => $val->total, 'name' => $val->relExam->name]);
+            }
+            $tempdata['marks'] = $marks;
+            $marks = [];
         }
         $tempdata['markSum'] = $markSum;
         $tempdata['totalSum'] = $totalSum;
-        $tempdata['percent'] = ($markSum/$totalSum) * 100;
+        $tempdata['percent'] = ($markSum / $totalSum) * 100;
         array_push($data, $tempdata);
         $tempdata = [];
     }
@@ -158,6 +190,23 @@ Route::get('/test', function () {
 
     // return $pdf->download('test.pdf');
     // return Inertia::render('PieChart', ['data'=>['prantho']]);
+
+
+    //mark store
+    // $req->validate([
+    //     '*.marks' => 'required',
+    //     '*.marks.*.exam_id' => 'required',
+    //     '*.marks.*.exam_name' => 'required',
+    //     '*.marks.*.copo_id' => 'required',
+    //     '*.marks.*.co_id' => 'required',
+    //     '*.marks.*.po_id' => 'required',
+    //     '*.marks.*.t_assign_courses_id' => 'required',
+    //     '*.marks.*.teacher_id' => 'required',
+    //     '*.marks.*.mark' => 'required',
+    //     '*.marks.*.total' => 'required',
+    // ],[
+    //     '*.marks.*.mark.required' => 'Marks is required',
+    // ]);
 });
 Route::get('/', function () {
     return Inertia::render('Welcome', ['canLogin' => Route::has('login')]);
@@ -194,6 +243,10 @@ Route::middleware('auth')->group(function () {
 
     // Courses
     Route::get('/teacher/my-courses', [CourseController::class, 'myCourse'])->name('course.teacher.myCourse');
+    Route::get('/teacher/my-completed-courses', [CourseController::class, 'myCompletedCourse'])->name('course.teacher.myCompletedCourse');
+    Route::post('/teacher/my-completed-courses/{id}', [CourseController::class, 'completeCourse'])->name('course.teacher.completeCourse');
+
+
     Route::get('/teacher/co-po-exam/{id}', [ExamAssignController::class, 'makeExam'])->name('course.teacher.makeExam');
     Route::post('/teacher/co-po-exam/{id}', [ExamAssignController::class, 'makeExamStore'])->name('course.teacher.makeExamStore');
     Route::get('/exam-mark/{id}', [ExamAssignController::class, 'markCreate'])->name('exam.markCreate');
@@ -203,16 +256,25 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/mark-show/batch/{id}', [ExamAssignController::class, 'markBatchShow'])->name('exam.markBatchShow');
 
+
     Route::get('/mark-show/student', [ExamAssignController::class, 'markStudentIndex'])->name('exam.markStudentIndex');
     Route::get('/mark-show/student/{did}/{bid}/{sid}/{cid}', [ExamAssignController::class, 'markStudentShow'])->name('exam.markStudentShow');
     Route::post('/mark-download/batch', [ExamAssignController::class, 'markBatchDownload'])->name('exam.markBatchDownload');
+
+
+    Route::get('admin/mark-show/batch', [ExamAssignController::class, 'adminBatchIndex'])->name('exam.adminBatchIndex');
+    Route::get('admin/mark-show/batch/{bid}/{cid}', [ExamAssignController::class, 'adminBatchShow'])->name('exam.adminBatchShow');
+
+    Route::get('admin/mark-show/poor-student', [ExamAssignController::class, 'adminBatchPoorIndex'])->name('exam.adminBatchPoorIndex');
+    Route::get('admin/mark-show/poor-student/{bid}/{cid}', [ExamAssignController::class, 'adminBatchPoorShow'])->name('exam.adminBatchPoorShow');
+
+    //Route::post('admin/mark-download/batch', [ExamAssignController::class, 'markBatchDownload'])->name('exam.markBatchDownload');
 
 
     Route::get('/teacher-assign-show', [CourseController::class, 'assignTeacherShow'])->name('course.assignTeacherShow');
     Route::get('/teacher-assign-create', [CourseController::class, 'assignTeacherCreate'])->name('course.assignTeacherCreate');
     Route::post('/courseAssign', [CourseController::class, 'assignCoPo'])->name('course.assignCoPo');
     Route::post('/teacherAssign', [CourseController::class, 'assignTeacherStore'])->name('course.assignTeacherStore');
-
 
 
     Route::resource('/course', CourseController::class);
@@ -225,13 +287,30 @@ Route::middleware('auth')->group(function () {
 
     Route::get('students', [UserController::class, 'studentShow'])->name('users.studentShow');
     Route::get('students/create', [UserController::class, 'studentCreate'])->name('users.studentCreate');
+
     Route::get('students/batch-info/{departmentId}', [UserController::class, 'studentBatchInfo'])->name('users.studentBatchInfo');
     Route::get('students/batch-student-info/{batchId}', [UserController::class, 'studentInfoByBatch'])->name('users.studentInfoByBatch');
+    Route::get('/courses-in-semester/{semester}', [CourseController::class, 'courseSemester'])->name('course.courseInSemester');
 
 
     Route::post('students', [UserController::class, 'studentStore'])->name('users.studentStore');
-    Route::post('studentsBluk', [UserController::class, 'studentBulk'])->name('users.studentBulk');
+    Route::post('studentsBulk', [UserController::class, 'studentBulk'])->name('users.studentBulk');
 
     Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+});
+
+Route::group(['middleware' => ['auth:student'], 'as' => 'student.', 'prefix' => 'student/'], function () {
+    Route::get('/dashboard', function () {
+        return Inertia::render('Student/Front/StudentDashboard');
+    })->name('dashboard');
+
+    Route::get('batch-info/{departmentId}', [UserController::class, 'studentBatchInfo'])->name('studentBatchInfo');
+    Route::get('batch-student-info/{batchId}', [UserController::class, 'studentInfoByBatch'])->name('studentInfoByBatch');
+    Route::get('courses-in-semester/{semester}', [CourseController::class, 'courseSemester'])->name('courseInSemester');
+
+    Route::get('mark-show', [ExamAssignController::class, 'markShowIndex'])->name('markShowIndex');
+    Route::get('mark-show/{cid}', [ExamAssignController::class, 'markShowShow'])->name('markShowShow');
+
+    Route::get('completed-po', [ExamAssignController::class, 'completePoIndex'])->name('completePoIndex');
 });

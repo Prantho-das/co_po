@@ -105,6 +105,8 @@
                         :name="i"
                         :co_name="dt.co_name"
                         :po_name="dt.po_name"
+                        :co_no="dt.co_no"
+                        :po_no="dt.po_no"
                         :below_40="dt.below_40"
                         :below_80="dt['79-60']"
                         :below_60="dt['59-40']"
@@ -158,7 +160,7 @@ export default {
                     );
                     const link = document.createElement("a");
                     link.href = url;
-                    link.setAttribute("download", "test.pdf");
+                    link.setAttribute("download", `co_by_batch${new Date().getMilliseconds()}.pdf`);
                     document.body.appendChild(link);
                     link.click();
                 })

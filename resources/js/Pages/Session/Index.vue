@@ -35,7 +35,7 @@
                         <!-- <BreezeInput
                             id="year"
                             type="date"
-                            class="block w-full mt-1 p-1.5 border-2 border-rose-100"
+                            class="block w-full mt-1 p-1.5 border-2 border-indigo-100"
                             v-model="form.year"
                             required
                             autocomplete="off"
@@ -50,10 +50,10 @@
                             {{ form.errors.year }}
                         </h2>
                         <h2 class="text-red-500" v-if="form.errors['year.0']">
-                            {{ form.errors['year.0'] }}
+                            {{ form.errors["year.0"] }}
                         </h2>
-                         <h2 class="text-red-500" v-if="form.errors['year.1']">
-                            {{ form.errors['year.1'] }}
+                        <h2 class="text-red-500" v-if="form.errors['year.1']">
+                            {{ form.errors["year.1"] }}
                         </h2>
                     </div>
                     <div class="my-4 flex-1">
@@ -81,7 +81,10 @@
                                 Spring
                             </option>
                         </select>
-                        <h2 class="text-red-500" v-if="form.errors.session_type">
+                        <h2
+                            class="text-red-500"
+                            v-if="form.errors.session_type"
+                        >
                             {{ form.errors.session_type }}
                         </h2>
                     </div>
@@ -167,7 +170,7 @@ export default {
             this.form.post(this.route("sessions.store"), {
                 onSuccess: () => this.form.reset(),
                 onError: (errors) => {
-                   // console.log(errors['year.0'])
+                    // console.log(errors['year.0'])
                 },
             });
         },
@@ -176,7 +179,7 @@ export default {
         sessions: Object,
     },
     mounted() {
-       console.log(this.form.errors)
+        console.log(this.form.errors);
     },
 };
 </script>

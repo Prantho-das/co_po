@@ -16,8 +16,15 @@ defineProps({
     >
         <div v-if="canLogin" class="fixed top-0 right-0 px-6 py-4 sm:block">
             <Link
-                v-if="$page.props.auth.user"
+                v-if="$page.props.auth.user && $page.props.auth.user.role"
                 :href="route('dashboard')"
+                class="text-lg text-white font-weight-bold"
+            >
+                Dashboard
+            </Link>
+            <Link
+                v-if="$page.props.auth.user && !$page.props.auth.user.role"
+                :href="route('student.dashboard')"
                 class="text-lg text-white font-weight-bold"
             >
                 Dashboard
@@ -26,9 +33,15 @@ defineProps({
             <template v-else>
                 <Link
                     :href="route('login')"
-                    class="text-lg text-white font-weight-bold"
+                    class="text-lg text-white font-weight-bold mr-2"
                 >
                     Log in
+                </Link>
+                <Link
+                    :href="route('student.login')"
+                    class="text-lg text-indigo-900 font-weight-bold"
+                >
+                    Log In For Student
                 </Link>
 
                 <!-- <Link v-if="canRegister" :href="route('register')" class="ml-4 text-sm text-gray-700 underline">

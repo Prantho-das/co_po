@@ -52,9 +52,9 @@ class RegisteredUserController extends Controller
             "roll" => "required|numeric",
             "reg" => "required|unique:students,reg_no",
             "shift" => "required",
-            "batch" => "required",
-            "session" => "required",
-            "department" => "required",
+            "batch" => "required|exists:student_batches,id",
+            "session" => "required|exists:session_years,id",
+            "department" => "required|exists:departments,id",
             'email' => 'required|string|email|max:255|unique:students',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
@@ -69,7 +69,7 @@ class RegisteredUserController extends Controller
             "session_id" => request("session"),
             "password" => Hash::make(request("password")),
         ]);
-        return redirect()->back()->with('success', 'Student Created Successfully');
+        return back()->with('success', 'Student Created Successfully');
         // event(new Registered($user));
 
         // Auth::login($user);

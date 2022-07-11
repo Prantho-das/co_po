@@ -1,84 +1,13 @@
 <template>
-    <Head title="Student Result" />
+    <Head title="My Result" />
 
     <BreezeAuthenticatedLayout>
-        <template #header> Student Result </template>
+        <template #header> My Result </template>
 
         <div
             class="p-3 shadow-md rounded-md mx-auto md:w-4/5 w sm:w-11/12 w-full bg-white"
         >
             <form @submit.prevent="findResult">
-                <div class="my-4">
-                    <BreezeLabel for="sessionId" value="Department" />
-                    <select
-                        @change="getBatches"
-                        id="sessionId"
-                        v-model="form.department"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    >
-                        <option selected value="" disabled>
-                            Choose a Department
-                        </option>
-                        <option
-                            class="text-black"
-                            v-for="(dpt, i) in departments"
-                            :key="i"
-                            :value="dpt.id"
-                        >
-                            {{ dpt.name }}
-                        </option>
-                    </select>
-                    <h2 class="text-red-500" v-if="form.errors.department">
-                        {{ form.errors.department }}
-                    </h2>
-                </div>
-                <div class="my-4">
-                    <BreezeLabel for="sessionId" value="Batch" />
-                    <select
-                    @change="studentInfoByBatch"
-                        id="sessionId"
-                        v-model="form.batch"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    >
-                        <option selected value="" disabled>
-                            Choose a Batch
-                        </option>
-                        <option
-                            class="text-black"
-                            v-for="(batch, i) in batches"
-                            :key="i"
-                            :value="batch.id"
-                        >
-                            {{ batch.name }}
-                        </option>
-                    </select>
-                    <h2 class="text-red-500" v-if="form.errors.batch">
-                        {{ form.errors.batch }}
-                    </h2>
-                </div>
-                <div class="my-4">
-                    <BreezeLabel for="sessionId" value="Roll" />
-                    <select
-                        id="sessionId"
-                        v-model="form.student"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    >
-                        <option selected value="" disabled>
-                            Choose a Roll
-                        </option>
-                        <option
-                            class="text-black"
-                            v-for="(student, i) in students"
-                            :key="i"
-                            :value="student.id"
-                        >
-                            {{ student.roll }}
-                        </option>
-                    </select>
-                    <h2 class="text-red-500" v-if="form.errors.roll">
-                        {{ form.errors.roll }}
-                    </h2>
-                </div>
                  <div class="my-4">
                     <BreezeLabel for="sessionId" value="Course" />
                     <select
@@ -110,7 +39,7 @@
                 </BreezeButton>
             </form>
         </div>
-        <div v-if="result" class="overflow-hidden my-8 w-full rounded-lg border shadow-xs">
+      <div v-if="result" class="overflow-hidden my-8 w-full rounded-lg border shadow-xs">
             <div class="overflow-x-auto w-full">
                 <table class="w-full whitespace-no-wrap">
                     <thead>
@@ -176,7 +105,7 @@ import BreezeAuthenticatedLayout from "@/Layouts/Authenticated.vue";
 import Pagination from "@/Components/Pagination.vue";
 import BreezeLabel from "@/Components/Label.vue";
 import { Link, Head } from "@inertiajs/inertia-vue3";
-import BarChart from "../../Components/BarChart.vue";
+import BarChart from "@/Components/BarChart.vue";
 
 export default {
     components: {
@@ -189,37 +118,20 @@ export default {
     Head,
     BarChart
 },
-    props: ["departments",'courses'],
+    props: ["courses"],
     data() {
         return {
-            batches: "",
-            students: "",
             result: "",
             po_result:"",
             form: this.$inertia.form({
-                department: "",
-                batch:"",
-                student:"",
                 course:""
             }),
         };
     },
     methods: {
-        getBatches() {
-            axios
-                .get(this.route("users.studentBatchInfo",this.form.department))
-                .then((res) =>this.batches=res.data)
-                .catch((err)=>console.log(err));
-        },
-        studentInfoByBatch() {
-            axios
-                .get(this.route("users.studentInfoByBatch",this.form.batch))
-                .then((res) =>this.students=res.data)
-                .catch((err)=>console.log(err));
-        },
         findResult() {
             axios
-                .get(this.route("exam.markStudentShow",[this.form.department,this.form.batch,this.form.student,this.form.course]))
+                .get(this.route("student.markShowShow",[this.form.course]))
                 .then((res) => {
                     this.result = res.data.result
                     this.po_result=res.data.po_result

@@ -28,18 +28,19 @@
                 </div>
             </div>
             <form @submit.prevent="semesterCreate" class="mb-4">
-            <h3 class="text-lg">Create semester</h3>
+                <h3 class="text-lg">Create semester</h3>
                 <div class="my-4">
                     <BreezeLabel for="semester" value="Enter Semester" />
                     <BreezeInput
                         id="semester"
                         type="semester"
-                        class="block w-full mt-1 p-1.5 border-2 border-rose-100"
+                        class="block w-full mt-1 p-1.5 border-2 border-indigo-100"
                         v-model="form.semester"
-
                         autocomplete="off"
                     />
-                    <h2 class="text-red-500" v-if="form.errors.semester">{{ form.errors.semester }}</h2>
+                    <h2 class="text-red-500" v-if="form.errors.semester">
+                        {{ form.errors.semester }}
+                    </h2>
                 </div>
 
                 <BreezeButton
@@ -93,7 +94,7 @@ import BreezeButton from "@/Components/Button.vue";
 import BreezeInput from "@/Components/Input.vue";
 import BreezeAuthenticatedLayout from "@/Layouts/Authenticated.vue";
 import Pagination from "@/Components/Pagination.vue";
-import BreezeLabel from '@/Components/Label.vue';
+import BreezeLabel from "@/Components/Label.vue";
 
 export default {
     components: {
@@ -101,7 +102,7 @@ export default {
         Pagination,
         BreezeButton,
         BreezeInput,
-        BreezeLabel
+        BreezeLabel,
     },
     data() {
         return {
@@ -110,7 +111,9 @@ export default {
     },
     methods: {
         semesterCreate() {
-            this.form.post(this.route("semesters.store"),{onSuccess: () => this.form.reset(),});
+            this.form.post(this.route("semesters.store"), {
+                onSuccess: () => this.form.reset(),
+            });
         },
     },
     props: {

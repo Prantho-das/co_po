@@ -18,7 +18,7 @@
                     <BreezeInput
                         id="mark"
                         type="number"
-                        class="block w-full mt-1 p-1.5 border-2 border-rose-100"
+                        class="block w-full mt-1 p-1.5 border-2 border-indigo-100"
                         :max="mk.total"
                         v-model="info.marks[id].mark"
                         required
@@ -93,6 +93,7 @@ export default {
             });
         },
         markCreate() {
+            if (!confirm("Are Your Sure ?")) return false;
             this.$inertia.post(
                 this.route("exam.markStore", this.teacherAssigns.id),
                 this.infos,

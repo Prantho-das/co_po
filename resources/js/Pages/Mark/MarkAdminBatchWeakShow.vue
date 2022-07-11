@@ -1,8 +1,8 @@
 <template>
-    <Head title="Student Result" />
+    <Head title="Batch Weak Result" />
 
     <BreezeAuthenticatedLayout>
-        <template #header> Student Result </template>
+        <template #header> Batch Weak Result </template>
 
         <div
             class="p-3 shadow-md rounded-md mx-auto md:w-4/5 w sm:w-11/12 w-full bg-white"
@@ -35,7 +35,6 @@
                 <div class="my-4">
                     <BreezeLabel for="sessionId" value="Batch" />
                     <select
-                    @change="studentInfoByBatch"
                         id="sessionId"
                         v-model="form.batch"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -57,29 +56,30 @@
                     </h2>
                 </div>
                 <div class="my-4">
-                    <BreezeLabel for="sessionId" value="Roll" />
+                    <BreezeLabel for="sessionId" value="Semester" />
                     <select
+                        @change="courseInfoBySemester"
                         id="sessionId"
-                        v-model="form.student"
+                        v-model="form.semester"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     >
                         <option selected value="" disabled>
-                            Choose a Roll
+                            Choose a Semester
                         </option>
                         <option
                             class="text-black"
-                            v-for="(student, i) in students"
+                            v-for="(semester, i) in semesters"
                             :key="i"
-                            :value="student.id"
+                            :value="semester.id"
                         >
-                            {{ student.roll }}
+                            {{ semester.name }}
                         </option>
                     </select>
-                    <h2 class="text-red-500" v-if="form.errors.roll">
-                        {{ form.errors.roll }}
+                    <h2 class="text-red-500" v-if="form.errors.semester">
+                        {{ form.errors.semester }}
                     </h2>
                 </div>
-                 <div class="my-4">
+                <div class="my-4">
                     <BreezeLabel for="sessionId" value="Course" />
                     <select
                         id="sessionId"
@@ -110,7 +110,10 @@
                 </BreezeButton>
             </form>
         </div>
-        <div v-if="result" class="overflow-hidden my-8 w-full rounded-lg border shadow-xs">
+        <div
+            v-if="weak"
+            class="overflow-hidden my-8 w-full rounded-lg"
+        >
             <div class="overflow-x-auto w-full">
                 <table class="w-full whitespace-no-wrap">
                     <thead>
@@ -118,53 +121,66 @@
                             class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase bg-gray-50 border-b"
                         >
                             <th class="px-4 py-3">*</th>
-                            <th class="px-4 py-3">Co Name</th>
-                            <th class="px-4 py-3">Po Name</th>
+                            <th class="px-4 py-3">Name</th>
+                            <th class="px-4 py-3">Roll</th>
+                            <th class="px-4 py-3">Co No</th>
+                            <th class="px-4 py-3">Po No</th>
                             <th class="px-4 py-3">Marks</th>
                             <th class="px-4 py-3">Total</th>
-                            <th class="px-4 py-3">Resutl Info</th>
+                            <th class="px-4 py-3">Percentage</th>
+                            <th class="px-4 py-3">Result Info</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y">
                         <tr
-                            v-for="(res, i) in result"
+                            v-for="(res, i) in weak"
                             :key="i"
                             class="text-gray-700"
                         >
                             <td class="px-4 py-3 text-sm">
                                 {{ i + 1 }}
                             </td>
-                            <td class="px-4 py-3 text-sm">
-                                {{ res.rel_co.co_name }}
+                             <td class="px-4 py-3 text-sm">
+                                {{ res.name }}
+                            </td>
+                             <td class="px-4 py-3 text-sm">
+                                {{ res.roll }}
                             </td>
                             <td class="px-4 py-3 text-sm">
-                                {{ res.rel_po.po_name }}
+                                {{ res.rel_co.co_no }}
                             </td>
                             <td class="px-4 py-3 text-sm">
-                                {{ res.rel_marks_sum_marks }}
+                                {{ res.rel_po.po_no }}
+                            </td>
+                            <td class="px-4 py-3 text-sm">
+                                {{ res.sum_mark }}
                             </td>
                             <td class="px-4 py-3 text-sm">
                                 {{
-                                    res.rel_marks_sum_total
+                                    res.total_mark
+                                }}
+                            </td>
+                             <td class="px-4 py-3 text-sm">
+                                {{
+                                    res.percentage
                                 }}
                             </td>
                             <td class="px-4 py-3 text-sm bg-gray-100">
                                 <ul>
-                                    <li v-for="info,i in res.rel_marks" :key="i">
-                                        <p class="text-bold">{{info.rel_exam.name}}:<span class="text-blue-600 ml-2">{{info.marks}}</span></p>
+                                    <li v-for="info,i in res.marks" :key="i">
+                                        <p class="text-bold">{{info.rel_exam.name}}:<span class="text-blue-600 ml-2">{{info.marks}}/{{info.total}}</span></p>
                                     </li>
                                 </ul>
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="6" class="px-2 py-2">
+                            <td colspan="9" class="px-2 py-2">
                                 <button class="text-indigo-500 font-weight-bold" @click="downloadPdf">Downlaod Pdf</button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <BarChart :po_result="po_result"/>
         </div>
     </BreezeAuthenticatedLayout>
 </template>
@@ -176,57 +192,63 @@ import BreezeAuthenticatedLayout from "@/Layouts/Authenticated.vue";
 import Pagination from "@/Components/Pagination.vue";
 import BreezeLabel from "@/Components/Label.vue";
 import { Link, Head } from "@inertiajs/inertia-vue3";
-import BarChart from "../../Components/BarChart.vue";
+import PieGoogle from "@/Components/PieGoogle.vue";
 
 export default {
     components: {
-    BreezeAuthenticatedLayout,
-    Pagination,
-    BreezeButton,
-    BreezeInput,
-    BreezeLabel,
-    Link,
-    Head,
-    BarChart
-},
-    props: ["departments",'courses'],
+        BreezeAuthenticatedLayout,
+        Pagination,
+        BreezeButton,
+        BreezeInput,
+        BreezeLabel,
+        Link,
+        Head,
+        PieGoogle
+    },
+    props: ["departments", "semesters"],
     data() {
         return {
             batches: "",
             students: "",
+            courses: "",
             result: "",
-            po_result:"",
+            weak:"",
             form: this.$inertia.form({
                 department: "",
-                batch:"",
-                student:"",
-                course:""
+                batch: "",
+                semester: "",
+                course: "",
             }),
         };
     },
     methods: {
         getBatches() {
             axios
-                .get(this.route("users.studentBatchInfo",this.form.department))
-                .then((res) =>this.batches=res.data)
-                .catch((err)=>console.log(err));
+                .get(this.route("users.studentBatchInfo", this.form.department))
+                .then((res) => (this.batches = res.data))
+                .catch((err) => console.log(err));
         },
-        studentInfoByBatch() {
+        courseInfoBySemester() {
             axios
-                .get(this.route("users.studentInfoByBatch",this.form.batch))
-                .then((res) =>this.students=res.data)
-                .catch((err)=>console.log(err));
+                .get(this.route("course.courseInSemester", this.form.semester))
+                .then((res) => (this.courses = res.data))
+                .catch((err) => console.log(err));
         },
         findResult() {
             axios
-                .get(this.route("exam.markStudentShow",[this.form.department,this.form.batch,this.form.student,this.form.course]))
+                .get(
+                    this.route("exam.adminBatchPoorShow", [
+                        this.form.batch,
+                        this.form.course,
+                    ])
+                )
                 .then((res) => {
                     this.result = res.data.result
-                    this.po_result=res.data.po_result
+                    this.weak=res.data.weak
                 })
-                .catch((err)=>console.log(err));
+                .catch((err) => console.log(err));
         },
-         downloadPdf() {
+        downloadPdf() {
             var html = document.getElementById("pdf").innerHTML;
             let data = new FormData();
             data.append("teacherName", this.teacherAssigns.rel_teacher.name);

@@ -19,6 +19,8 @@
     <script src="{{ asset('js/sweetalert.js') }}"></script>
     <script src="{{ asset('js/chart.min.js') }}"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    {{-- <script type="text/javascript" src="{{ asset('js/loader.js') }}"></script> --}}
+
     @inertiaHead
     <style>
         .v-calendar .input-field.long {

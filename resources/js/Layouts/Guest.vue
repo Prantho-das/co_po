@@ -20,5 +20,23 @@ export default {
     components: {
         Link,
     },
+    watch: {
+        status: {
+            deep: true,
+            handler(val) {
+                if (val && val.success) {
+                    Swal.fire({ title: val.success, icon: "success" });
+                }
+                if (val && val.error) {
+                    Swal.fire({ title: val.error, icon: "info" });
+                }
+            },
+        },
+    },
+    computed: {
+        status() {
+            return this.$page.props.flash;
+        },
+    },
 };
 </script>

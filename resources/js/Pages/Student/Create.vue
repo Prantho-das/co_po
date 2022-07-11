@@ -143,7 +143,7 @@
                         <BreezeInput
                             id="shift"
                             type="tel"
-                            class="block w-full mt-1 p-1.5 border-2 border-rose-100"
+                            class="block w-full mt-1 p-1.5 border-2 border-indigo-100"
                             v-model="shift"
                             required
                             autopomplete="off"
@@ -190,7 +190,7 @@
                     <BreezeInput
                         id="name"
                         type="text"
-                        class="block w-full mt-1 p-1.5 border-2 border-rose-100"
+                        class="block w-full mt-1 p-1.5 border-2 border-indigo-100"
                         v-model="form.name"
                         required
                         autopomplete="off"
@@ -208,7 +208,7 @@
                     <BreezeInput
                         id="email"
                         type="email"
-                        class="block w-full mt-1 p-1.5 border-2 border-rose-100"
+                        class="block w-full mt-1 p-1.5 border-2 border-indigo-100"
                         v-model="form.email"
                         required
                         autopomplete="off"
@@ -226,7 +226,7 @@
                     <BreezeInput
                         id="roll"
                         type="number"
-                        class="block w-full mt-1 p-1.5 border-2 border-rose-100"
+                        class="block w-full mt-1 p-1.5 border-2 border-indigo-100"
                         v-model="form.roll"
                         required
                         autopomplete="off"
@@ -244,7 +244,7 @@
                     <BreezeInput
                         id="reg"
                         type="text"
-                        class="block w-full mt-1 p-1.5 border-2 border-rose-100"
+                        class="block w-full mt-1 p-1.5 border-2 border-indigo-100"
                         v-model="form.reg"
                         required
                         autopomplete="off"
@@ -262,7 +262,7 @@
                     <BreezeInput
                         id="shift"
                         type="tel"
-                        class="block w-full mt-1 p-1.5 border-2 border-rose-100"
+                        class="block w-full mt-1 p-1.5 border-2 border-indigo-100"
                         v-model="form.shift"
                         required
                         autopomplete="off"
@@ -355,7 +355,7 @@
                 <!-- <div class="my-4">
                     <BreezeLabel for="avatar" value="Enter Avatar" class="text-blue-500" />
                     <BreezeInput id="avatar" accept="images/*" @input="form.avatar = $event.target.files[0]" type="file"
-                        class="block w-full mt-1 p-1.5 border-2 border-rose-100" required
+                        class="block w-full mt-1 p-1.5 border-2 border-indigo-100" required
                         autopomplete="off" />
                     <h2 class="text-red-500" v-if="form.errors.avatar">
                         {{ form.errors.avatar }}
@@ -431,7 +431,7 @@ export default {
                     this.session = "";
                     this.department = "";
                     this.shift = "";
-                    document.querySelector('input').value=""
+                    document.querySelector("input").value = "";
                 },
                 onError: (error) => {
                     this.loading = false;

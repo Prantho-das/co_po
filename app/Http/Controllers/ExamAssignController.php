@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AssignMark;
+use App\Models\Comment;
 use App\Models\Course;
 use App\Models\CourseAssign;
 use App\Models\Department;
@@ -325,7 +326,7 @@ class ExamAssignController extends Controller
     public function markBatchShow($id)
     {
         $teacherAssigns = TeacherAssignCourse::with('relTeacher', 'relBatch', 'relCourse')->findOrFail($id);
-
+        $comment = Comment::where('t_assign_course_id', $id)->first();
         $copos = CourseAssign::where('course_id', $teacherAssigns->course_id)->get();
         $arr = [];
         foreach ($copos as $key => $value) {
@@ -361,7 +362,7 @@ class ExamAssignController extends Controller
             }
         }
         // return $arr;
-        return Inertia::render('Mark/MarkBatchShow', ['data' => $arr, 'teacherAssigns' => $teacherAssigns]);
+        return Inertia::render('Mark/MarkBatchShow', ['data' => $arr, 'teacherAssigns' => $teacherAssigns,'chart_comment'=>$comment]);
     }
     public function markStudentIndex()
     {
@@ -487,7 +488,8 @@ class ExamAssignController extends Controller
         }
         return response(['result' => $result, 'po_result' => $po_result]);
     }
-    public function completePoIndex(){
+    public function completePoIndex()
+    {
         $student = Auth::guard('student')->user();
         $result = AssignMark::with('relCo', 'relPo', 'relMarks.relExam')
             ->where('batch_id', $student->batch_id)
@@ -521,6 +523,25 @@ class ExamAssignController extends Controller
             array_push($po_result, $tempdata);
             $tempdata = [];
         }
-        return Inertia::render('Student/Front/MarkPoShow',['po_result' => $po_result]);
+        return Inertia::render('Student/Front/MarkPoShow', ['po_result' => $po_result]);
+    }
+
+    public function markComment()
+    {
+        request()->validate([
+            'teacher_course' => 'required|exists:teacher_assign_courses,id',
+            'comment' => 'required',
+        ]);
+
+        $teacherAssign = TeacherAssignCourse::findOrFail(request('teacher_course'));
+
+        Comment::updateOrCreate([
+            't_assign_course_id' => $teacherAssign->id,
+        ], [
+            't_assign_course_id' => $teacherAssign->id,
+            'teacher_id' => auth()->id(),
+            'comment' => trim(request('comment')),
+        ]);
+        return back()->with(['success' => 'Comment Added Successfully']);
     }
 }

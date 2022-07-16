@@ -87,15 +87,29 @@
                 v-if="commentStatus"
                 class="my-3 bg-white rounded-lg shadow-md p-2"
             >
-                <textarea
-                    v-model="comment"
-                    placeholder="Enter Your Comment"
-                    name=""
-                    id=""
-                    cols="30"
-                    class="w-full border-1 border-indigo-400 rounded-lg"
-                    rows="4"
-                ></textarea>
+                <form @keyup.enter="commentDone">
+                    <textarea
+                        v-model="comment"
+                        placeholder="Enter Your Comment"
+                        name=""
+                        id=""
+                        cols="30"
+                        class="w-full border-1 border-indigo-400 rounded-lg"
+                        rows="4"
+                    ></textarea>
+                    <span
+                        class="text-red-500 my-2"
+                        v-if="errors && errors.teacher_course"
+                    >
+                        {{ errors.teacher_course[0] }}</span
+                    >
+                    <span
+                        class="text-red-500 my-2"
+                        v-if="errors && errors.comment"
+                    >
+                        {{ errors.comment[0] }}</span
+                    >
+                </form>
             </div>
             <div id="pdf">
                 <div class="chart_wrapper">
@@ -136,11 +150,30 @@ export default {
         return {
             commentStatus: false,
             loading: false,
-            comment: '',
+            comment: "",
+            errors: null,
         };
     },
-    props: ["data", "teacherAssigns"],
+    props: ["data", "teacherAssigns", "chart_comment"],
+    mounted() {
+        this.comment = this.chart_comment.comment;
+    },
     methods: {
+        commentDone(e) {
+            e.preventDefault();
+            axios
+                .post(this.route("exam.markComment"), {
+                    comment: this.comment,
+                    teacher_course: this.teacherAssigns.id,
+                })
+                .then((response) => {
+                    this.errors = null;
+                    Swal.fire({ title: "Comment Added", icon: "success" });
+                })
+                .catch((error) => {
+                    this.errors = error.response.data.errors;
+                });
+        },
         downloadPdf() {
             var html = document.getElementById("pdf").innerHTML;
             let data = new FormData();
@@ -160,7 +193,10 @@ export default {
                     );
                     const link = document.createElement("a");
                     link.href = url;
-                    link.setAttribute("download", `co_by_batch${new Date().getMilliseconds()}.pdf`);
+                    link.setAttribute(
+                        "download",
+                        `co_by_batch${new Date().getMilliseconds()}.pdf`
+                    );
                     document.body.appendChild(link);
                     link.click();
                 })

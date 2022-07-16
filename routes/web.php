@@ -252,6 +252,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/exam-mark/{id}', [ExamAssignController::class, 'markCreate'])->name('exam.markCreate');
     Route::post('/exam-mark/{id}', [ExamAssignController::class, 'markStore'])->name('exam.markStore');
     Route::post('/exam-mark-draft/{id}', [ExamAssignController::class, 'draftMark'])->name('exam.markDraft');
+    Route::post('/teacher/exam-mark-comment', [ExamAssignController::class, 'markComment'])->name('exam.markComment');
 
 
     Route::get('/mark-show/batch/{id}', [ExamAssignController::class, 'markBatchShow'])->name('exam.markBatchShow');

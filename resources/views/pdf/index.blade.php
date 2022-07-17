@@ -86,7 +86,7 @@
         tbody tr {
             font-family: OpenSans-Regular;
             font-size: 15px;
-            color: #808080;
+            color: black;
             line-height: 1.2;
             font-weight: unset;
         }

@@ -10,6 +10,8 @@
     <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
 
+    <!-- Styles -->
+    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
 
     <!-- Scripts -->
     @routes
@@ -18,7 +20,7 @@
     <script src="{{ asset('js/chart.min.js') }}"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     {{-- <script type="text/javascript" src="{{ asset('js/loader.js') }}"></script> --}}
-    @vite('resources/js/app.js')
+
     @inertiaHead
     <style>
         .v-calendar .input-field.long {

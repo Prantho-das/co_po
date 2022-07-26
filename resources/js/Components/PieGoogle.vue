@@ -2,7 +2,7 @@
     <table style="margin-bottom: 1.2rem">
         <tbody>
             <tr>
-                <td style="width:50%;">
+                <td style="width: 50%">
                     <div class="table100">
                         <h2 class="mb-3">
                             <span class="text-blue-400"
@@ -41,15 +41,23 @@
                                                 : "_"
                                         }}
                                     </td>
-                                    <td class="column4">
+                                    <td
+                                        class="column4"
+                                        :style="{
+                                            backgroundColor: markPercentColor(
+                                                result.rel_marks_sum_marks,
+                                                result.rel_marks_sum_total
+                                            ),
+                                            color: 'white',
+                                        }"
+                                    >
                                         {{
                                             result.rel_marks_sum_total &&
                                             result.rel_marks_sum_marks
-                                                ? (
-                                                      (result.rel_marks_sum_marks /
-                                                          result.rel_marks_sum_total) *
-                                                      100
-                                                  ).toFixed(3)
+                                                ? markPercent(
+                                                      result.rel_marks_sum_marks,
+                                                      result.rel_marks_sum_total
+                                                  )
                                                 : "_"
                                         }}
                                     </td>
@@ -58,7 +66,7 @@
                         </table>
                     </div>
                 </td>
-                <td style="width:50%;">
+                <td style="width: 50%">
                     <div :id="name" style="height: 400px"></div>
                 </td>
             </tr>
@@ -121,6 +129,25 @@ export default {
         "above_80",
         "results",
     ],
+    methods: {
+        markPercent(mark, total) {
+            let percentage = ((mark / total) * 100).toFixed(3);
+            return percentage;
+        },
+        markPercentColor(mark, total) {
+            let percentage = ((mark / total) * 100).toFixed(3);
+            if (percentage >= 80) {
+                return "rgb(0,128,0)";
+            } else if (percentage <= 79 && percentage >= 60) {
+                return "rgb(0, 110, 189)";
+            } else if (percentage <= 59 && percentage >= 40) {
+                return "rgb(255, 251, 1)";
+            } else {
+                return "rgb(255,0,0)";
+            }
+        },
+    },
+
     components: { ResultTable },
 };
 </script>

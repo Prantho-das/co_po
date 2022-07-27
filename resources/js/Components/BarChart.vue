@@ -10,16 +10,21 @@ export default {
     },
     props: ["po_result"],
     methods: {
+         markPercentColor(percentage) {
+            if (percentage >= 80) {
+                return "rgb(0,128,0)";
+            } else if (percentage <= 79 && percentage >= 60) {
+                return "rgb(0, 110, 189)";
+            } else if (percentage <= 59 && percentage >= 40) {
+                return "rgb(255, 251, 1)";
+            } else {
+                return "rgb(255,0,0)";
+            }
+        },
         drawBasic() {
             let dataRow = [["PO", "Po Percent Rate", { role: "style" }]];
             this.po_result.forEach((val) => {
-                let colors = [
-                    'rgb(255, 0, 0)',
-                    'rgb(0, 110, 189)',
-                    'rgb(255, 251, 1)',
-                    'rgb(0, 128, 0)',
-                ];
-                dataRow.push([val.po_no, val.percent, `color: ${colors[Math.floor(Math.random()*4)]}`]);
+                dataRow.push([val.po_no, val.percent, `color: ${this.markPercentColor(val.percent)}`]);
             });
 
             var data = google.visualization.arrayToDataTable(dataRow);

@@ -11,7 +11,10 @@ class ExamAssign extends Model
     protected $guarded=[];
 
     protected $table= "exam_assigns";
-
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
     public function relCo()
     {
         return $this->hasOne(CourseOutcome::class, 'id', 'co_id');

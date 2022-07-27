@@ -10,7 +10,10 @@ class CourseAssign extends Model
     use HasFactory;
 
     protected $guarded = [];
-
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
 
     public function relCo(){
         return $this->hasOne(CourseOutcome::class,'id','co_id');

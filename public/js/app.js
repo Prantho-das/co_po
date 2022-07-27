@@ -21678,13 +21678,25 @@ __webpack_require__.r(__webpack_exports__);
   },
   props: ["po_result"],
   methods: {
+    markPercentColor: function markPercentColor(percentage) {
+      if (percentage >= 80) {
+        return "rgb(0,128,0)";
+      } else if (percentage <= 79 && percentage >= 60) {
+        return "rgb(0, 110, 189)";
+      } else if (percentage <= 59 && percentage >= 40) {
+        return "rgb(255, 251, 1)";
+      } else {
+        return "rgb(255,0,0)";
+      }
+    },
     drawBasic: function drawBasic() {
+      var _this = this;
+
       var dataRow = [["PO", "Po Percent Rate", {
         role: "style"
       }]];
       this.po_result.forEach(function (val) {
-        var colors = ['rgb(255, 0, 0)', 'rgb(0, 110, 189)', 'rgb(255, 251, 1)', 'rgb(0, 128, 0)'];
-        dataRow.push([val.po_no, val.percent, "color: ".concat(colors[Math.floor(Math.random() * 4)])]);
+        dataRow.push([val.po_no, val.percent, "color: ".concat(_this.markPercentColor(val.percent))]);
       });
       var data = google.visualization.arrayToDataTable(dataRow);
       var options = {
@@ -23466,7 +23478,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   props: ["data", "teacherAssigns", "chart_comment"],
   mounted: function mounted() {
-    this.comment = this.chart_comment.comment;
+    this.comment = this.chart_comment ? this.chart_comment.comment : "";
   },
   methods: {
     commentDone: function commentDone(e) {
@@ -24857,7 +24869,7 @@ var _withScopeId = function _withScopeId(n) {
 
 var _hoisted_1 = {
   style: {
-    "margin-bottom": "1.2rem"
+    "margin-bottom": "20px"
   }
 };
 var _hoisted_2 = {
@@ -24908,14 +24920,15 @@ var _hoisted_11 = {
 };
 var _hoisted_12 = {
   style: {
-    "width": "50%"
+    "width": "50%",
+    "vertical-align": "top"
   }
 };
 var _hoisted_13 = ["id"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("table", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_5, "Po name:-" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.po_name), 1
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("table", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_5, "Po name:-" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.po_name) + "(" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.po_no) + ")", 1
   /* TEXT */
-  ), _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_7, "Co name:-" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.co_name), 1
+  ), _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_7, "Co name:-" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.co_name) + "(" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.co_no) + ")", 1
   /* TEXT */
   )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", null, [_hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.results, function (result, i) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", {
@@ -24930,7 +24943,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       "class": "column4",
       style: (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeStyle)({
         backgroundColor: $options.markPercentColor(result.rel_marks_sum_marks, result.rel_marks_sum_total),
-        color: 'white'
+        color: 'black'
       })
     }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(result.rel_marks_sum_total && result.rel_marks_sum_marks ? $options.markPercent(result.rel_marks_sum_marks, result.rel_marks_sum_total) : "_"), 5
     /* TEXT, STYLE */
@@ -24940,7 +24953,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   ))])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     id: $props.name,
     style: {
-      "height": "400px"
+      "height": "500px"
     }
   }, null, 8
   /* PROPS */
@@ -30202,10 +30215,16 @@ var _hoisted_25 = {
   "class": "text-red-500 my-2"
 };
 var _hoisted_26 = {
-  id: "pdf"
+  id: "pdf",
+  style: {
+    "margin-top": "0px !important"
+  }
 };
 var _hoisted_27 = {
-  "class": "chart_wrapper"
+  "class": "chart_wrapper",
+  style: {
+    "margin-top": "0px !important"
+  }
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Head = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Head");

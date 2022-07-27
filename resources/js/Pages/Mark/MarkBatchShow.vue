@@ -111,8 +111,8 @@
                     >
                 </form>
             </div>
-            <div id="pdf">
-                <div class="chart_wrapper">
+            <div id="pdf" style="margin-top:0px !important;">
+                <div class="chart_wrapper" style="margin-top:0px !important;">
                     <PieGoogle
                         v-for="(dt, i) in data"
                         :key="i"
@@ -156,7 +156,7 @@ export default {
     },
     props: ["data", "teacherAssigns", "chart_comment"],
     mounted() {
-        this.comment = this.chart_comment.comment;
+        this.comment = this.chart_comment? this.chart_comment.comment : "";
     },
     methods: {
         commentDone(e) {

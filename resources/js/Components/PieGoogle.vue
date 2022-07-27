@@ -1,16 +1,16 @@
 <template>
-    <table style="margin-bottom: 1.2rem">
+    <table style="margin-bottom: 20px">
         <tbody>
             <tr>
                 <td style="width: 50%">
                     <div class="table100">
                         <h2 class="mb-3">
                             <span class="text-blue-400"
-                                >Po name:-{{ po_name }}</span
+                                >Po name:-{{ po_name }}({{po_no}})</span
                             >
                             |
                             <span class="text-green-400"
-                                >Co name:-{{ co_name }}</span
+                                >Co name:-{{ co_name }}({{co_no}})</span
                             >
                         </h2>
                         <table>
@@ -48,7 +48,7 @@
                                                 result.rel_marks_sum_marks,
                                                 result.rel_marks_sum_total
                                             ),
-                                            color: 'white',
+                                            color: 'black',
                                         }"
                                     >
                                         {{
@@ -66,8 +66,8 @@
                         </table>
                     </div>
                 </td>
-                <td style="width: 50%">
-                    <div :id="name" style="height: 400px"></div>
+                <td style="width: 50%; vertical-align: top;">
+                    <div :id="name" style="height: 500px"></div>
                 </td>
             </tr>
         </tbody>

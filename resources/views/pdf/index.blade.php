@@ -12,8 +12,6 @@
             max-width: 100% !important;
         }
 
-        /* ------------------------------------ */
-
         .table100 {
             width: 95%;
         }
@@ -109,6 +107,7 @@
             text-align: right;
             padding-right: 1rem;
         }
+
     </style>
 </head>
 
@@ -124,13 +123,11 @@
         <h2>Course Name: {{ $courseName }}</h2>
         <h2>Course Code: {{ $courseCode }}</h2>
     </div>
-    @if ($comment != null)
-        <hr style="margin:1rem 0rem;" />
-        <h3><span style='font-weight:bold;'>Comment:</span> {{ $comment }}</h3>
-    @endif
-    <hr style="margin:1rem 0rem;" />
-    <div style="border-left: 1px solid blue;border-right: 1px solid blue;">
-        {!! $data !!}
+    {{-- {!!$comment!!} --}}
+    <div>
+        <div style="border-left: 1px solid blue;border-right: 1px solid blue;">
+            {!! $data !!}
+        </div>
     </div>
 </body>
 

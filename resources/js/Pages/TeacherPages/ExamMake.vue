@@ -47,7 +47,7 @@
                     <BreezeLabel for="mark" value="Marks" />
                     <BreezeInput
                         id="mark"
-                        type="number"
+                        type="string"
                         class="block w-full mt-1 p-1.5 border-2 border-indigo-100"
                         v-model="form.marks"
                         required

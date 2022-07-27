@@ -37,7 +37,7 @@ use PhpParser\Node\Expr\Assign;
 */
 
 Route::get('/test', function () {
-
+    return view('pdf.index', ['data' => '<h1>prantho</h1>', 'content' => '<h1>prantho</h1>', 'teacherName' => 'prantho', 'batchName' => 'prantho', 'courseName' => 'prantho', 'courseCode' => 'prantho', 'comment' => 'prantho']);
 
     $poors = AssignMark::where('batch_id', 1)
         ->where('course_id', 1)

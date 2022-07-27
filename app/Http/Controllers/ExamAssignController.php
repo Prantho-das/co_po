@@ -319,7 +319,11 @@ class ExamAssignController extends Controller
     public function markBatchDownload()
     {
         $content = '<style>' . file_get_contents(public_path() . '/css/app.css') . '</style>';
-        $pdf = Pdf::loadView('pdf.index', ['data' => request()->html, 'content' => $content, 'teacherName' => request()->teacherName, 'batchName' => request()->batchName, 'courseName' => request()->courseName, 'courseCode' => request()->courseCode, 'comment' => request()->comment]);
+        $comment = "";
+        if (!is_null(request()->comment) || isset(request()->comment)) {
+            $comment= "<span margin-bottom:0px !important;><span style='font-weight:bold;'>Comment:</span>".request()->comment."</span>";
+        }
+        $pdf = Pdf::loadView('pdf.index', ['data' => trim(request()->html), 'content' => $content, 'teacherName' => request()->teacherName, 'batchName' => request()->batchName, 'courseName' => request()->courseName, 'courseCode' => request()->courseCode, 'comment' => $comment]);
 
         return $pdf->download('test.pdf');
     }
@@ -328,6 +332,7 @@ class ExamAssignController extends Controller
         $teacherAssigns = TeacherAssignCourse::with('relTeacher', 'relBatch', 'relCourse')->findOrFail($id);
         $comment = Comment::where('t_assign_course_id', $id)->first();
         $copos = CourseAssign::where('course_id', $teacherAssigns->course_id)->get();
+
         $arr = [];
         foreach ($copos as $key => $value) {
             $mrks = AssignMark::with('relCo:id,co_name', 'relPo:id,po_name', 'relMarks')
@@ -338,6 +343,7 @@ class ExamAssignController extends Controller
                 ->withSum('relMarks', 'marks')
                 ->withSum('relMarks', 'total')
                 ->get();
+            $exams = ExamAssign::where('t_assign_courses_id', $id)->where('co_id', $value->co_id)->get();
             if (!empty($mrks) && count($mrks) > 0) {
                 foreach ($mrks as $key => $val) {
                     $percentage = ((int)$val->rel_marks_sum_marks / (int)$val->rel_marks_sum_total) * 100;
@@ -349,6 +355,7 @@ class ExamAssignController extends Controller
                     $arr[$arr_index]['co_no'] = $value->relCo->co_no;
                     $arr[$arr_index]['po_no']  = $value->relPo->po_no;
                     $arr[$arr_index]['result']  = $mrks;
+                    $arr[$arr_index]['exams'] = $exams;
                     if ($percentage >= 80) {
                         $arr[$arr_index]['80'] = isset($arr[$arr_index]['80']) ? $arr[$arr_index]['80'] + 1 : 1;
                     } elseif ($percentage <= 79 && $percentage >= 60) {
@@ -362,7 +369,7 @@ class ExamAssignController extends Controller
             }
         }
         // return $arr;
-        return Inertia::render('Mark/MarkBatchShow', ['data' => $arr, 'teacherAssigns' => $teacherAssigns,'chart_comment'=>$comment]);
+        return Inertia::render('Mark/MarkBatchShow', ['data' => $arr, 'teacherAssigns' => $teacherAssigns, 'chart_comment' => $comment]);
     }
     public function markStudentIndex()
     {

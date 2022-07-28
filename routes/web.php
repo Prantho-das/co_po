@@ -268,6 +268,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('admin/mark-show/poor-student', [ExamAssignController::class, 'adminBatchPoorIndex'])->name('exam.adminBatchPoorIndex');
     Route::get('admin/mark-show/poor-student/{bid}/{cid}', [ExamAssignController::class, 'adminBatchPoorShow'])->name('exam.adminBatchPoorShow');
+    Route::get('admin/year-po-mark-show/{year}/{pid}', [ExamAssignController::class, 'deanYearPoReport'])->name('exam.deanYearPoReport');
 
     //Route::post('admin/mark-download/batch', [ExamAssignController::class, 'markBatchDownload'])->name('exam.markBatchDownload');
 

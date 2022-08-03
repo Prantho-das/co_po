@@ -16,6 +16,7 @@ use App\Models\CourseAssign;
 use App\Models\Marks;
 use App\Models\StudentBatch;
 use App\Models\Students;
+use App\Models\TeacherAssignCourse;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
@@ -37,6 +38,16 @@ use PhpParser\Node\Expr\Assign;
 */
 
 Route::get('/test', function () {
+
+        $satisfiedBatch=TeacherAssignCourse::whereYear('created_at', '2022')->whereHas('relCoPo',function($query){
+            return $query->where('po_id',1);
+        })->with('relCoPo')->get();
+
+
+
+
+
+        
     return view('pdf.index', ['data' => '<h1>prantho</h1>', 'content' => '<h1>prantho</h1>', 'teacherName' => 'prantho', 'batchName' => 'prantho', 'courseName' => 'prantho', 'courseCode' => 'prantho', 'comment' => 'prantho']);
 
     $poors = AssignMark::where('batch_id', 1)

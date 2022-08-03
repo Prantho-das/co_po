@@ -38,4 +38,8 @@ class TeacherAssignCourse extends Model
     {
         return $this->hasOne(Course::class,'id','course_id');
     }
+    public function relCoPo()
+    {
+        return $this->hasMany(CourseAssign::class,'course_id','course_id');
+    }
 }

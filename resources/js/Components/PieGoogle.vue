@@ -1,4 +1,27 @@
 <template>
+    <div class="my-3 bg-white rounded-lg shadow-md p-2 comment_box">
+        <h6 class="text-blue-600"></h6>
+        <form @keyup.enter="commentDone">
+            <textarea
+                v-model="comment"
+                placeholder="Enter Your Comment"
+                name=""
+                id=""
+                cols="30"
+                class="w-full border-1 border-indigo-400 rounded-lg"
+                rows="4"
+            ></textarea>
+            <span
+                class="text-red-500 my-2"
+                v-if="errors && errors.teacher_course"
+            >
+                {{ errors.teacher_course[0] }}</span
+            >
+            <span class="text-red-500 my-2" v-if="errors && errors.comment">
+                {{ errors.comment[0] }}</span
+            >
+        </form>
+    </div>
     <table style="margin-bottom: 20px">
         <tbody>
             <tr>
@@ -6,11 +29,11 @@
                     <div class="table100">
                         <h2 class="mb-3">
                             <span class="text-blue-400"
-                                >Po name:-{{ po_name }}({{po_no}})</span
+                                >Po name:-{{ po_name }}({{ po_no }})</span
                             >
                             |
                             <span class="text-green-400"
-                                >Co name:-{{ co_name }}({{co_no}})</span
+                                >Co name:-{{ co_name }}({{ co_no }})</span
                             >
                         </h2>
                         <table>
@@ -66,8 +89,11 @@
                         </table>
                     </div>
                 </td>
-                <td style="width: 50%; vertical-align: top;">
+                <td style="width: 50%; vertical-align: top">
                     <div :id="name" style="height: 500px"></div>
+                    <p class="ml-2 my-2 p-2 rounded bg-gray-300" v-if="comment">
+                        <span class="text-lg capitalize">comment: </span>{{comment}}
+                    </p>
                 </td>
             </tr>
         </tbody>
@@ -79,9 +105,13 @@ import ResultTable from "./ResultTable.vue";
 export default {
     name: "PieChart",
     data() {
-        return {};
+        return {
+            comment:null,
+            errors:null,
+        };
     },
     mounted() {
+        this.comment=this.comments?this.comments.comment:null;
         let self = this;
         if (self.name) {
             google.charts.load("current", { packages: ["corechart"] });
@@ -128,8 +158,29 @@ export default {
         "below_60",
         "above_80",
         "results",
+        "co_id",
+        "po_id",
+        "comments",
+        "teacherAssigns_id",
     ],
     methods: {
+        commentDone(e) {
+            e.preventDefault();
+            axios
+                .post(this.route("exam.markComment"), {
+                    comment: this.comment,
+                    teacher_course: this.teacherAssigns_id,
+                    co_id: this.co_id,
+                    po_id: this.po_id,
+                })
+                .then((response) => {
+                    this.errors = null;
+                    Swal.fire({ title: "Comment Added", icon: "success" });
+                })
+                .catch((error) => {
+                    this.errors = error.response.data.errors;
+                });
+        },
         markPercent(mark, total) {
             let percentage = ((mark / total) * 100).toFixed(3);
             return percentage;

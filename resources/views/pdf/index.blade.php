@@ -8,6 +8,9 @@
     {!! $content !!}
     <title>Chart</title>
     <style>
+        .comment_box{
+            display: none !important;
+        }
         img {
             max-width: 100% !important;
         }
@@ -125,9 +128,7 @@
     </div>
     {{-- {!!$comment!!} --}}
     <div>
-        <div style="border-left: 1px solid blue;border-right: 1px solid blue;">
             {!! $data !!}
-        </div>
     </div>
 </body>
 

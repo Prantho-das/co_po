@@ -23,6 +23,79 @@ use Illuminate\Support\Str;
 
 class ExamAssignController extends Controller
 {
+    public function deanYearPoReport($year, $pid)
+    {
+        $satisfiedBatch = TeacherAssignCourse::whereYear('created_at', $year)->whereHas('relCoPo', function ($query) use ($pid) {
+            return $query->where('po_id', $pid);
+        })->with('relCoPo', 'relCourse')->get();
+
+        $studentPo = [];
+        $tempdata = [];
+        $batchPo = [];
+        $percentageCount =   [];
+        foreach ($satisfiedBatch as $batch) {
+            $students = Students::with('relBatch')->where('batch_id', $batch->batch_id)->get();
+
+            foreach ($students as $student) {
+                $result = AssignMark::with('relCo', 'relPo', 'relMarks.relExam')
+                    ->where('course_id', $batch->course_id)
+                    ->where('batch_id', $batch->batch_id)
+                    ->where('student_id', $student->id)
+                    ->where('po_id', 1)
+                    ->withSum('relMarks', 'marks')
+                    ->withSum('relMarks', 'total')
+                    ->get();
+
+                $markSum = 0;
+                $totalSum = 0;
+                if ($result || count($result) > 0) {
+                    foreach ($result as $po) {
+                        $tempdata['co_no'] = [];
+                        $tempdata['po_name'] = $po->relPo->po_name;
+                        $tempdata['po_no'] = $po->relPo->po_no;
+                        $markSum += $po->rel_marks_sum_marks;
+                        $totalSum += $po->rel_marks_sum_total;
+                        array_push($tempdata['co_no'], $po->relCo->co_no);
+                        $marks = [];
+                        foreach ($po->relMarks as $val) {
+                            array_push($marks, ['mark' => $val->marks, 'co_no' => $po->relCo->co_no, 'total' => $val->total, 'name' => $val->relExam->name]);
+                        }
+                        $tempdata['marks'] = $marks;
+                        $marks = [];
+                        $tempdata['markSum'] = $markSum;
+                        $tempdata['totalSum'] = $totalSum;
+                        $tempdata['percent'] = ($markSum / $totalSum) * 100;
+                    }
+                    if ($tempdata && $tempdata['percent']) {
+
+                        if ($tempdata['percent'] >= 80) {
+                            $percentageCount['80'] = isset($percentageCount['80']) ? $percentageCount['80'] + 1 : 1;
+                        } elseif ($tempdata['percent'] <= 79 && $tempdata['percent'] >= 60) {
+                            $percentageCount['79-60'] = isset($percentageCount['79-60']) ? $percentageCount['79-60'] + 1 : 1;
+                        } elseif ($tempdata['percent'] <= 59 && $tempdata['percent'] >= 40) {
+                            $percentageCount['59-40'] = isset($percentageCount['59-40']) ? $percentageCount['59-40'] + 1 : 1;
+                        } else {
+                            $percentageCount['below_40'] = isset($percentageCount['below_40']) ? $percentageCount['below_40'] + 1 : 1;
+                        }
+                        array_push($studentPo, [
+                            'name' => $student->name,
+                            'po_result' => $tempdata
+                        ]);
+                    }
+                    $tempdata = [];
+                }
+            }
+            array_push($batchPo, [
+                'coruse_name' => $batch->relCourse->c_name,
+                'batch_id' => $batch->batch_id,
+                'batch_name' => $batch->relBatch->name,
+                'student_po' => $studentPo,
+                'percentageCount' => $percentageCount
+            ]);
+            $studentPo = [];
+        }
+        return $batchPo;
+    }
     public function adminBatchPoorIndex()
     {
         $departments = Department::where('name', '!=', 'boat')->get();
@@ -238,38 +311,38 @@ class ExamAssignController extends Controller
                     ->where('co_id', $mark['co_id'])
                     ->where('course_id', $teacherAssigns->course_id)
                     ->first();
-                // if ($mark['mark']) {
-                if ($assignMark) {
-                    Marks::create([
-                        'student_id' => $s_id,
-                        'assign_marks_id' => $assignMark->id,
-                        'exam_id' => $mark['exam_id'],
-                        'marks' => $mark['mark'],
-                        'total' => $mark['total']
-                    ]);
-                } else {
-                    $newAssignMark = AssignMark::create([
-                        'student_id' => $s_id,
-                        'batch_id' => $teacherAssigns->batch_id,
-                        'roll' => $roll,
-                        'course_id' => $teacherAssigns->course_id,
-                        'copo_id' => $mark['copo_id'],
-                        'co_id' => $mark['co_id'],
-                        'po_id' => $mark['po_id'],
-                        't_assign_courses_id' => $id,
-                        'teacher_id' => $teacherAssigns->user_id,
-                    ]);
-                    Marks::create([
-                        'student_id' => $s_id,
-                        'assign_marks_id' => $newAssignMark->id,
-                        'exam_id' => $mark['exam_id'],
-                        'marks' => $mark['mark'],
-                        'total' => $mark['total']
-                    ]);
+                if ($mark['mark']) {
+                    if ($assignMark) {
+                        Marks::create([
+                            'student_id' => $s_id,
+                            'assign_marks_id' => $assignMark->id,
+                            'exam_id' => $mark['exam_id'],
+                            'marks' => $mark['mark'],
+                            'total' => $mark['total']
+                        ]);
+                    } else {
+                        $newAssignMark = AssignMark::create([
+                            'student_id' => $s_id,
+                            'batch_id' => $teacherAssigns->batch_id,
+                            'roll' => $roll,
+                            'course_id' => $teacherAssigns->course_id,
+                            'copo_id' => $mark['copo_id'],
+                            'co_id' => $mark['co_id'],
+                            'po_id' => $mark['po_id'],
+                            't_assign_courses_id' => $id,
+                            'teacher_id' => $teacherAssigns->user_id,
+                        ]);
+                        Marks::create([
+                            'student_id' => $s_id,
+                            'assign_marks_id' => $newAssignMark->id,
+                            'exam_id' => $mark['exam_id'],
+                            'marks' => $mark['mark'],
+                            'total' => $mark['total']
+                        ]);
+                    }
+                    ExamAssign::findOrFail($mark['exam_id'])->update(['mark_assign_done' => now()]);
+                    DraftMark::where('t_assign_courses_id', $id)->delete();
                 }
-                ExamAssign::findOrFail($mark['exam_id'])->update(['mark_assign_done' => now()]);
-                DraftMark::where('t_assign_courses_id', $id)->delete();
-                // }
             }
 
 
@@ -321,7 +394,7 @@ class ExamAssignController extends Controller
         $content = '<style>' . file_get_contents(public_path() . '/css/app.css') . '</style>';
         $comment = "";
         if (!is_null(request()->comment) || isset(request()->comment)) {
-            $comment= "<span margin-bottom:0px !important;><span style='font-weight:bold;'>Comment:</span>".request()->comment."</span>";
+            $comment = "<span margin-bottom:0px !important;><span style='font-weight:bold;'>Comment:</span>" . request()->comment . "</span>";
         }
         $pdf = Pdf::loadView('pdf.index', ['data' => trim(request()->html), 'content' => $content, 'teacherName' => request()->teacherName, 'batchName' => request()->batchName, 'courseName' => request()->courseName, 'courseCode' => request()->courseCode, 'comment' => $comment]);
 
@@ -330,7 +403,7 @@ class ExamAssignController extends Controller
     public function markBatchShow($id)
     {
         $teacherAssigns = TeacherAssignCourse::with('relTeacher', 'relBatch', 'relCourse')->findOrFail($id);
-        $comment = Comment::where('t_assign_course_id', $id)->first();
+
         $copos = CourseAssign::where('course_id', $teacherAssigns->course_id)->get();
 
         $arr = [];
@@ -343,6 +416,8 @@ class ExamAssignController extends Controller
                 ->withSum('relMarks', 'marks')
                 ->withSum('relMarks', 'total')
                 ->get();
+            $comment = Comment::where('t_assign_course_id', $id)->where('co_id', $value->id)->first();
+
             $exams = ExamAssign::where('t_assign_courses_id', $id)->where('co_id', $value->co_id)->get();
             if (!empty($mrks) && count($mrks) > 0) {
                 foreach ($mrks as $key => $val) {
@@ -356,6 +431,7 @@ class ExamAssignController extends Controller
                     $arr[$arr_index]['po_no']  = $value->relPo->po_no;
                     $arr[$arr_index]['result']  = $mrks;
                     $arr[$arr_index]['exams'] = $exams;
+                    $arr[$arr_index]['comment'] = $comment;
                     if ($percentage >= 80) {
                         $arr[$arr_index]['80'] = isset($arr[$arr_index]['80']) ? $arr[$arr_index]['80'] + 1 : 1;
                     } elseif ($percentage <= 79 && $percentage >= 60) {
@@ -368,7 +444,7 @@ class ExamAssignController extends Controller
                 }
             }
         }
-        // return $arr;
+       // return $arr;
         return Inertia::render('Mark/MarkBatchShow', ['data' => $arr, 'teacherAssigns' => $teacherAssigns, 'chart_comment' => $comment]);
     }
     public function markStudentIndex()
@@ -419,6 +495,7 @@ class ExamAssignController extends Controller
             array_push($po_result, $tempdata);
             $tempdata = [];
         }
+        // return $po_result;
         return response(['result' => $result, 'po_result' => $po_result]);
     }
 
@@ -538,16 +615,21 @@ class ExamAssignController extends Controller
         request()->validate([
             'teacher_course' => 'required|exists:teacher_assign_courses,id',
             'comment' => 'required',
+            'co_id' => 'required',
+            'po_id' => 'required',
         ]);
 
         $teacherAssign = TeacherAssignCourse::findOrFail(request('teacher_course'));
 
         Comment::updateOrCreate([
             't_assign_course_id' => $teacherAssign->id,
+            'co_id' => request('co_id'),
         ], [
             't_assign_course_id' => $teacherAssign->id,
             'teacher_id' => auth()->id(),
             'comment' => trim(request('comment')),
+            'co_id' => request('co_id'),
+            'po_id' => request('po_id'),
         ]);
         return back()->with(['success' => 'Comment Added Successfully']);
     }

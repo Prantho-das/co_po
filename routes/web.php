@@ -26,6 +26,8 @@ use Inertia\Inertia;
 use Illuminate\Support\Str;
 use PhpParser\Node\Expr\Assign;
 
+use function PHPUnit\Framework\isNull;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -39,15 +41,81 @@ use PhpParser\Node\Expr\Assign;
 
 Route::get('/test', function () {
 
-        $satisfiedBatch=TeacherAssignCourse::whereYear('created_at', '2022')->whereHas('relCoPo',function($query){
-            return $query->where('po_id',1);
-        })->with('relCoPo')->get();
+    $satisfiedBatch = TeacherAssignCourse::whereYear('created_at', '2022')->whereHas('relCoPo', function ($query) {
+        return $query->where('po_id', 1);
+    })->with('relCoPo', 'relCourse')->get();
+
+    $studentPo = [];
+    $tempdata = [];
+    $batchPo = [];
+    $percentageCount =   [];
+    foreach ($satisfiedBatch as $batch) {
+        $students = Students::with('relBatch')->where('batch_id', $batch->batch_id)->get();
+
+        foreach ($students as $student) {
+            $result = AssignMark::with('relCo', 'relPo', 'relMarks.relExam')
+                ->where('course_id', $batch->course_id)
+                ->where('batch_id', $batch->batch_id)
+                ->where('student_id', $student->id)
+                ->where('po_id', 1)
+                ->withSum('relMarks', 'marks')
+                ->withSum('relMarks', 'total')
+                ->get();
+
+            $markSum = 0;
+            $totalSum = 0;
+            if ($result || count($result) > 0) {
+                foreach ($result as $po) {
+                    $tempdata['co_no'] = [];
+                    $tempdata['po_name'] = $po->relPo->po_name;
+                    $tempdata['po_no'] = $po->relPo->po_no;
+                    $markSum += $po->rel_marks_sum_marks;
+                    $totalSum += $po->rel_marks_sum_total;
+                    array_push($tempdata['co_no'], $po->relCo->co_no);
+                    $marks = [];
+                    foreach ($po->relMarks as $val) {
+                        array_push($marks, ['mark' => $val->marks, 'co_no' => $po->relCo->co_no, 'total' => $val->total, 'name' => $val->relExam->name]);
+                    }
+                    $tempdata['marks'] = $marks;
+                    $marks = [];
+                    $tempdata['markSum'] = $markSum;
+                    $tempdata['totalSum'] = $totalSum;
+                    $tempdata['percent'] = ($markSum / $totalSum) * 100;
+                }
+                if ($tempdata&& $tempdata['percent']) {
+                   // dump($tempdata);
+                    if ($tempdata['percent'] >= 80) {
+                        $percentageCount['80'] = isset($percentageCount['80']) ? $percentageCount['80'] + 1 : 1;
+                    } elseif ($tempdata['percent'] <= 79 && $tempdata['percent'] >= 60) {
+                        $percentageCount['79-60'] = isset($percentageCount['79-60']) ? $percentageCount['79-60'] + 1 : 1;
+                    } elseif ($tempdata['percent'] <= 59 && $tempdata['percent'] >= 40) {
+                        $percentageCount['59-40'] = isset($percentageCount['59-40']) ? $percentageCount['59-40'] + 1 : 1;
+                    } else {
+                        $percentageCount['below_40'] = isset($percentageCount['below_40']) ? $percentageCount['below_40'] + 1 : 1;
+                    }
+                    array_push($studentPo, [
+                        'name' => $student->name,
+                        'po_result' => $tempdata
+                    ]);
+                }
+                $tempdata = [];
+            }
+        }
+        array_push($batchPo, [
+            'coruse_name' => $batch->relCourse->c_name,
+            'batch_id' => $batch->batch_id,
+            'batch_name' => $batch->relBatch->name,
+            'student_po' => $studentPo,
+            'percentageCount' => $percentageCount
+        ]);
+        $studentPo = [];
+    }
+    return $batchPo;
 
 
 
 
 
-        
     return view('pdf.index', ['data' => '<h1>prantho</h1>', 'content' => '<h1>prantho</h1>', 'teacherName' => 'prantho', 'batchName' => 'prantho', 'courseName' => 'prantho', 'courseCode' => 'prantho', 'comment' => 'prantho']);
 
     $poors = AssignMark::where('batch_id', 1)

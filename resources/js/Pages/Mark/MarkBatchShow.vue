@@ -62,7 +62,7 @@
                             />
                         </svg>
                     </button>
-                    <button
+                    <!-- <button
                         class="float-right mr-4"
                         @click="commentStatus = !commentStatus"
                     >
@@ -80,10 +80,10 @@
                                 d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
                             />
                         </svg>
-                    </button>
+                    </button> -->
                 </div>
             </div>
-            <div
+            <!-- <div
                 v-if="commentStatus"
                 class="my-3 bg-white rounded-lg shadow-md p-2"
             >
@@ -110,7 +110,7 @@
                         {{ errors.comment[0] }}</span
                     >
                 </form>
-            </div>
+            </div> -->
             <div id="pdf" style="margin-top:0px !important;">
                 <div class="chart_wrapper" style="margin-top:0px !important;">
                     <PieGoogle
@@ -126,6 +126,10 @@
                         :below_60="dt['59-40']"
                         :above_80="dt['80']"
                         :results="dt.result"
+                        :co_id="dt.co_id"
+                        :po_id="dt.po_id"
+                        :comments="dt.comment"
+                        :teacherAssigns_id="teacherAssigns.id"
                     />
                 </div>
             </div>

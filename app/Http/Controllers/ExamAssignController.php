@@ -10,6 +10,7 @@ use App\Models\Department;
 use App\Models\DraftMark;
 use App\Models\ExamAssign;
 use App\Models\Marks;
+use App\Models\ProgramOutcome;
 use App\Models\Semester;
 use App\Models\StudentBatch;
 use App\Models\Students;
@@ -23,6 +24,12 @@ use Illuminate\Support\Str;
 
 class ExamAssignController extends Controller
 {
+    public function deanYearPoReportIndex(){
+        $pos=ProgramOutcome::all();
+        return Inertia::render('Mark/MarkYearShow',[
+            'pos'=>$pos
+        ]);
+    }
     public function deanYearPoReport($year, $pid)
     {
         $satisfiedBatch = TeacherAssignCourse::whereYear('created_at', $year)->whereHas('relCoPo', function ($query) use ($pid) {
@@ -69,16 +76,17 @@ class ExamAssignController extends Controller
                     if ($tempdata && $tempdata['percent']) {
 
                         if ($tempdata['percent'] >= 80) {
-                            $percentageCount['80'] = isset($percentageCount['80']) ? $percentageCount['80'] + 1 : 1;
+                            $percentageCount['above_80'] = isset($percentageCount['above_80']) ? $percentageCount['above_80'] + 1 : 1;
                         } elseif ($tempdata['percent'] <= 79 && $tempdata['percent'] >= 60) {
-                            $percentageCount['79-60'] = isset($percentageCount['79-60']) ? $percentageCount['79-60'] + 1 : 1;
+                            $percentageCount['below_80'] = isset($percentageCount['below_80']) ? $percentageCount['below_80'] + 1 : 1;
                         } elseif ($tempdata['percent'] <= 59 && $tempdata['percent'] >= 40) {
-                            $percentageCount['59-40'] = isset($percentageCount['59-40']) ? $percentageCount['59-40'] + 1 : 1;
+                            $percentageCount['below_60'] = isset($percentageCount['below_60']) ? $percentageCount['below_60'] + 1 : 1;
                         } else {
                             $percentageCount['below_40'] = isset($percentageCount['below_40']) ? $percentageCount['below_40'] + 1 : 1;
                         }
                         array_push($studentPo, [
                             'name' => $student->name,
+                            'roll' => $student->roll,
                             'po_result' => $tempdata
                         ]);
                     }
@@ -86,7 +94,7 @@ class ExamAssignController extends Controller
                 }
             }
             array_push($batchPo, [
-                'coruse_name' => $batch->relCourse->c_name,
+                'course_name' => $batch->relCourse->c_name,
                 'batch_id' => $batch->batch_id,
                 'batch_name' => $batch->relBatch->name,
                 'student_po' => $studentPo,

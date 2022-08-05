@@ -13,6 +13,8 @@ use App\Http\Controllers\UserController;
 use App\Models\AssignMark;
 use App\Models\Course;
 use App\Models\CourseAssign;
+use App\Models\DraftMark;
+use App\Models\ExamAssign;
 use App\Models\Marks;
 use App\Models\StudentBatch;
 use App\Models\Students;
@@ -24,7 +26,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
-use PhpParser\Node\Expr\Assign;
+
 
 use function PHPUnit\Framework\isNull;
 
@@ -41,66 +43,118 @@ use function PHPUnit\Framework\isNull;
 
 Route::get('/test', function () {
 
-    $satisfiedBatch = TeacherAssignCourse::whereYear('created_at', '2022')->whereHas('relCoPo', function ($query) {
-        return $query->where('po_id', 1);
-    })->with('relCoPo', 'relCourse')->get();
+    $teacherAssigns = TeacherAssignCourse::findOrFail(1);
+
+    $examAssigns = ExamAssign::where('t_assign_courses_id', 1)->get();
+    $marks = Marks::all();
+    $students = Students::where('batch_id', $teacherAssigns->batch_id)->get();
+    // mark
+    $info = [];
+    $examInfo = [];
+    foreach ($students as $key => $student) {
+        $info["student_name"] = $student->name;
+        $info["student_id"] = $student->id;
+        $info["student_roll"] = $student->roll;
+        $info["marks"] = [];
+        foreach ($examAssigns as $key => $exam) {
+            $mark = [];
+            foreach ($marks as $key => $e) {
+                return $exam->exam_id;
+                if ($e->student_id === $student->id && $e->exam_id === $exam->exam_id && $e->assign_marks_id === $exam->id) {
+                    return $e;
+                    $mark = $e;
+                    break;
+                };
+            }
+            return $mark;
+            array_push($info["marks"], [
+                "exam_id" => $exam->id,
+                "exam_name" => $exam->name,
+                "copo_id" => $exam->copo_id,
+                "co_id" => $exam->co_id,
+                "po_id" => $exam->po_id,
+                "t_assign_courses_id" => $exam->t_assign_courses_id,
+                "teacher_id" => $exam->teacher_id,
+                "mark" => $mark ? $mark['marks'] : "",
+                "total" => $exam->marks,
+            ]);
+        }
+        array_push($examInfo, $info);
+        $info = [];
+    }
+    return $examInfo;
+
+    return Inertia::render('Welcome', ['examInfo' => $examInfo]);
+
+
+
+
+
+    $satisfiedBatch = TeacherAssignCourse::whereYear('created_at', '2022')
+        ->whereHas('relCoPo', function ($query) {
+            return $query->where('po_id', 1);
+        })->with('relCoPo', 'relCourse')->get()->groupBy('batch_id');
 
     $studentPo = [];
     $tempdata = [];
     $batchPo = [];
     $percentageCount =   [];
-    foreach ($satisfiedBatch as $batch) {
-        $students = Students::with('relBatch')->where('batch_id', $batch->batch_id)->get();
+    foreach ($satisfiedBatch as $key => $batches) {
 
-        foreach ($students as $student) {
-            $result = AssignMark::with('relCo', 'relPo', 'relMarks.relExam')
-                ->where('course_id', $batch->course_id)
-                ->where('batch_id', $batch->batch_id)
-                ->where('student_id', $student->id)
-                ->where('po_id', 1)
-                ->withSum('relMarks', 'marks')
-                ->withSum('relMarks', 'total')
-                ->get();
+        $students = Students::with('relBatch')->where('batch_id', $key)->get();
 
-            $markSum = 0;
-            $totalSum = 0;
-            if ($result || count($result) > 0) {
-                foreach ($result as $po) {
-                    $tempdata['co_no'] = [];
-                    $tempdata['po_name'] = $po->relPo->po_name;
-                    $tempdata['po_no'] = $po->relPo->po_no;
-                    $markSum += $po->rel_marks_sum_marks;
-                    $totalSum += $po->rel_marks_sum_total;
-                    array_push($tempdata['co_no'], $po->relCo->co_no);
-                    $marks = [];
-                    foreach ($po->relMarks as $val) {
-                        array_push($marks, ['mark' => $val->marks, 'co_no' => $po->relCo->co_no, 'total' => $val->total, 'name' => $val->relExam->name]);
+        foreach ($batches as $batch) {
+            foreach ($students as $student) {
+                return  $result = AssignMark::with('relCo', 'relPo', 'relMarks.relExam')
+                    ->where('course_id', $batch->course_id)
+                    ->where('batch_id', $batch->batch_id)
+                    ->where('student_id', $student->id)
+                    ->where('po_id', 1)
+                    ->withSum('relMarks', 'marks')
+                    ->withSum('relMarks', 'total')
+                    ->get();
+
+                $markSum = 0;
+                $totalSum = 0;
+                if ($result || count($result) > 0) {
+                    foreach ($result as $po) {
+                        $tempdata['co_no'] = [];
+                        $tempdata['po_name'] = $po->relPo->po_name;
+                        $tempdata['po_no'] = $po->relPo->po_no;
+                        $markSum += $po->rel_marks_sum_marks;
+                        $totalSum += $po->rel_marks_sum_total;
+                        array_push($tempdata['co_no'], $po->relCo->co_no);
+                        $marks = [];
+                        foreach ($po->relMarks as $val) {
+                            array_push($marks, ['mark' => $val->marks, 'co_no' => $po->relCo->co_no, 'total' => $val->total, 'name' => $val->relExam->name]);
+                        }
+                        $tempdata['marks'] = $marks;
+                        $marks = [];
+                        $tempdata['markSum'] = $markSum;
+                        $tempdata['totalSum'] = $totalSum;
+                        $tempdata['percent'] = ($markSum / $totalSum) * 100;
                     }
-                    $tempdata['marks'] = $marks;
-                    $marks = [];
-                    $tempdata['markSum'] = $markSum;
-                    $tempdata['totalSum'] = $totalSum;
-                    $tempdata['percent'] = ($markSum / $totalSum) * 100;
-                }
-                if ($tempdata&& $tempdata['percent']) {
-                   // dump($tempdata);
-                    if ($tempdata['percent'] >= 80) {
-                        $percentageCount['80'] = isset($percentageCount['80']) ? $percentageCount['80'] + 1 : 1;
-                    } elseif ($tempdata['percent'] <= 79 && $tempdata['percent'] >= 60) {
-                        $percentageCount['79-60'] = isset($percentageCount['79-60']) ? $percentageCount['79-60'] + 1 : 1;
-                    } elseif ($tempdata['percent'] <= 59 && $tempdata['percent'] >= 40) {
-                        $percentageCount['59-40'] = isset($percentageCount['59-40']) ? $percentageCount['59-40'] + 1 : 1;
-                    } else {
-                        $percentageCount['below_40'] = isset($percentageCount['below_40']) ? $percentageCount['below_40'] + 1 : 1;
+                    if ($tempdata && $tempdata['percent']) {
+                        // dump($tempdata);
+                        if ($tempdata['percent'] >= 80) {
+                            $percentageCount['80'] = isset($percentageCount['80']) ? $percentageCount['80'] + 1 : 1;
+                        } elseif ($tempdata['percent'] <= 79 && $tempdata['percent'] >= 60) {
+                            $percentageCount['79-60'] = isset($percentageCount['79-60']) ? $percentageCount['79-60'] + 1 : 1;
+                        } elseif ($tempdata['percent'] <= 59 && $tempdata['percent'] >= 40) {
+                            $percentageCount['59-40'] = isset($percentageCount['59-40']) ? $percentageCount['59-40'] + 1 : 1;
+                        } else {
+                            $percentageCount['below_40'] = isset($percentageCount['below_40']) ? $percentageCount['below_40'] + 1 : 1;
+                        }
+                        array_push($studentPo, [
+                            'name' => $student->name,
+                            'po_result' => $tempdata
+                        ]);
                     }
-                    array_push($studentPo, [
-                        'name' => $student->name,
-                        'po_result' => $tempdata
-                    ]);
+                    $tempdata = [];
                 }
-                $tempdata = [];
             }
         }
+
         array_push($batchPo, [
             'coruse_name' => $batch->relCourse->c_name,
             'batch_id' => $batch->batch_id,
@@ -347,6 +401,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('admin/mark-show/poor-student', [ExamAssignController::class, 'adminBatchPoorIndex'])->name('exam.adminBatchPoorIndex');
     Route::get('admin/mark-show/poor-student/{bid}/{cid}', [ExamAssignController::class, 'adminBatchPoorShow'])->name('exam.adminBatchPoorShow');
+    Route::get('admin/year-po-mark-show', [ExamAssignController::class, 'deanYearPoReportIndex'])->name('exam.deanYearPoReportIndex');
     Route::get('admin/year-po-mark-show/{year}/{pid}', [ExamAssignController::class, 'deanYearPoReport'])->name('exam.deanYearPoReport');
 
     //Route::post('admin/mark-download/batch', [ExamAssignController::class, 'markBatchDownload'])->name('exam.markBatchDownload');

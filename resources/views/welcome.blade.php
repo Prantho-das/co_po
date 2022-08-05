@@ -655,7 +655,8 @@
                         <th class="column3">Total</th>
                         <th class="column4">%</th>
                     </tr>
-                </thead><!-- {{results}} -->
+                </thead>
+                {{-- {{results}} --}}
                 <tbody>
                     <tr>
                         <td class="column1">56</td>

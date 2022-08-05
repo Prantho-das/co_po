@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class ExamAssign extends Model
 {
     use HasFactory;
-    protected $guarded=[];
+    protected $guarded = [];
 
-    protected $table= "exam_assigns";
+    protected $table = "exam_assigns";
     protected $hidden = [
         'created_at',
         'updated_at',
@@ -19,8 +19,9 @@ class ExamAssign extends Model
     {
         return $this->hasOne(CourseOutcome::class, 'id', 'co_id');
     }
-    public function relBatch(){
-        return $this->hasOneThrough(StudentBatch::class,TeacherAssignCourse::class,'id','id','t_assign_courses_id','batch_id');
+    public function relBatch()
+    {
+        return $this->hasOneThrough(StudentBatch::class, TeacherAssignCourse::class, 'id', 'id', 't_assign_courses_id', 'batch_id');
     }
 
     public function relPo()
@@ -31,7 +32,8 @@ class ExamAssign extends Model
     {
         return $this->hasOne(Course::class);
     }
-    public function relCourseAssignCopo(){
+    public function relCourseAssignCopo()
+    {
         return $this->hasOne(CourseAssign::class, 'id', 'copo_id');
     }
 }

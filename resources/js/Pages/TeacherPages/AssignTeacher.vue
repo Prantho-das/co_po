@@ -74,6 +74,13 @@
                             >
                                 Batch Result
                             </Link>
+                            <Link
+                             v-if="run.mark_assign_done"
+                                :href="route('exam.markEdit', run.id)"
+                                class="inline-block m-2 text-md font-weight-bold p-2 rounded bg-pink-500 text-white"
+                            >
+                                Mark Update
+                            </Link>
                         </tr>
                     </tbody>
                 </table>

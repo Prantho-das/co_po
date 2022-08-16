@@ -43,56 +43,11 @@ use function PHPUnit\Framework\isNull;
 
 Route::get('/test', function () {
 
-    $teacherAssigns = TeacherAssignCourse::findOrFail(1);
-
-    $examAssigns = ExamAssign::where('t_assign_courses_id', 1)->get();
-    $marks = Marks::all();
-    $students = Students::where('batch_id', $teacherAssigns->batch_id)->get();
-    // mark
-    $info = [];
-    $examInfo = [];
-    foreach ($students as $key => $student) {
-        $info["student_name"] = $student->name;
-        $info["student_id"] = $student->id;
-        $info["student_roll"] = $student->roll;
-        $info["marks"] = [];
-        foreach ($examAssigns as $key => $exam) {
-            $mark = [];
-            foreach ($marks as $key => $e) {
-                return $exam->exam_id;
-                if ($e->student_id === $student->id && $e->exam_id === $exam->exam_id && $e->assign_marks_id === $exam->id) {
-                    return $e;
-                    $mark = $e;
-                    break;
-                };
-            }
-            return $mark;
-            array_push($info["marks"], [
-                "exam_id" => $exam->id,
-                "exam_name" => $exam->name,
-                "copo_id" => $exam->copo_id,
-                "co_id" => $exam->co_id,
-                "po_id" => $exam->po_id,
-                "t_assign_courses_id" => $exam->t_assign_courses_id,
-                "teacher_id" => $exam->teacher_id,
-                "mark" => $mark ? $mark['marks'] : "",
-                "total" => $exam->marks,
-            ]);
-        }
-        array_push($examInfo, $info);
-        $info = [];
-    }
-    return $examInfo;
-
-    return Inertia::render('Welcome', ['examInfo' => $examInfo]);
-
-
-
 
 
     $satisfiedBatch = TeacherAssignCourse::whereYear('created_at', '2022')
         ->whereHas('relCoPo', function ($query) {
-            return $query->where('po_id', 1);
+            return $query->where('po_id', 12);
         })->with('relCoPo', 'relCourse')->get()->groupBy('batch_id');
 
     $studentPo = [];
@@ -105,7 +60,7 @@ Route::get('/test', function () {
 
         foreach ($batches as $batch) {
             foreach ($students as $student) {
-                return  $result = AssignMark::with('relCo', 'relPo', 'relMarks.relExam')
+                return $result = AssignMark::with('relCo', 'relPo', 'relMarks.relExam')
                     ->where('course_id', $batch->course_id)
                     ->where('batch_id', $batch->batch_id)
                     ->where('student_id', $student->id)
@@ -383,6 +338,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/teacher/co-po-exam/{id}', [ExamAssignController::class, 'makeExam'])->name('course.teacher.makeExam');
     Route::post('/teacher/co-po-exam/{id}', [ExamAssignController::class, 'makeExamStore'])->name('course.teacher.makeExamStore');
     Route::get('/exam-mark/{id}', [ExamAssignController::class, 'markCreate'])->name('exam.markCreate');
+    Route::get('/exam-mark-edit/{id}', [ExamAssignController::class, 'markEdit'])->name('exam.markEdit');
+    Route::post('/exam-mark-update/{id}', [ExamAssignController::class, 'markUpdate'])->name('exam.markUpdate');
+
     Route::post('/exam-mark/{id}', [ExamAssignController::class, 'markStore'])->name('exam.markStore');
     Route::post('/exam-mark-draft/{id}', [ExamAssignController::class, 'draftMark'])->name('exam.markDraft');
     Route::post('/teacher/exam-mark-comment', [ExamAssignController::class, 'markComment'])->name('exam.markComment');

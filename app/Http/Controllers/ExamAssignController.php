@@ -24,10 +24,12 @@ use Illuminate\Support\Str;
 
 class ExamAssignController extends Controller
 {
-    public function deanYearPoReportIndex(){
-        $pos=ProgramOutcome::all();
-        return Inertia::render('Mark/MarkYearShow',[
-            'pos'=>$pos
+
+    public function deanYearPoReportIndex()
+    {
+        $pos = ProgramOutcome::all();
+        return Inertia::render('Mark/MarkYearShow', [
+            'pos' => $pos
         ]);
     }
     public function deanYearPoReport($year, $pid)
@@ -289,6 +291,52 @@ class ExamAssignController extends Controller
             'examInfo' => $examInfo
         ]);
     }
+    public function markEdit(Request $req, $id)
+    {
+        $teacherAssigns = TeacherAssignCourse::findOrFail($id);
+
+        $examAssigns = ExamAssign::where('t_assign_courses_id', $id)->whereNotNull('mark_assign_done')->get();
+
+        if (count($examAssigns) == 0) {
+            return back()->with('error', 'Assign Mark First');
+        }
+        if (count($examAssigns) == 0) {
+            return back()->with('error', 'No Exam Assigned');
+        }
+        $students = Students::where('batch_id', $teacherAssigns->batch_id)->get();
+        // mark
+        $info = [];
+        $examInfo = [];
+        foreach ($students as $key => $student) {
+            $info["student_name"] = $student->name;
+            $info["student_id"] = $student->id;
+            $info["student_roll"] = $student->roll;
+            $info["marks"] = [];
+            foreach ($examAssigns as $key => $exam) {
+                $mark = Marks::where('exam_id', $exam->id)->where('student_id', $student->id)->first();
+                array_push($info["marks"], [
+                    "exam_id" => $exam->id,
+                    "exam_name" => $exam->name,
+                    "copo_id" => $exam->copo_id,
+                    "co_id" => $exam->co_id,
+                    "po_id" => $exam->po_id,
+                    "t_assign_courses_id" => $exam->t_assign_courses_id,
+                    "teacher_id" => $exam->teacher_id,
+                    "mark_id" => $mark->id ?? "",
+                    "mark" => $mark->marks ?? 0,
+                    "total" => $exam->marks,
+                ]);
+            }
+            array_push($examInfo, $info);
+            $info = [];
+        }
+        return Inertia::render('TeacherPages/MarksUpdate', [
+            'examAssigns' => $examAssigns,
+            'students' => $students,
+            'teacherAssigns' => $teacherAssigns,
+            'examInfo' => $examInfo
+        ]);
+    }
     private function getDraftMark($draft, $sId, $eId)
     {
 
@@ -396,6 +444,24 @@ class ExamAssignController extends Controller
         }
         return redirect()->route('course.teacher.myCourse')->with('success', 'Mark Submitted Successfully');
     }
+    public function markUpdate(Request $req, $id)
+    {
+
+        TeacherAssignCourse::findOrFail($id);
+
+        foreach ($req->all() as $value) {
+            foreach ($value['marks'] as $mark) {
+                if ($mark['mark']) {
+                    Marks::where('id', $mark['mark_id'])->update([
+                        'marks' => $mark['mark'],
+                    ]);
+                }
+            }
+        }
+
+
+        return redirect()->back()->with('success', 'Mark Updated Successfully');
+    }
 
     public function markBatchDownload()
     {
@@ -452,7 +518,7 @@ class ExamAssignController extends Controller
                 }
             }
         }
-       // return $arr;
+        // return $arr;
         return Inertia::render('Mark/MarkBatchShow', ['data' => $arr, 'teacherAssigns' => $teacherAssigns, 'chart_comment' => $comment]);
     }
     public function markStudentIndex()

@@ -49,10 +49,19 @@
                 >
                     Find
                 </BreezeButton>
+                <BreezeButton v-if="result && result.length > 0"
+                class="ml-2 bg-blue-500"
+                    :class="{ 'opacity-25': form.processing }"
+                    :type="button"
+                    @click="downloadPdf"
+                >
+                    Download
+                </BreezeButton>
             </form>
         </div>
         <div
-            v-if="result"
+            v-if="result && result.length > 0"
+            id="pdf"
             class="overflow-hidden my-8 w-full rounded-lg border shadow-xs"
         >
             <YearChartTable
@@ -62,7 +71,11 @@
                 :batch_name="res.batch_name"
                 :student_pos="res.student_po"
                 :percentageCount="res.percentageCount"
+                :id="res.id"
             />
+        </div>
+        <div v-if="result && result.length === 0">
+            <h2>Noting Found</h2>
         </div>
     </BreezeAuthenticatedLayout>
 </template>
@@ -92,7 +105,7 @@ export default {
     props: ["pos"],
     data() {
         return {
-            result: "",
+            result: null,
             po_result: "",
             form: this.$inertia.form({
                 year: "",
@@ -115,16 +128,18 @@ export default {
                 .catch((err) => console.log(err));
         },
         downloadPdf() {
+            let po_name=this.pos.filter((data)=>{
+                if(data.id == this.form.po){
+                   return data.po_name;
+                }
+            })
             var html = document.getElementById("pdf").innerHTML;
             let data = new FormData();
-            data.append("teacherName", this.teacherAssigns.rel_teacher.name);
-            data.append("batchName", this.teacherAssigns.rel_batch.name);
-            data.append("courseName", this.teacherAssigns.rel_course.c_name);
-            data.append("courseCode", this.teacherAssigns.rel_course.c_code);
+            data.append("year", this.form.year);
+             data.append("po", po_name[0].po_name);
             data.append("html", html);
-            data.append("comment", this.comment);
             axios
-                .post(this.route("exam.markBatchDownload"), data, {
+                .post(this.route("exam.markYearDownload"), data, {
                     responseType: "blob",
                 })
                 .then((response) => {
@@ -133,7 +148,7 @@ export default {
                     );
                     const link = document.createElement("a");
                     link.href = url;
-                    link.setAttribute("download", "test.pdf");
+                    link.setAttribute("download", `admin_year_po_${new Date().getTime()}.pdf`);
                     document.body.appendChild(link);
                     link.click();
                 })

@@ -1,12 +1,12 @@
 <template>
-    <table style="margin-bottom: 20px">
+    <table style="margin-bottom: 20px" v-if="student_pos && student_pos.length >0">
         <tbody>
             <tr>
                 <td style="width: 50%">
                     <div class="table100">
                         <h2 class="mb-3">
                             <span class="text-blue-400">{{ course_name }}</span> |
-                            <span class="text-green-400">{{ batch_name }}</span>
+                            <span class="text-green-400">Batch:{{ batch_name }}</span>
                         </h2>
                         <table>
                             <thead>
@@ -57,7 +57,7 @@
                     </div>
                 </td>
                 <td style="width: 50%; vertical-align: top">
-                    <div :id="batch_name" style="height: 500px"></div>
+                    <div :id="id" style="height: 500px"></div>
                 </td>
             </tr>
         </tbody>
@@ -75,7 +75,7 @@ export default {
             errors: null,
         };
     },
-    props: ["course_name", "batch_name", "student_pos", "percentageCount"],
+    props: ["course_name", "batch_name", "student_pos", "percentageCount","id"],
     mounted() {
         let self = this;
         if (self.batch_name) {
@@ -110,7 +110,7 @@ export default {
                     ],
                     is3D: true,
                 };
-                let chart_div = document.getElementById(self.batch_name);
+                let chart_div = document.getElementById(self.id);
                 var chart = new google.visualization.PieChart(chart_div);
                 google.visualization.events.addListener(
                     chart,

@@ -50,7 +50,7 @@ class ExamAssignController extends Controller
                     ->where('course_id', $batch->course_id)
                     ->where('batch_id', $batch->batch_id)
                     ->where('student_id', $student->id)
-                    ->where('po_id', 1)
+                    ->where('po_id', $pid)
                     ->withSum('relMarks', 'marks')
                     ->withSum('relMarks', 'total')
                     ->get();
@@ -100,7 +100,8 @@ class ExamAssignController extends Controller
                 'batch_id' => $batch->batch_id,
                 'batch_name' => $batch->relBatch->name,
                 'student_po' => $studentPo,
-                'percentageCount' => $percentageCount
+                'percentageCount' => $percentageCount,
+                'id' => uniqid('diu')
             ]);
             $studentPo = [];
         }
@@ -471,6 +472,14 @@ class ExamAssignController extends Controller
             $comment = "<span margin-bottom:0px !important;><span style='font-weight:bold;'>Comment:</span>" . request()->comment . "</span>";
         }
         $pdf = Pdf::loadView('pdf.index', ['data' => trim(request()->html), 'content' => $content, 'teacherName' => request()->teacherName, 'batchName' => request()->batchName, 'courseName' => request()->courseName, 'courseCode' => request()->courseCode, 'comment' => $comment]);
+
+        return $pdf->download('test.pdf');
+    }
+    public function markYearDownload()
+    {
+        $content = '<style>' . file_get_contents(public_path() . '/css/app.css') . '</style>';
+        $pdf = Pdf::loadView('pdf.studentYearDeanMark',
+        ['data' => trim(request()->html), 'content' => $content, 'po' => request()->po, 'year' => request()->year]);
 
         return $pdf->download('test.pdf');
     }

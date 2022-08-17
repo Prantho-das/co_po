@@ -22161,7 +22161,7 @@ __webpack_require__.r(__webpack_exports__);
       errors: null
     };
   },
-  props: ["course_name", "batch_name", "student_pos", "percentageCount"],
+  props: ["course_name", "batch_name", "student_pos", "percentageCount", "id"],
   mounted: function mounted() {
     var self = this;
 
@@ -22172,7 +22172,7 @@ __webpack_require__.r(__webpack_exports__);
           colors: ["rgb(255,0,0)", "rgb(0, 110, 189)", "rgb(255, 251, 1)", "rgb(0,128,0)"],
           is3D: true
         };
-        var chart_div = document.getElementById(self.batch_name);
+        var chart_div = document.getElementById(self.id);
         var chart = new google.visualization.PieChart(chart_div);
         google.visualization.events.addListener(chart, "ready", function () {
           chart_div.innerHTML = "<img src=\"".concat(chart.getImageURI(), "\" alt=\"Pie Chart\">");
@@ -23767,7 +23767,7 @@ __webpack_require__.r(__webpack_exports__);
   props: ["pos"],
   data: function data() {
     return {
-      result: "",
+      result: null,
       po_result: "",
       form: this.$inertia.form({
         year: "",
@@ -23788,21 +23788,23 @@ __webpack_require__.r(__webpack_exports__);
     downloadPdf: function downloadPdf() {
       var _this2 = this;
 
+      var po_name = this.pos.filter(function (data) {
+        if (data.id == _this2.form.po) {
+          return data.po_name;
+        }
+      });
       var html = document.getElementById("pdf").innerHTML;
       var data = new FormData();
-      data.append("teacherName", this.teacherAssigns.rel_teacher.name);
-      data.append("batchName", this.teacherAssigns.rel_batch.name);
-      data.append("courseName", this.teacherAssigns.rel_course.c_name);
-      data.append("courseCode", this.teacherAssigns.rel_course.c_code);
+      data.append("year", this.form.year);
+      data.append("po", po_name[0].po_name);
       data.append("html", html);
-      data.append("comment", this.comment);
-      axios.post(this.route("exam.markBatchDownload"), data, {
+      axios.post(this.route("exam.markYearDownload"), data, {
         responseType: "blob"
       }).then(function (response) {
         var url = window.URL.createObjectURL(new Blob([response.data]));
         var link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", "test.pdf");
+        link.setAttribute("download", "admin_year_po_".concat(new Date().getTime(), ".pdf"));
         document.body.appendChild(link);
         link.click();
       })["catch"](function (error) {
@@ -25410,6 +25412,7 @@ var _withScopeId = function _withScopeId(n) {
 };
 
 var _hoisted_1 = {
+  key: 0,
   style: {
     "margin-bottom": "20px"
   }
@@ -25468,9 +25471,9 @@ var _hoisted_12 = {
 };
 var _hoisted_13 = ["id"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("table", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.course_name), 1
+  return $props.student_pos && $props.student_pos.length > 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("table", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.course_name), 1
   /* TEXT */
-  ), _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.batch_name), 1
+  ), _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_7, "Batch:" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.batch_name), 1
   /* TEXT */
   )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", null, [_hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.student_pos, function (sop, i) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", {
@@ -25493,13 +25496,13 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }), 128
   /* KEYED_FRAGMENT */
   ))])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    id: $props.batch_name,
+    id: $props.id,
     style: {
       "height": "500px"
     }
   }, null, 8
   /* PROPS */
-  , _hoisted_13)])])])]);
+  , _hoisted_13)])])])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true);
 }
 
 /***/ }),
@@ -31117,10 +31120,22 @@ var _hoisted_8 = {
 
 var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Find ");
 
-var _hoisted_10 = {
+var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Download ");
+
+var _hoisted_11 = {
   key: 0,
+  id: "pdf",
   "class": "overflow-hidden my-8 w-full rounded-lg border shadow-xs"
 };
+var _hoisted_12 = {
+  key: 1
+};
+
+var _hoisted_13 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", null, "Noting Found", -1
+/* HOISTED */
+);
+
+var _hoisted_14 = [_hoisted_13];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Head = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Head");
 
@@ -31194,21 +31209,38 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
       }, 8
       /* PROPS */
-      , ["class", "disabled"])], 32
+      , ["class", "disabled"]), $data.result && $data.result.length > 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_BreezeButton, {
+        key: 0,
+        "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["ml-2 bg-blue-500", {
+          'opacity-25': $data.form.processing
+        }]),
+        type: _ctx.button,
+        onClick: $options.downloadPdf
+      }, {
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [_hoisted_10];
+        }),
+        _: 1
+        /* STABLE */
+
+      }, 8
+      /* PROPS */
+      , ["class", "type", "onClick"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)], 32
       /* HYDRATE_EVENTS */
-      )]), $data.result ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_10, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.result, function (res) {
+      )]), $data.result && $data.result.length > 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_11, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.result, function (res) {
         return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_YearChartTable, {
           key: res.batch_id,
           course_name: res.course_name,
           batch_name: res.batch_name,
           student_pos: res.student_po,
-          percentageCount: res.percentageCount
+          percentageCount: res.percentageCount,
+          id: res.id
         }, null, 8
         /* PROPS */
-        , ["course_name", "batch_name", "student_pos", "percentageCount"]);
+        , ["course_name", "batch_name", "student_pos", "percentageCount", "id"]);
       }), 128
       /* KEYED_FRAGMENT */
-      ))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)];
+      ))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $data.result && $data.result.length === 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_12, _hoisted_14)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)];
     }),
     _: 1
     /* STABLE */

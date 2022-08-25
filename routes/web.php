@@ -47,73 +47,74 @@ Route::get('/test', function () {
     $year = 2022;
     $satisfiedBatch = TeacherAssignCourse::whereYear('created_at', $year)->whereHas('relCoPo', function ($query) use ($pid) {
         return $query->where('po_id', $pid);
-    })->with('relCoPo', 'relCourse')->get();
+    })->with('relCoPo', 'relCourse', 'relBatch')->get()->groupBy('batch_id');
 
     $studentPo = [];
     $tempdata = [];
     $batchPo = [];
     $percentageCount =   [];
-    foreach ($satisfiedBatch as $batch) {
-        $students = Students::with('relBatch')->where('batch_id', $batch->batch_id)->get();
+    foreach ($satisfiedBatch as $key => $batch) {
+        $students = Students::with('relBatch')->where('batch_id', $key)->get();
+        foreach ($batch as $bat) {
+            foreach ($students as $student) {
+                $result = AssignMark::with('relCo', 'relPo', 'relMarks.relExam')
+                    ->where('course_id', $bat->course_id)
+                    ->where('batch_id', $key)
+                    ->where('student_id', $student->id)
+                    ->where('po_id', $pid)
+                    ->withSum('relMarks', 'marks')
+                    ->withSum('relMarks', 'total')
+                    ->get();
 
-        foreach ($students as $student) {
-            $result = AssignMark::with('relCo', 'relPo', 'relMarks.relExam')
-                ->where('course_id', $batch->course_id)
-                ->where('batch_id', $batch->batch_id)
-                ->where('student_id', $student->id)
-                ->where('po_id', $pid)
-                ->withSum('relMarks', 'marks')
-                ->withSum('relMarks', 'total')
-                ->get();
-
-            $markSum = 0;
-            $totalSum = 0;
-            if ($result || count($result) > 0) {
-                foreach ($result as $po) {
-                    $tempdata['co_no'] = [];
-                    $tempdata['po_name'] = $po->relPo->po_name;
-                    $tempdata['po_no'] = $po->relPo->po_no;
-                    $markSum += $po->rel_marks_sum_marks;
-                    $totalSum += $po->rel_marks_sum_total;
-                    array_push($tempdata['co_no'], $po->relCo->co_no);
-                    $marks = [];
-                    foreach ($po->relMarks as $val) {
-                        array_push($marks, ['mark' => $val->marks, 'co_no' => $po->relCo->co_no, 'total' => $val->total, 'name' => $val->relExam->name]);
+                $markSum = 0;
+                $totalSum = 0;
+                if ($result || count($result) > 0) {
+                    foreach ($result as $po) {
+                        $tempdata['co_no'] = [];
+                        $tempdata['po_name'] = $po->relPo->po_name;
+                        $tempdata['po_no'] = $po->relPo->po_no;
+                        $markSum += $po->rel_marks_sum_marks;
+                        $totalSum += $po->rel_marks_sum_total;
+                        array_push($tempdata['co_no'], $po->relCo->co_no);
+                        $marks = [];
+                        foreach ($po->relMarks as $val) {
+                            array_push($marks, ['mark' => $val->marks, 'co_no' => $po->relCo->co_no, 'total' => $val->total, 'name' => $val->relExam->name]);
+                        }
+                        $tempdata['marks'] = $marks;
+                        $marks = [];
+                        $tempdata['markSum'] = $markSum;
+                        $tempdata['totalSum'] = $totalSum;
+                        $tempdata['percent'] = ($markSum / $totalSum) * (count($batch) *100);
                     }
-                    $tempdata['marks'] = $marks;
-                    $marks = [];
-                    $tempdata['markSum'] = $markSum;
-                    $tempdata['totalSum'] = $totalSum;
-                    $tempdata['percent'] = ($markSum / $totalSum) * 100;
-                }
-                if ($tempdata && $tempdata['percent']) {
+                    if ($tempdata && $tempdata['percent']) {
 
-                    if ($tempdata['percent'] >= 80) {
-                        $percentageCount['above_80'] = isset($percentageCount['above_80']) ? $percentageCount['above_80'] + 1 : 1;
-                    } elseif ($tempdata['percent'] <= 79 && $tempdata['percent'] >= 60) {
-                        $percentageCount['below_80'] = isset($percentageCount['below_80']) ? $percentageCount['below_80'] + 1 : 1;
-                    } elseif ($tempdata['percent'] <= 59 && $tempdata['percent'] >= 40) {
-                        $percentageCount['below_60'] = isset($percentageCount['below_60']) ? $percentageCount['below_60'] + 1 : 1;
-                    } else {
-                        $percentageCount['below_40'] = isset($percentageCount['below_40']) ? $percentageCount['below_40'] + 1 : 1;
+                        if ($tempdata['percent'] >= 80) {
+                            $percentageCount['above_80'] = isset($percentageCount['above_80']) ? $percentageCount['above_80'] + 1 : 1;
+                        } elseif ($tempdata['percent'] <= 79 && $tempdata['percent'] >= 60) {
+                            $percentageCount['below_80'] = isset($percentageCount['below_80']) ? $percentageCount['below_80'] + 1 : 1;
+                        } elseif ($tempdata['percent'] <= 59 && $tempdata['percent'] >= 40) {
+                            $percentageCount['below_60'] = isset($percentageCount['below_60']) ? $percentageCount['below_60'] + 1 : 1;
+                        } else {
+                            $percentageCount['below_40'] = isset($percentageCount['below_40']) ? $percentageCount['below_40'] + 1 : 1;
+                        }
+                        array_push($studentPo, [
+                            'name' => $student->name,
+                            'roll' => $student->roll,
+                            'po_result' => $tempdata
+                        ]);
                     }
-                    array_push($studentPo, [
-                        'name' => $student->name,
-                        'roll' => $student->roll,
-                        'po_result' => $tempdata
-                    ]);
+                    $tempdata = [];
                 }
-                $tempdata = [];
             }
+            array_push($batchPo, [
+                'course_name' => $bat->relCourse->c_name,
+                'batch_id' => $bat->batch_id,
+                'batch_name' => $bat->relBatch->name,
+                'student_po' => $studentPo,
+                'percentageCount' => $percentageCount
+            ]);
+            $studentPo = [];
         }
-        array_push($batchPo, [
-            'course_name' => $batch->relCourse->c_name,
-            'batch_id' => $batch->batch_id,
-            'batch_name' => $batch->relBatch->name,
-            'student_po' => $studentPo,
-            'percentageCount' => $percentageCount
-        ]);
-        $studentPo = [];
     }
     return $batchPo;
 

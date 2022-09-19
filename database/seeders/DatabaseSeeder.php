@@ -113,7 +113,7 @@ class DatabaseSeeder extends Seeder
         ]);
            for ($i=1; $i <= 12; $i++) {
             Semester::create([
-                'name'=>$i%2==0?$i."nd":$i."st",
+                'name'=>$i,
             ]);
            }
         Course::create([

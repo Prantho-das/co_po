@@ -8,6 +8,7 @@ use App\Models\SessionYear;
 use App\Models\StudentBatch;
 use App\Models\Students;
 use App\Models\User;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
@@ -17,6 +18,7 @@ class UserController extends Controller
 {
     public function index()
     {
+
         return Inertia::render('Users/Index', [
             'users' => User::paginate()
         ]);
@@ -73,9 +75,13 @@ class UserController extends Controller
 
     public function studentShow()
     {
-        Students::with('relSession', 'relBatch')->paginate();
+        $students = Students::query()->with('relSession', 'relBatch');
+        if (request('batch') && request('department')) {
+            $students->where('batch_id', request('batch'))
+                ->where('department_id', request('department'));
+        }
         return Inertia::render('Student/Index', [
-            'students' => Students::with('relSession', 'relBatch')->paginate()
+            'students' => $students->paginate()
         ]);
     }
     public function studentCreate()
@@ -128,7 +134,7 @@ class UserController extends Controller
         try {
             DB::transaction(function () {
                 $file = request()->file('student_csv');
-                Excel::import(new StudentImport(request('batch'),request('session'),request('department'), request('shift')), $file);
+                Excel::import(new StudentImport(request('batch'), request('session'), request('department'), request('shift')), $file);
             });
             return back()->with('success', 'Students Imported Successfully');
         } catch (\Exception $e) {
@@ -143,7 +149,7 @@ class UserController extends Controller
     }
     public function studentInfoByBatch($batchId)
     {
-        $students = Students::where('batch_id', $batchId)->select('id','name','roll')->get();
+        $students = Students::where('batch_id', $batchId)->select('id', 'name', 'roll')->get();
         return response($students);
     }
 }

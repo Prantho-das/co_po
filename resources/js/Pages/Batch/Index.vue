@@ -89,7 +89,32 @@
                         {{ form.errors.batch_name }}
                     </h2>
                 </div>
-
+                <div class="my-4">
+                    <BreezeLabel
+                        for="sessionId"
+                        value="Select Total Semester"
+                    />
+                    <select
+                        id="sessionId"
+                        v-model="form.semester"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
+                        <option selected value="" disabled>
+                            Choose a Semester
+                        </option>
+                        <option
+                            class="text-black"
+                            v-for="(dpt, i) in 12"
+                            :key="i"
+                            :value="dpt"
+                        >
+                            {{ dpt }}
+                        </option>
+                    </select>
+                    <h2 class="text-red-500" v-if="form.errors.department">
+                        {{ form.errors.semester }}
+                    </h2>
+                </div>
                 <BreezeButton
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
@@ -109,6 +134,7 @@
                                 <th class="px-4 py-3">*</th>
                                 <th class="px-4 py-3">batch</th>
                                 <th class="px-4 py-3">session</th>
+                                <th class="px-4 py-3">total semester</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y">
@@ -125,6 +151,9 @@
                                 </td>
                                 <td class="px-4 py-3 text-sm">
                                     {{ batch.rel_session.session_year }}
+                                </td>
+                                <td class="px-4 py-3 text-sm">
+                                    {{ batch.total_semester }}
                                 </td>
                             </tr>
                         </tbody>
@@ -161,6 +190,7 @@ export default {
                 session: "",
                 batch_name: "",
                 department: "",
+                semester: "",
             }),
         };
     },

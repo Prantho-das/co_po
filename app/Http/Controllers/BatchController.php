@@ -51,6 +51,7 @@ class BatchController extends Controller
             'session' => "required|exists:session_years,id",
             'department' => "required|exists:departments,id",
             'batch_name' => "required|min:1|max:12",
+            'semester'=> "required|numeric|min:1|max:12",
         ]);
         $uniquevalidation=StudentBatch::where('session_id',$request->session)->where('department_id',$request->department)->where('name',$request->batch_name)->exists();
         if($uniquevalidation){
@@ -60,6 +61,7 @@ class BatchController extends Controller
             'session_id' => $request->session,
             'department_id' => $request->department,
             'name' => $request->batch_name,
+            'total_semester' => $request->semester,
         ]);
 
         return back()->with('success', 'Batch Created Successfully');

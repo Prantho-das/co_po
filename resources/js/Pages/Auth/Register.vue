@@ -77,7 +77,7 @@
                             autocomplete="username"
                         />
                     </div>
-                    <div class="mt-4">
+                    <!-- <div class="mt-4">
                         <BreezeLabel for="batch" value="Batch" />
                         <BreezeInput
                             id="batch"
@@ -87,7 +87,7 @@
                             required
                             autocomplete="username"
                         />
-                    </div>
+                    </div> -->
                     <div class="mt-4">
                         <BreezeLabel for="department" value="Department" />
                         <select

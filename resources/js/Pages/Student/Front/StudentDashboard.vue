@@ -3,7 +3,7 @@
 
     <BreezeAuthenticatedLayout>
         <template #header> Dashboard </template>
-       
+        <h2>Notification</h2>
     </BreezeAuthenticatedLayout>
 </template>
 

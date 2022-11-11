@@ -397,6 +397,7 @@ Route::group(['middleware' => ['auth:student'], 'as' => 'student.', 'prefix' => 
         return Inertia::render('Student/Front/StudentDashboard');
     })->name('dashboard');
 
+    Route::get('all-notifications', [ExamAssignController::class, 'allNotifications'])->name('allNotifications');
     Route::get('batch-info/{departmentId}', [UserController::class, 'studentBatchInfo'])->name('studentBatchInfo');
     Route::get('batch-student-info/{batchId}', [UserController::class, 'studentInfoByBatch'])->name('studentInfoByBatch');
     Route::get('courses-in-semester/{semester}', [CourseController::class, 'courseSemester'])->name('courseInSemester');

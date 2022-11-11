@@ -1,7 +1,10 @@
 <template>
     <div class="my-3 bg-white rounded-lg shadow-md p-2 comment_box">
         <h6 class="text-blue-600"></h6>
-        <form @keyup.enter="commentDone">
+        <form
+            @keyup.enter="commentDone"
+            v-if="$page.props.auth.user.role==='TEACHER'"
+        >
             <textarea
                 v-model="comment"
                 placeholder="Enter Your Comment"
@@ -92,7 +95,8 @@
                 <td style="width: 50%; vertical-align: top">
                     <div :id="name" style="height: 500px"></div>
                     <p class="ml-2 my-2 p-2 rounded bg-gray-300" v-if="comment">
-                        <span class="text-lg capitalize">comment: </span>{{comment}}
+                        <span class="text-lg capitalize">comment: </span
+                        >{{ comment }}
                     </p>
                 </td>
             </tr>
@@ -106,12 +110,12 @@ export default {
     name: "PieChart",
     data() {
         return {
-            comment:null,
-            errors:null,
+            comment: null,
+            errors: null,
         };
     },
     mounted() {
-        this.comment=this.comments?this.comments.comment:null;
+        this.comment = this.comments ? this.comments.comment : null;
         let self = this;
         if (self.name) {
             google.charts.load("current", { packages: ["corechart"] });

@@ -16,6 +16,7 @@ class StuedentOutcomeNotify extends Notification implements ShouldQueue
      *
      * @return void
      */
+    public $message;
     public function __construct(string $message)
     {
         $this->message=$message;

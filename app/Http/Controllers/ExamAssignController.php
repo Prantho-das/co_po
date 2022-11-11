@@ -15,6 +15,7 @@ use App\Models\Semester;
 use App\Models\StudentBatch;
 use App\Models\Students;
 use App\Models\TeacherAssignCourse;
+use App\Notifications\StuedentOutcomeNotify;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,6 +26,14 @@ use Illuminate\Support\Str;
 class ExamAssignController extends Controller
 {
 
+    public function allNotifications()
+    {
+        $notifications = Auth::user()->notifications->sortBy('created_at');
+
+        return Inertia::render('Student/Front/AllNotifications', [
+            'notifications' => $notifications
+        ]);
+    }
     public function deanYearPoReportIndex()
     {
         $pos = ProgramOutcome::all();
@@ -137,6 +146,7 @@ class ExamAssignController extends Controller
                     $arr_index = Str::slug($val->relCo->co_name, '_');
                     if ($percentage < 40) {
                         $student = [];
+                        $student['id'] = $val->relStudent->id;
                         $student['name'] = $val->relStudent->name;
                         $student['roll'] = $val->relStudent->roll;
                         $student['sum_mark'] = $val->rel_marks_sum_marks;
@@ -151,6 +161,11 @@ class ExamAssignController extends Controller
                     }
                 }
             }
+        }
+        foreach ($weak as $key => $value) {
+            $student=Students::where('id', $value['id'])
+                ->first();
+            $student->notify(new StuedentOutcomeNotify('You are weak in ' . $value['rel_po']['po_name'] . ' PO of ' . $value['rel_co']['co_name'] . ' CO of course'));
         }
         //  return $weak;
         return response(['weak' => $weak]);
@@ -478,8 +493,10 @@ class ExamAssignController extends Controller
     public function markYearDownload()
     {
         $content = '<style>' . file_get_contents(public_path() . '/css/app.css') . '</style>';
-        $pdf = Pdf::loadView('pdf.studentYearDeanMark',
-        ['data' => trim(request()->html), 'content' => $content, 'po' => request()->po, 'year' => request()->year]);
+        $pdf = Pdf::loadView(
+            'pdf.studentYearDeanMark',
+            ['data' => trim(request()->html), 'content' => $content, 'po' => request()->po, 'year' => request()->year]
+        );
 
         return $pdf->download('test.pdf');
     }
